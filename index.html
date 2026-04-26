@@ -124,21 +124,16 @@ textarea:focus{outline:none;border-color:#c8c4be}
     <div class="loading" id="oura-loading">Syncing Oura data...</div>
     <div class="error-msg" id="oura-error"></div>
 
-    <div class="metrics">
+    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
       <div class="metric" id="m-sleep-card">
         <div class="metric-label">Sleep score</div>
         <div class="metric-value" id="m-sleep">—</div>
+        <div class="metric-sub">Last night</div>
+      </div>
+      <div class="metric" id="m-avg-card">
+        <div class="metric-label">7-day avg score</div>
+        <div class="metric-value" id="m-avg">—</div>
         <div class="metric-sub">Target &gt;70</div>
-      </div>
-      <div class="metric" id="m-hours-card">
-        <div class="metric-label">Total sleep</div>
-        <div class="metric-value" id="m-hours">—</div>
-        <div class="metric-sub">Target &gt;7h</div>
-      </div>
-      <div class="metric" id="m-hr-card">
-        <div class="metric-label">Resting HR</div>
-        <div class="metric-value" id="m-hr">—</div>
-        <div class="metric-sub">Target &lt;60 bpm</div>
       </div>
       <div class="metric" id="m-ready-card">
         <div class="metric-label">Readiness</div>
@@ -183,8 +178,8 @@ textarea:focus{outline:none;border-color:#c8c4be}
       <div class="chart-wrap"><canvas id="chart-sleep" role="img" aria-label="Sleep score over 7 days">Sleep score trend.</canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">Resting HR — 7 days</div>
-      <div style="font-size:11px;color:#8c8880;margin-bottom:10px">Target: below 60 bpm</div>
+      <div class="card-title">Resting HR — 7-day rolling</div>
+      <div style="font-size:11px;color:#8c8880;margin-bottom:10px">Lowest heart rate during sleep · Target &lt;60 bpm</div>
       <div class="chart-wrap"><canvas id="chart-hr" role="img" aria-label="Resting HR over 7 days">Resting HR trend.</canvas></div>
     </div>
     <div class="card">
@@ -232,7 +227,7 @@ textarea:focus{outline:none;border-color:#c8c4be}
 
 <script>
 const HABITS_A = [
-  {id:'sleep', label:'Sleep floor hit (7hrs)'},
+  {id:'sleep', label:'Sleep score target hit (>70)'},
   {id:'stimulants', label:'No unplanned stimulants'},
   {id:'addie', label:'Addie anchor'},
 ];
@@ -361,33 +356,35 @@ async function fetchOura() {
 }
 
 function renderToday() {
-  // Use today's data if available, otherwise fall back to most recent
   const days = last7();
-  const mostRecentSleep = days.slice().reverse().find(d => ouraData.sleep[d] && ouraData.sleep[d].score);
-  const mostRecentSession = days.slice().reverse().find(d => ouraData.sleep[d] && ouraData.sleep[d].rhr);
+  // Find most recent day with a sleep score
+  const scoreDay = days.slice().reverse().find(d => ouraData.sleep[d] && ouraData.sleep[d].score);
+  const baseData = ouraData.sleep[scoreDay] || {};
+  // Only show session data (total sleep, RHR) if it's from the same night as the score
   const sl = {
-    ...(ouraData.sleep[mostRecentSleep] || {}),
-    rhr: (ouraData.sleep[mostRecentSession] || {}).rhr,
-    totalMins: (ouraData.sleep[mostRecentSession] || {}).totalMins,
+    score: baseData.score,
+    totalMins: baseData.totalMins || null,
+    rhr: baseData.rhr || null,
+    syncing: baseData.score && !baseData.totalMins,
   };
-  const rd = ouraData.readiness[today] || ouraData.readiness[mostRecentSleep] || {};
+  const rd = ouraData.readiness[scoreDay] || {};
   const ci = todayCI();
 
   // Metrics
+  // Last night sleep score
   const sleepEl = document.getElementById('m-sleep');
   sleepEl.textContent = sl.score || '—';
   if(sl.score && sl.score < 70) { sleepEl.className = 'metric-value warn'; document.getElementById('m-sleep-card').className = 'metric warn'; }
   else { sleepEl.className = 'metric-value'; document.getElementById('m-sleep-card').className = 'metric'; }
 
-  if(sl.totalMins) {
-    const h = Math.floor(sl.totalMins/60), m = sl.totalMins%60;
-    document.getElementById('m-hours').textContent = h+'h '+m+'m';
-    if(sl.totalMins < 420) { document.getElementById('m-hours').className = 'metric-value warn'; document.getElementById('m-hours-card').className = 'metric warn'; }
-  } else { document.getElementById('m-hours').textContent = '—'; }
-
-  const hrEl = document.getElementById('m-hr');
-  hrEl.textContent = sl.rhr ? sl.rhr+' bpm' : '—';
-  if(sl.rhr && sl.rhr > 65) { hrEl.className = 'metric-value warn'; document.getElementById('m-hr-card').className = 'metric warn'; }
+  // 7-day rolling average sleep score
+  const days7 = last7();
+  const scores7 = days7.map(d => ouraData.sleep[d] && ouraData.sleep[d].score).filter(Boolean);
+  const avg7 = scores7.length ? Math.round(scores7.reduce((a,b)=>a+b,0)/scores7.length) : null;
+  const avgEl = document.getElementById('m-avg');
+  avgEl.textContent = avg7 || '—';
+  if(avg7 && avg7 < 70) { avgEl.className = 'metric-value warn'; document.getElementById('m-avg-card').className = 'metric warn'; }
+  else { avgEl.className = 'metric-value'; document.getElementById('m-avg-card').className = 'metric'; }
 
   document.getElementById('m-ready').textContent = rd.score || '—';
 
@@ -466,8 +463,9 @@ function saveNote() {
 
 function renderAlerts() {
   const days = last7(), alerts = [];
-  const sm = days.slice(-3).filter(d => ouraData.sleep[d] && ouraData.sleep[d].score < 70).length;
-  if(sm >= 2) alerts.push('Sleep score below 70 for '+sm+' of last 3 nights');
+  const recentScores = days.map(d => ouraData.sleep[d] && ouraData.sleep[d].score).filter(Boolean);
+  const rollingAvg = recentScores.length ? Math.round(recentScores.reduce((a,b)=>a+b,0)/recentScores.length) : null;
+  if(rollingAvg && rollingAvg < 70) alerts.push('7-day avg sleep score is '+rollingAvg+' — below target of 70');
   const ci = todayCI();
   if(ci.regulation === 3) alerts.push('Dysregulation flagged today — MVS mode');
   const stm = days.filter(d => checkins[d] && checkins[d].habits && checkins[d].habits.stimulants === false).length;
@@ -530,6 +528,8 @@ function renderTrends() {
   }
 
   mkChart('chart-sleep', sleepScores, '#3b82f6', 70, 40, 100);
+  // Add rolling avg line to sleep chart
+  const avgScores = days.map((_,i) => { const w = sleepScores.slice(Math.max(0,i-6),i+1).filter(v=>v!==null); return w.length ? Math.round(w.reduce((a,b)=>a+b,0)/w.length) : null; });
   mkChart('chart-hr', rhrs, '#ef4444', 60, 45, 90);
   mkChart('chart-habits', tierA, '#22c55e', 100, 0, 100);
 
