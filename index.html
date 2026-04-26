@@ -319,7 +319,7 @@ async function fetchOura() {
       fetch(`https://api.ouraring.com/v2/usercollection/daily_readiness?start_date=${start}&end_date=${end}`, {headers}),
     ]);
     const sj = sr.ok ? await sr.json() : null;
-    const rj = rr.ok ? await rj_json() : null;
+    const rj = rr.ok ? await rr.json() : null;
 
     const sleep = {};
     if(sj && sj.data) {
