@@ -314,24 +314,34 @@ async function fetchOura() {
   const days = last7(), start = days[0], end = days[6];
   const proxy = 'https://plain-hill-28ab.mjtharp2.workers.dev';
   try {
-    const [sr, rr] = await Promise.all([
+    const [scoreRes, sessionRes, readinessRes] = await Promise.all([
       fetch(proxy + '?path=daily_sleep%3Fstart_date%3D' + start + '%26end_date%3D' + end + '&token=' + token),
+      fetch(proxy + '?path=sleep%3Fstart_date%3D' + start + '%26end_date%3D' + end + '&token=' + token),
       fetch(proxy + '?path=daily_readiness%3Fstart_date%3D' + start + '%26end_date%3D' + end + '&token=' + token),
     ]);
-    const sj = sr.ok ? await sr.json() : null;
-    const rj = rr.ok ? await rr.json() : null;
+    const scoreJson = scoreRes.ok ? await scoreRes.json() : null;
+    const sessionJson = sessionRes.ok ? await sessionRes.json() : null;
+    const readJson = readinessRes.ok ? await readinessRes.json() : null;
 
     const sleep = {};
-    if(sj && sj.data) {
-      sj.data.forEach(d => {
-        const ts = d.contributors && d.contributors.total_sleep ? Math.round(d.contributors.total_sleep * 8.5) : null;
-        sleep[d.day] = {score: d.score, totalMins: ts};
+    if(scoreJson && scoreJson.data) {
+      scoreJson.data.forEach(d => {
+        sleep[d.day] = {score: d.score, totalMins: null, rhr: null};
+      });
+    }
+    if(sessionJson && sessionJson.data) {
+      sessionJson.data.forEach(d => {
+        if(d.type === 'long_sleep' && d.day) {
+          if(!sleep[d.day]) sleep[d.day] = {score: null, totalMins: null, rhr: null};
+          sleep[d.day].totalMins = d.total_sleep_duration ? Math.round(d.total_sleep_duration / 60) : null;
+          sleep[d.day].rhr = d.lowest_heart_rate || null;
+        }
       });
     }
     const readiness = {};
-    if(rj && rj.data) {
-      rj.data.forEach(d => {
-        readiness[d.day] = {score: d.score, rhr: d.contributors && d.contributors.resting_heart_rate};
+    if(readJson && readJson.data) {
+      readJson.data.forEach(d => {
+        readiness[d.day] = {score: d.score};
       });
     }
     ouraData = {sleep, readiness};
@@ -363,8 +373,8 @@ function renderToday() {
   } else { document.getElementById('m-hours').textContent = '—'; }
 
   const hrEl = document.getElementById('m-hr');
-  hrEl.textContent = rd.rhr ? rd.rhr+' bpm' : '—';
-  if(rd.rhr && rd.rhr > 65) { hrEl.className = 'metric-value warn'; document.getElementById('m-hr-card').className = 'metric warn'; }
+  hrEl.textContent = sl.rhr ? sl.rhr+' bpm' : '—';
+  if(sl.rhr && sl.rhr > 65) { hrEl.className = 'metric-value warn'; document.getElementById('m-hr-card').className = 'metric warn'; }
 
   document.getElementById('m-ready').textContent = rd.score || '—';
 
@@ -475,7 +485,7 @@ function weekStats() {
 function renderTrends() {
   const days = last7(), labels = days.map(dayLabel);
   const sleepScores = days.map(d => ouraData.sleep[d] ? ouraData.sleep[d].score : null);
-  const rhrs = days.map(d => ouraData.readiness[d] ? ouraData.readiness[d].rhr : null);
+  const rhrs = days.map(d => ouraData.sleep[d] ? ouraData.sleep[d].rhr : null);
   const tierA = days.map(d => {
     const ci = checkins[d];
     if(!ci || !ci.habits) return null;
