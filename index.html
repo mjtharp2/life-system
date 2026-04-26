@@ -3,501 +3,589 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Life System Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.5.0/Recharts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.2/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Life System</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', system-ui, sans-serif; background: #faf9f7; color: #1a1814; }
-  textarea:focus, input:focus, button:focus { outline: none; }
-  ::-webkit-scrollbar { width: 6px; } 
-  ::-webkit-scrollbar-track { background: #f0ede8; }
-  ::-webkit-scrollbar-thumb { background: #c8c4be; border-radius: 3px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#faf9f7;color:#1a1814;font-size:14px}
+.header{background:#fff;border-bottom:1px solid #e8e4de;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.header-title{font-family:'DM Serif Display',serif;font-size:20px}
+.header-date{font-size:11px;color:#8c8880;margin-top:2px}
+.header-right{display:flex;gap:8px;align-items:center}
+.btn{padding:5px 12px;border-radius:6px;border:1px solid #e0dcd6;background:#f0ede8;color:#4a4640;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif}
+.btn-green{background:#f0f7f2;border-color:#c8dfd0;color:#4a7c59}
+.btn-amber{background:#fff3e0;border-color:#ffd49e;color:#c17f24}
+.btn-dark{background:#1a1814;border-color:#1a1814;color:#fff}
+.btn-danger{background:#fdf0f0;border-color:#e8c5c5;color:#b94040}
+.token-panel{background:#fffbf5;border-bottom:1px solid #f0e0c8;padding:14px 24px;display:none}
+.token-panel.show{display:block}
+.token-row{display:flex;gap:8px;margin-top:8px}
+.token-input{flex:1;padding:8px 12px;border:1px solid #e0dcd6;border-radius:6px;font-size:12px;font-family:monospace;background:#fff;color:#1a1814}
+.alerts{background:#fdf6ec;border-bottom:1px solid #f0e0c8;padding:10px 24px;display:none}
+.alerts.show{display:block}
+.alert-item{font-size:12px;color:#8a5a1a;margin-bottom:2px}
+.tabs{background:#fff;border-bottom:1px solid #e8e4de;padding:0 24px;display:flex}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;font-size:12px;font-weight:600;cursor:pointer;color:#8c8880;font-family:'DM Sans',system-ui,sans-serif}
+.tab.active{color:#1a1814;border-bottom-color:#1a1814}
+.content{padding:20px 24px;max-width:820px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.metric{background:#fff;border:1px solid #e8e4de;border-radius:10px;padding:14px 15px}
+.metric.warn{border-color:#e8c5c5;background:#fdf8f8}
+.metric-label{font-size:10px;color:#8c8880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.metric-value{font-size:26px;font-family:'DM Serif Display',serif;color:#1a1814;line-height:1}
+.metric-value.warn{color:#b94040}
+.metric-sub{font-size:10px;color:#b8b4ae;margin-top:4px}
+.card{background:#fff;border:1px solid #e8e4de;border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;color:#1a1814;margin-bottom:12px}
+.reg-btns{display:flex;gap:8px;margin-bottom:10px}
+.reg-btn{flex:1;padding:10px 6px;border-radius:8px;border:2px solid #e8e4de;background:#faf9f7;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',system-ui,sans-serif;color:#8c8880}
+.reg-btn.sel-1{border-color:#4a7c59;background:#f0f7f2;color:#4a7c59}
+.reg-btn.sel-2{border-color:#c17f24;background:#fdf6ec;color:#c17f24}
+.reg-btn.sel-3{border-color:#b94040;background:#fdf0f0;color:#b94040}
+.reg-msg{font-size:12px;padding:8px 12px;border-radius:6px;display:none}
+.reg-msg.show{display:block}
+.reg-msg-1{background:#f0f7f2;color:#4a7c59}
+.reg-msg-2{background:#fdf6ec;color:#c17f24}
+.reg-msg-3{background:#fdf0f0;color:#b94040}
+.section-label{font-size:10px;color:#8c8880;text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px}
+.habit-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;border:1px solid #e8e4de;margin-bottom:5px;background:#faf9f7;transition:all .12s}
+.habit-row.done-a{background:#f0f7f2;border-color:#c8dfd0}
+.habit-row.done-b{background:#f5f8ff;border-color:#c8d4f0}
+.habit-check{width:18px;height:18px;border-radius:4px;border:2px solid #c8c4be;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff;background:transparent}
+.habit-check.a{border-color:#4a7c59;background:#4a7c59}
+.habit-check.b{border-color:#4a6cb0;background:#4a6cb0}
+.habit-label{font-size:12px;color:#4a4640}
+.habit-label.done-a{color:#4a7c59;font-weight:500}
+.habit-label.done-b{color:#4a6cb0;font-weight:500}
+.habit-score{display:flex;gap:12px;font-size:11px;font-weight:600}
+.habit-score-a{color:#4a7c59}
+.habit-score-b{color:#4a6cb0}
+textarea{width:100%;min-height:70px;border:1px solid #e8e4de;border-radius:7px;padding:8px 10px;font-size:12px;font-family:'DM Sans',system-ui,sans-serif;color:#1a1814;background:#faf9f7;resize:vertical;line-height:1.5}
+textarea:focus{outline:none;border-color:#c8c4be}
+.chart-wrap{position:relative;height:150px;margin-top:4px}
+.reg-dots{display:flex;gap:6px}
+.reg-dot{flex:1;text-align:center}
+.reg-dot-inner{height:40px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.reg-dot-label{font-size:9px;color:#8c8880;margin-top:3px}
+.week-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.week-stat-val{font-size:26px;font-family:'DM Serif Display',serif;color:#1a1814}
+.week-stat-label{font-size:10px;color:#8c8880;margin-top:2px}
+.review-section{margin-bottom:20px}
+.review-section-title{font-size:11px;font-weight:600;color:#4a4640;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f0ede8}
+.review-prompt{font-size:12px;color:#4a4640;margin-bottom:4px}
+.review-prompt-wrap{margin-bottom:10px}
+.summary-box{background:#faf9f7;border:1px solid #e8e4de;border-radius:8px;padding:14px}
+.summary-label{font-size:10px;color:#8c8880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.loading{font-size:12px;color:#8c8880;margin-bottom:10px;display:none}
+.loading.show{display:block}
+.error-msg{font-size:12px;color:#b94040;background:#fdf0f0;padding:8px 10px;border-radius:6px;margin-bottom:10px;display:none}
+.error-msg.show{display:block}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useCallback } = React;
-const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } = Recharts;
 
-const TOKEN_KEY = "life_oura_token";
-const CHECKINS_KEY = "life_checkins";
+<div class="header">
+  <div>
+    <div class="header-title">Life System</div>
+    <div class="header-date" id="hdr-date"></div>
+  </div>
+  <div class="header-right">
+    <div id="alert-badge" style="display:none;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:#fdf0f0;color:#b94040;border:1px solid #e8c5c5"></div>
+    <button class="btn btn-amber" id="conn-btn" onclick="toggleToken()">Connect Oura</button>
+    <button class="btn" id="refresh-btn" style="display:none" onclick="fetchOura()">↻ Refresh</button>
+  </div>
+</div>
 
-const HABITS = [
-  { id: "sleep", label: "Sleep floor hit (7hrs)", tier: "A" },
-  { id: "stimulants", label: "No unplanned stimulants", tier: "A" },
-  { id: "addie", label: "Addie anchor", tier: "A" },
-  { id: "focus", label: "90-min focus block", tier: "B" },
-  { id: "workout", label: "Workout / movement", tier: "B" },
-  { id: "self_time", label: "Self time (11-11:30pm)", tier: "B" },
-  { id: "phone", label: "Phone outside bedroom", tier: "B" },
-];
+<div class="token-panel" id="token-panel">
+  <div style="font-size:12px;color:#8a5a1a;font-weight:500">Paste your Oura access token to pull live sleep data</div>
+  <div class="token-row">
+    <input class="token-input" id="token-input" type="text" placeholder="Paste token here...">
+    <button class="btn btn-dark" onclick="saveToken()">Connect</button>
+    <button class="btn" onclick="toggleToken()">Cancel</button>
+  </div>
+  <div style="font-size:11px;color:#b94040;margin-top:6px;display:none" id="token-err"></div>
+</div>
 
-const REG = {
-  1: { label: "Regulated", color: "#4a7c59", bg: "#f0f7f2", icon: "●" },
-  2: { label: "Sliding", color: "#c17f24", bg: "#fdf6ec", icon: "◐" },
-  3: { label: "Dysregulated", color: "#b94040", bg: "#fdf0f0", icon: "○" },
-};
+<div class="alerts" id="alerts-banner"></div>
 
-const REG_MSG = {
-  1: "System nominal. Execute the plan.",
-  2: "Early warning. Run Level 1 protocol: 15-min planning session, name the open loop.",
-  3: "MVS mode only. Sleep + no unplanned stimulants + Addie anchor. No major decisions today.",
-};
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('today',this)">Today</button>
+  <button class="tab" onclick="switchTab('trends',this)">Trends</button>
+  <button class="tab" onclick="switchTab('review',this)">Weekly review</button>
+</div>
 
-function fmt(d) { return d.toISOString().split("T")[0]; }
-function today() { return fmt(new Date()); }
-function last7() {
-  return Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return fmt(d);});
-}
-function dayLabel(s) {
-  return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date(s+"T12:00:00").getDay()];
-}
+<div class="content">
 
-function loadCheckins() {
-  try { return JSON.parse(localStorage.getItem(CHECKINS_KEY)||"{}"); } catch(e) { return {}; }
-}
-function saveCheckins(c) { localStorage.setItem(CHECKINS_KEY, JSON.stringify(c)); }
+  <!-- TODAY -->
+  <div class="tab-content active" id="tab-today">
+    <div class="loading" id="oura-loading">Syncing Oura data...</div>
+    <div class="error-msg" id="oura-error"></div>
 
-function App() {
-  const [token, setToken] = useState(()=>localStorage.getItem(TOKEN_KEY)||"");
-  const [tokenInput, setTokenInput] = useState("");
-  const [showToken, setShowToken] = useState(!localStorage.getItem(TOKEN_KEY));
-  const [oura, setOura] = useState({sleep:{}, hr:{}, readiness:{}});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [checkins, setCheckins] = useState(loadCheckins);
-  const [tab, setTab] = useState("today");
-  const [noteText, setNoteText] = useState("");
-  const [saved, setSaved] = useState(false);
-  const [reviewNotes, setReviewNotes] = useState({});
-  const todayStr = today();
-  const todayCI = checkins[todayStr] || {habits:{}, regulation:null, notes:""};
-
-  const fetchOura = useCallback(async(t) => {
-    if(!t) return;
-    setLoading(true); setError(null);
-    const days = last7();
-    const start = days[0], end = days[6];
-    try {
-      const headers = {Authorization:`Bearer ${t}`};
-      
-      const [sleepRes, readinessRes] = await Promise.all([
-        fetch(`https://api.ouraring.com/v2/usercollection/daily_sleep?start_date=${start}&end_date=${end}`, {headers}),
-        fetch(`https://api.ouraring.com/v2/usercollection/daily_readiness?start_date=${start}&end_date=${end}`, {headers}),
-      ]);
-
-      const sleepJson = sleepRes.ok ? await sleepRes.json() : null;
-      const readJson = readinessRes.ok ? await readinessRes.json() : null;
-
-      const sleep = {};
-      if(sleepJson?.data) {
-        sleepJson.data.forEach(d => {
-          const totalMins = d.contributors?.total_sleep 
-            ? Math.round(d.contributors.total_sleep * 8.5) 
-            : null;
-          sleep[d.day] = {
-            score: d.score,
-            totalSleep: totalMins,
-            deep: d.contributors?.deep_sleep,
-            rem: d.contributors?.rem_sleep,
-            efficiency: d.contributors?.efficiency,
-            restingHR: null,
-          };
-        });
-      }
-
-      const readiness = {};
-      if(readJson?.data) {
-        readJson.data.forEach(d => {
-          readiness[d.day] = {
-            score: d.score,
-            hrv: d.contributors?.hrv_balance,
-            restingHR: d.contributors?.resting_heart_rate,
-            recoveryIndex: d.contributors?.recovery_index,
-          };
-          if(sleep[d.day]) sleep[d.day].restingHR = d.contributors?.resting_heart_rate;
-        });
-      }
-
-      setOura({sleep, readiness, dates:days});
-    } catch(e) {
-      setError("Could not reach Oura API. Check your token or internet connection.");
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(()=>{ if(token) fetchOura(token); },[token]);
-
-  const saveToken = () => {
-    const t = tokenInput.trim();
-    if(!t) return;
-    localStorage.setItem(TOKEN_KEY, t);
-    setToken(t);
-    setShowToken(false);
-  };
-
-  const toggleHabit = (id) => {
-    const updated = {...checkins, [todayStr]:{...todayCI, habits:{...todayCI.habits,[id]:!todayCI.habits[id]}}};
-    setCheckins(updated); saveCheckins(updated);
-  };
-
-  const setReg = (level) => {
-    const updated = {...checkins, [todayStr]:{...todayCI, regulation:level}};
-    setCheckins(updated); saveCheckins(updated);
-  };
-
-  const saveNote = () => {
-    const updated = {...checkins, [todayStr]:{...todayCI, notes:noteText}};
-    setCheckins(updated); saveCheckins(updated);
-    setSaved(true); setTimeout(()=>setSaved(false),1200);
-  };
-
-  const saveReviewNote = (key, val) => {
-    const updated = {...reviewNotes, [key]:val};
-    setReviewNotes(updated);
-    localStorage.setItem("life_review_"+todayStr, JSON.stringify(updated));
-  };
-
-  useEffect(()=>{
-    setNoteText(todayCI.notes||"");
-    try { setReviewNotes(JSON.parse(localStorage.getItem("life_review_"+todayStr)||"{}")); } catch(e){}
-  },[todayStr]);
-
-  const days = last7();
-  const todaySleep = oura.sleep[todayStr];
-  const todayRead = oura.readiness[todayStr];
-
-  const tierA = HABITS.filter(h=>h.tier==="A");
-  const tierB = HABITS.filter(h=>h.tier==="B");
-  const tierADone = tierA.filter(h=>todayCI.habits[h.id]).length;
-  const tierBDone = tierB.filter(h=>todayCI.habits[h.id]).length;
-  const reg = todayCI.regulation;
-
-  const alerts = [];
-  const sleepMisses = days.slice(-3).filter(d=>oura.sleep[d]?.score && oura.sleep[d].score<70).length;
-  if(sleepMisses>=2) alerts.push("Sleep score below 70 for 2+ of last 3 nights");
-  if(reg===3) alerts.push("Dysregulation flagged — MVS mode active");
-  const stimMiss = days.filter(d=>checkins[d]?.habits?.stimulants===false).length;
-  if(stimMiss>0) alerts.push(`Stimulant contract: ${stimMiss} miss${stimMiss>1?"es":""} this week`);
-
-  const trendData = days.map(d=>({
-    day: dayLabel(d), date: d,
-    sleepScore: oura.sleep[d]?.score||null,
-    restingHR: oura.sleep[d]?.restingHR||null,
-    hrv: oura.readiness[d]?.hrv||null,
-    tierA: checkins[d]?.habits ? Math.round(tierA.filter(h=>checkins[d].habits[h.id]).length/tierA.length*100) : null,
-    regulation: checkins[d]?.regulation||null,
-  }));
-
-  const weekAvgSleep = (()=>{
-    const scores = days.map(d=>oura.sleep[d]?.score).filter(Boolean);
-    return scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : "—";
-  })();
-  const tierADays = days.filter(d=>checkins[d]?.habits && tierA.every(h=>checkins[d].habits[h.id])).length;
-  const regDays = days.filter(d=>checkins[d]?.regulation===1).length;
-
-  const s = (obj) => Object.assign({}, obj);
-
-  return (
-    <div style={{minHeight:"100vh",background:"#faf9f7",fontFamily:"'DM Sans',system-ui,sans-serif",color:"#1a1814"}}>
-      
-      {/* Header */}
-      <div style={{background:"#fff",borderBottom:"1px solid #e8e4de",padding:"18px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10,boxShadow:"0 1px 8px rgba(0,0,0,0.04)"}}>
-        <div>
-          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,letterSpacing:"-0.3px"}}>Life System</div>
-          <div style={{fontSize:11,color:"#8c8880",marginTop:1}}>
-            {new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}
-          </div>
-        </div>
-        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          {alerts.length>0 && (
-            <div style={{background:"#fdf0f0",border:"1px solid #e8c5c5",borderRadius:6,padding:"4px 10px",fontSize:11,color:"#b94040",fontWeight:500}}>
-              ⚠ {alerts.length} alert{alerts.length>1?"s":""}
-            </div>
-          )}
-          <button onClick={()=>setShowToken(!showToken)} style={{background:token?"#f0f7f2":"#fff3e0",border:`1px solid ${token?"#c8dfd0":"#ffd49e"}`,borderRadius:6,padding:"5px 12px",fontSize:11,color:token?"#4a7c59":"#c17f24",cursor:"pointer",fontWeight:600}}>
-            {token ? (loading?"Syncing...":"● Oura Live") : "Connect Oura"}
-          </button>
-          {token && <button onClick={()=>fetchOura(token)} style={{background:"#f0ede8",border:"1px solid #e0dcd6",borderRadius:6,padding:"5px 10px",fontSize:11,cursor:"pointer",color:"#4a4640"}}>↻ Refresh</button>}
-        </div>
+    <div class="metrics">
+      <div class="metric" id="m-sleep-card">
+        <div class="metric-label">Sleep score</div>
+        <div class="metric-value" id="m-sleep">—</div>
+        <div class="metric-sub">Target &gt;70</div>
       </div>
-
-      {/* Token Input */}
-      {showToken && (
-        <div style={{background:"#fffbf5",borderBottom:"1px solid #f0e0c8",padding:"16px 28px"}}>
-          <div style={{fontSize:12,color:"#8a5a1a",marginBottom:10,fontWeight:500}}>
-            Paste your Oura access token to connect live data
-          </div>
-          <div style={{display:"flex",gap:8}}>
-            <input value={tokenInput} onChange={e=>setTokenInput(e.target.value)}
-              placeholder="Paste token here..."
-              style={{flex:1,padding:"9px 12px",border:"1px solid #e0dcd6",borderRadius:6,fontSize:12,fontFamily:"monospace",background:"#fff"}}
-            />
-            <button onClick={saveToken} style={{background:"#1a1814",color:"#fff",border:"none",borderRadius:6,padding:"9px 18px",fontSize:12,cursor:"pointer",fontWeight:600}}>
-              Connect
-            </button>
-            {token && <button onClick={()=>setShowToken(false)} style={{background:"none",border:"1px solid #e0dcd6",borderRadius:6,padding:"9px 14px",fontSize:12,cursor:"pointer",color:"#8c8880"}}>Cancel</button>}
-          </div>
-          {error && <div style={{marginTop:8,fontSize:12,color:"#b94040"}}>{error}</div>}
-        </div>
-      )}
-
-      {/* Alerts Banner */}
-      {alerts.length>0 && (
-        <div style={{background:"#fdf6ec",borderBottom:"1px solid #f0e0c8",padding:"10px 28px"}}>
-          {alerts.map((a,i)=>(
-            <div key={i} style={{fontSize:12,color:"#8a5a1a",marginBottom:i<alerts.length-1?3:0}}>→ {a}</div>
-          ))}
-        </div>
-      )}
-
-      {/* Tabs */}
-      <div style={{background:"#fff",borderBottom:"1px solid #e8e4de",padding:"0 28px",display:"flex"}}>
-        {["today","trends","review"].map(t=>(
-          <button key={t} onClick={()=>setTab(t)} style={{background:"none",border:"none",padding:"13px 18px",fontSize:12,fontWeight:600,cursor:"pointer",color:tab===t?"#1a1814":"#8c8880",borderBottom:tab===t?"2px solid #1a1814":"2px solid transparent",textTransform:"capitalize",letterSpacing:"0.02em"}}>
-            {t}
-          </button>
-        ))}
+      <div class="metric" id="m-hours-card">
+        <div class="metric-label">Total sleep</div>
+        <div class="metric-value" id="m-hours">—</div>
+        <div class="metric-sub">Target &gt;7h</div>
       </div>
-
-      <div style={{padding:"22px 28px",maxWidth:860,margin:"0 auto"}}>
-
-        {/* TODAY */}
-        {tab==="today" && (
-          <div style={{display:"grid",gap:16}}>
-
-            {/* Oura Metrics */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
-              {[
-                {label:"Sleep Score", value:loading?"...":todaySleep?.score??"—", sub:"Target >70", highlight:todaySleep?.score && todaySleep.score<70},
-                {label:"Total Sleep", value:loading?"...":todaySleep?.totalSleep ? `${Math.floor(todaySleep.totalSleep/60)}h ${todaySleep.totalSleep%60}m` : "—", sub:"Target >7h", highlight:todaySleep?.totalSleep && todaySleep.totalSleep<420},
-                {label:"Resting HR", value:loading?"...":todaySleep?.restingHR??"—", unit:"bpm", sub:"Target <60", highlight:todaySleep?.restingHR && todaySleep.restingHR>65},
-                {label:"HRV Balance", value:loading?"...":todayRead?.hrv??"—", sub:"Higher = better", highlight:false},
-              ].map(m=>(
-                <div key={m.label} style={{background:"#fff",border:`1px solid ${m.highlight?"#e8c5c5":"#e8e4de"}`,borderRadius:10,padding:"15px 16px",background:m.highlight?"#fdf8f8":"#fff"}}>
-                  <div style={{fontSize:10,color:"#8c8880",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8}}>{m.label}</div>
-                  <div style={{fontSize:26,fontFamily:"'DM Serif Display',serif",color:m.highlight?"#b94040":"#1a1814",lineHeight:1}}>
-                    {m.value}{m.unit && m.value!=="—" && m.value!=="..." && <span style={{fontSize:12,color:"#8c8880",marginLeft:2}}>{m.unit}</span>}
-                  </div>
-                  <div style={{fontSize:10,color:"#b8b4ae",marginTop:5}}>{m.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Regulation */}
-            <div style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"18px 22px"}}>
-              <div style={{fontSize:12,fontWeight:600,marginBottom:12,color:"#1a1814"}}>Regulation Check-in</div>
-              <div style={{display:"flex",gap:8,marginBottom:10}}>
-                {Object.entries(REG).map(([level,info])=>(
-                  <button key={level} onClick={()=>setReg(Number(level))} style={{flex:1,padding:"11px 6px",borderRadius:8,cursor:"pointer",border:`2px solid ${reg===Number(level)?info.color:"#e8e4de"}`,background:reg===Number(level)?info.bg:"#faf9f7",color:reg===Number(level)?info.color:"#8c8880",fontSize:12,fontWeight:600,transition:"all 0.15s"}}>
-                    {info.icon} {info.label}
-                  </button>
-                ))}
-              </div>
-              {reg && (
-                <div style={{fontSize:12,color:REG[reg].color,background:REG[reg].bg,padding:"8px 12px",borderRadius:6,border:`1px solid ${REG[reg].color}30`}}>
-                  {REG_MSG[reg]}
-                </div>
-              )}
-            </div>
-
-            {/* Habits */}
-            <div style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"18px 22px"}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-                <div style={{fontSize:12,fontWeight:600,color:"#1a1814"}}>Daily Habits</div>
-                <div style={{display:"flex",gap:12}}>
-                  <span style={{fontSize:11,color:"#4a7c59",fontWeight:600}}>A: {tierADone}/{tierA.length}</span>
-                  <span style={{fontSize:11,color:"#4a6cb0",fontWeight:600}}>B: {tierBDone}/{tierB.length}</span>
-                </div>
-              </div>
-
-              <div style={{fontSize:10,color:"#8c8880",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8}}>Tier A — Non-negotiable</div>
-              {tierA.map(h=>{
-                const done = !!todayCI.habits[h.id];
-                return (
-                  <div key={h.id} onClick={()=>toggleHabit(h.id)} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 10px",borderRadius:7,cursor:"pointer",background:done?"#f0f7f2":"#faf9f7",marginBottom:5,border:`1px solid ${done?"#c8dfd0":"#e8e4de"}`,transition:"all 0.15s"}}>
-                    <div style={{width:18,height:18,borderRadius:4,border:`2px solid ${done?"#4a7c59":"#c8c4be"}`,background:done?"#4a7c59":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.15s"}}>
-                      {done && <span style={{color:"#fff",fontSize:11,lineHeight:1}}>✓</span>}
-                    </div>
-                    <span style={{fontSize:12,color:done?"#4a7c59":"#4a4640",fontWeight:done?500:400}}>{h.label}</span>
-                  </div>
-                );
-              })}
-
-              <div style={{fontSize:10,color:"#8c8880",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8,marginTop:14}}>Tier B — Tracked</div>
-              {tierB.map(h=>{
-                const done = !!todayCI.habits[h.id];
-                return (
-                  <div key={h.id} onClick={()=>toggleHabit(h.id)} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 10px",borderRadius:7,cursor:"pointer",background:done?"#f5f8ff":"#faf9f7",marginBottom:5,border:`1px solid ${done?"#c8d4f0":"#e8e4de"}`,transition:"all 0.15s"}}>
-                    <div style={{width:18,height:18,borderRadius:4,border:`2px solid ${done?"#4a6cb0":"#c8c4be"}`,background:done?"#4a6cb0":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.15s"}}>
-                      {done && <span style={{color:"#fff",fontSize:11,lineHeight:1}}>✓</span>}
-                    </div>
-                    <span style={{fontSize:12,color:done?"#4a6cb0":"#4a4640",fontWeight:done?500:400}}>{h.label}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Daily Note */}
-            <div style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"18px 22px"}}>
-              <div style={{fontSize:12,fontWeight:600,color:"#1a1814",marginBottom:10}}>Daily Note</div>
-              <textarea value={noteText} onChange={e=>setNoteText(e.target.value)}
-                placeholder="What's alive today? What's the open loop? What do you need?"
-                style={{width:"100%",minHeight:80,border:"1px solid #e8e4de",borderRadius:7,padding:"9px 12px",fontSize:12,fontFamily:"'DM Sans',system-ui,sans-serif",color:"#1a1814",background:"#faf9f7",resize:"vertical",lineHeight:1.6}}
-              />
-              <button onClick={saveNote} style={{marginTop:8,background:saved?"#4a7c59":"#1a1814",color:"#fff",border:"none",borderRadius:6,padding:"7px 16px",fontSize:11,cursor:"pointer",fontWeight:600,transition:"background 0.2s"}}>
-                {saved?"Saved ✓":"Save Note"}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* TRENDS */}
-        {tab==="trends" && (
-          <div style={{display:"grid",gap:16}}>
-            {[
-              {title:"Sleep Score",sub:"Target: above 70",key:"sleepScore",color:"#4a6cb0",ref:70,refColor:"#e8c5c5",domain:[40,100]},
-              {title:"Resting Heart Rate",sub:"Target: below 60 bpm",key:"restingHR",color:"#b94040",ref:60,refColor:"#c8dfd0",domain:[45,85]},
-              {title:"Tier A Compliance",sub:"% of non-negotiables hit",key:"tierA",color:"#4a7c59",ref:100,refColor:"#c8dfd0",domain:[0,100]},
-            ].map(chart=>(
-              <div key={chart.title} style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"18px 22px"}}>
-                <div style={{fontSize:12,fontWeight:600,color:"#1a1814",marginBottom:2}}>{chart.title}</div>
-                <div style={{fontSize:10,color:"#8c8880",marginBottom:14}}>{chart.sub}</div>
-                <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={trendData}>
-                    <XAxis dataKey="day" tick={{fontSize:10,fill:"#8c8880"}} axisLine={false} tickLine={false}/>
-                    <YAxis domain={chart.domain} tick={{fontSize:10,fill:"#8c8880"}} axisLine={false} tickLine={false} width={28}/>
-                    <Tooltip contentStyle={{fontSize:11,border:"1px solid #e8e4de",borderRadius:6,boxShadow:"0 2px 8px rgba(0,0,0,0.08)"}}/>
-                    <ReferenceLine y={chart.ref} stroke={chart.refColor} strokeDasharray="4 4"/>
-                    <Line type="monotone" dataKey={chart.key} stroke={chart.color} strokeWidth={2} dot={{fill:chart.color,r:3}} connectNulls={false}/>
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            ))}
-
-            {/* Regulation history */}
-            <div style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"18px 22px"}}>
-              <div style={{fontSize:12,fontWeight:600,color:"#1a1814",marginBottom:14}}>Regulation — 7 Days</div>
-              <div style={{display:"flex",gap:6}}>
-                {trendData.map(d=>{
-                  const info = d.regulation ? REG[d.regulation] : null;
-                  return (
-                    <div key={d.date} style={{flex:1,textAlign:"center"}}>
-                      <div style={{height:44,borderRadius:7,background:info?info.bg:"#f0ede8",border:`1px solid ${info?info.color+"40":"#e8e4de"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:info?info.color:"#c8c4be"}}>
-                        {d.regulation===1?"●":d.regulation===2?"◐":d.regulation===3?"○":"·"}
-                      </div>
-                      <div style={{fontSize:9,color:"#8c8880",marginTop:4}}>{d.day}</div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div style={{display:"flex",gap:14,marginTop:10}}>
-                {Object.entries(REG).map(([l,info])=>(
-                  <div key={l} style={{display:"flex",alignItems:"center",gap:4,fontSize:10,color:info.color}}>
-                    <span>{info.icon}</span><span>{info.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Week Summary */}
-            <div style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"18px 22px"}}>
-              <div style={{fontSize:12,fontWeight:600,color:"#1a1814",marginBottom:14}}>Week At A Glance</div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,textAlign:"center"}}>
-                {[
-                  {label:"Avg Sleep Score",value:weekAvgSleep},
-                  {label:"Perfect Tier A Days",value:`${tierADays}/7`},
-                  {label:"Regulated Days",value:`${regDays}/7`},
-                ].map(m=>(
-                  <div key={m.label}>
-                    <div style={{fontSize:28,fontFamily:"'DM Serif Display',serif",color:"#1a1814"}}>{m.value}</div>
-                    <div style={{fontSize:10,color:"#8c8880",marginTop:3}}>{m.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* WEEKLY REVIEW */}
-        {tab==="review" && (
-          <div style={{display:"grid",gap:16}}>
-            <div style={{background:"#fff",border:"1px solid #e8e4de",borderRadius:10,padding:"22px 26px"}}>
-              <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,marginBottom:3}}>Weekly Review</div>
-              <div style={{fontSize:11,color:"#8c8880",marginBottom:22}}>Sunday 3:00pm · 30 minutes · Pull the thread on the week</div>
-
-              {[
-                {section:"1. Regulation Check",prompts:[
-                  "What level am I at heading into this week?",
-                  "What's the open loop creating the most cognitive drag?",
-                  "Anything I've been avoiding that needs to be named?",
-                ]},
-                {section:"2. Last Week Review",prompts:[
-                  "Did I honor the Tier A habits? What slipped and why?",
-                  "Sleep floor — how many nights did I hit 7 hours?",
-                  "Did I miss any defined relationship commitments?",
-                  "Where did the creature show up? What was the trigger?",
-                ]},
-                {section:"3. Week Ahead",prompts:[
-                  "What are the 3 most important professional moves this week?",
-                  "Any travel or disruptions that need adaptive planning?",
-                  "What conversations need to happen?",
-                  "What Todoist items need to move this week?",
-                ]},
-                {section:"4. System Check",prompts:[
-                  "Is the system working or is something structurally broken?",
-                  "What's one thing to do differently next week?",
-                  "What do I want more of? Less of?",
-                ]},
-              ].map(block=>(
-                <div key={block.section} style={{marginBottom:22}}>
-                  <div style={{fontSize:11,fontWeight:600,color:"#4a4640",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10,paddingBottom:6,borderBottom:"1px solid #f0ede8"}}>
-                    {block.section}
-                  </div>
-                  {block.prompts.map((p,i)=>(
-                    <div key={i} style={{marginBottom:10}}>
-                      <div style={{fontSize:12,color:"#4a4640",marginBottom:4}}>→ {p}</div>
-                      <textarea
-                        value={reviewNotes[`${block.section}_${i}`]||""}
-                        onChange={e=>saveReviewNote(`${block.section}_${i}`,e.target.value)}
-                        placeholder="..."
-                        style={{width:"100%",minHeight:56,border:"1px solid #e8e4de",borderRadius:6,padding:"8px 10px",fontSize:12,fontFamily:"'DM Sans',system-ui,sans-serif",color:"#1a1814",background:"#faf9f7",resize:"vertical",lineHeight:1.5}}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ))}
-
-              <div style={{background:"#faf9f7",border:"1px solid #e8e4de",borderRadius:8,padding:"14px 16px"}}>
-                <div style={{fontSize:10,fontWeight:600,color:"#8c8880",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>This Week's Numbers</div>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,textAlign:"center"}}>
-                  {[
-                    {label:"Avg Sleep Score",value:weekAvgSleep},
-                    {label:"Perfect Tier A Days",value:`${tierADays}/7`},
-                    {label:"Regulated Days",value:`${regDays}/7`},
-                  ].map(m=>(
-                    <div key={m.label}>
-                      <div style={{fontSize:22,fontFamily:"'DM Serif Display',serif",color:"#1a1814"}}>{m.value}</div>
-                      <div style={{fontSize:10,color:"#8c8880",marginTop:2}}>{m.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+      <div class="metric" id="m-hr-card">
+        <div class="metric-label">Resting HR</div>
+        <div class="metric-value" id="m-hr">—</div>
+        <div class="metric-sub">Target &lt;60 bpm</div>
+      </div>
+      <div class="metric" id="m-ready-card">
+        <div class="metric-label">Readiness</div>
+        <div class="metric-value" id="m-ready">—</div>
+        <div class="metric-sub">Oura score</div>
       </div>
     </div>
-  );
+
+    <div class="card">
+      <div class="card-title">Regulation check-in</div>
+      <div class="reg-btns">
+        <button class="reg-btn" id="reg-1" onclick="setReg(1)">● Regulated</button>
+        <button class="reg-btn" id="reg-2" onclick="setReg(2)">◐ Sliding</button>
+        <button class="reg-btn" id="reg-3" onclick="setReg(3)">○ Dysregulated</button>
+      </div>
+      <div class="reg-msg" id="reg-msg"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="card-title" style="margin:0">Daily habits</div>
+        <div class="habit-score"><span class="habit-score-a" id="score-a">A: 0/3</span><span class="habit-score-b" id="score-b">B: 0/4</span></div>
+      </div>
+      <div class="section-label" style="margin-top:0">Tier A — non-negotiable</div>
+      <div id="habits-a"></div>
+      <div class="section-label">Tier B — tracked</div>
+      <div id="habits-b"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Daily note</div>
+      <textarea id="daily-note" placeholder="What's alive today? What's the open loop? What do you need?"></textarea>
+      <button class="btn btn-dark" onclick="saveNote()" id="save-note-btn" style="margin-top:8px">Save note</button>
+    </div>
+  </div>
+
+  <!-- TRENDS -->
+  <div class="tab-content" id="tab-trends">
+    <div class="card">
+      <div class="card-title">Sleep score — 7 days</div>
+      <div style="font-size:11px;color:#8c8880;margin-bottom:10px">Floor: 70</div>
+      <div class="chart-wrap"><canvas id="chart-sleep" role="img" aria-label="Sleep score over 7 days">Sleep score trend.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Resting HR — 7 days</div>
+      <div style="font-size:11px;color:#8c8880;margin-bottom:10px">Target: below 60 bpm</div>
+      <div class="chart-wrap"><canvas id="chart-hr" role="img" aria-label="Resting HR over 7 days">Resting HR trend.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tier A compliance — 7 days</div>
+      <div style="font-size:11px;color:#8c8880;margin-bottom:10px">% of non-negotiables hit each day</div>
+      <div class="chart-wrap"><canvas id="chart-habits" role="img" aria-label="Tier A compliance over 7 days">Habit compliance trend.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Regulation — 7 days</div>
+      <div class="reg-dots" id="reg-dots"></div>
+      <div style="display:flex;gap:14px;margin-top:10px;font-size:10px">
+        <span style="color:#4a7c59">● Regulated</span>
+        <span style="color:#c17f24">◐ Sliding</span>
+        <span style="color:#b94040">○ Dysregulated</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Week at a glance</div>
+      <div class="week-stats">
+        <div><div class="week-stat-val" id="w-sleep">—</div><div class="week-stat-label">Avg sleep score</div></div>
+        <div><div class="week-stat-val" id="w-tiera">0/7</div><div class="week-stat-label">Perfect Tier A days</div></div>
+        <div><div class="week-stat-val" id="w-reg">0/7</div><div class="week-stat-label">Regulated days</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div class="tab-content" id="tab-review">
+    <div class="card">
+      <div style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:3px">Weekly review</div>
+      <div style="font-size:11px;color:#8c8880;margin-bottom:20px">Sunday 3:00pm · 30 minutes</div>
+      <div id="review-prompts"></div>
+      <div class="summary-box" style="margin-top:4px">
+        <div class="summary-label">This week's numbers</div>
+        <div class="week-stats">
+          <div><div class="week-stat-val" id="rv-sleep">—</div><div class="week-stat-label">Avg sleep score</div></div>
+          <div><div class="week-stat-val" id="rv-tiera">0/7</div><div class="week-stat-label">Perfect Tier A days</div></div>
+          <div><div class="week-stat-val" id="rv-reg">0/7</div><div class="week-stat-label">Regulated days</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const HABITS_A = [
+  {id:'sleep', label:'Sleep floor hit (7hrs)'},
+  {id:'stimulants', label:'No unplanned stimulants'},
+  {id:'addie', label:'Addie anchor'},
+];
+const HABITS_B = [
+  {id:'focus', label:'90-min focus block'},
+  {id:'workout', label:'Workout / movement'},
+  {id:'self_time', label:'Self time (11–11:30pm)'},
+  {id:'phone', label:'Phone outside bedroom'},
+];
+const REG_MSGS = {
+  1: {msg:'System nominal. Execute the plan.', cls:'reg-msg-1'},
+  2: {msg:'Early warning. Run Level 1: 15-min planning session, name the open loop.', cls:'reg-msg-2'},
+  3: {msg:'MVS mode. Sleep + no unplanned stimulants + Addie anchor only. No major decisions today.', cls:'reg-msg-3'},
+};
+const REG_COLORS = {1:'#4a7c59', 2:'#c17f24', 3:'#b94040'};
+const REG_BGS = {1:'#f0f7f2', 2:'#fdf6ec', 3:'#fdf0f0'};
+const REG_ICONS = {1:'●', 2:'◐', 3:'○'};
+const REVIEW_SECTIONS = [
+  {title:'1. Regulation check', prompts:['What level am I at heading into this week?','What open loop is creating the most cognitive drag?','Anything I\'ve been avoiding that needs to be named?']},
+  {title:'2. Last week', prompts:['Did I honor the Tier A habits? What slipped and why?','Sleep floor — how many nights did I hit 7 hours?','Did I miss any defined relationship commitments?','Where did the creature show up? What was the trigger?']},
+  {title:'3. Week ahead', prompts:['The 3 most important professional moves this week?','Travel or disruptions needing adaptive planning?','What conversations need to happen?','What Todoist items need to move?']},
+  {title:'4. System check', prompts:['Is the system working or is something structurally broken?','One thing to do differently next week?','What do I want more of? Less of?']},
+];
+
+let token = '';
+let ouraData = {sleep:{}, readiness:{}};
+let checkins = {};
+let today = '';
+let charts = {};
+
+function fmt(d) { return d.toISOString().split('T')[0]; }
+function getToday() { return fmt(new Date()); }
+function last7() {
+  return Array.from({length:7}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate()-(6-i)); return fmt(d);
+  });
+}
+function dayLabel(s) {
+  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(s+'T12:00:00').getDay()];
 }
 
-ReactDOM.render(<App/>, document.getElementById("root"));
+function loadLocal() {
+  try { checkins = JSON.parse(localStorage.getItem('life_ci') || '{}'); } catch(e) { checkins = {}; }
+  token = localStorage.getItem('life_token') || '';
+}
+function saveCI() { localStorage.setItem('life_ci', JSON.stringify(checkins)); }
+
+function todayCI() { return checkins[today] || {habits:{}, regulation:null, notes:''}; }
+
+function toggleToken() {
+  const p = document.getElementById('token-panel');
+  p.classList.toggle('show');
+}
+
+function saveToken() {
+  const t = document.getElementById('token-input').value.trim();
+  if(!t) return;
+  token = t;
+  localStorage.setItem('life_token', t);
+  updateConnBtn();
+  toggleToken();
+  fetchOura();
+}
+
+function updateConnBtn() {
+  const btn = document.getElementById('conn-btn');
+  const rb = document.getElementById('refresh-btn');
+  if(token) {
+    btn.textContent = '● Oura connected';
+    btn.className = 'btn btn-green';
+    rb.style.display = '';
+  }
+}
+
+async function fetchOura() {
+  if(!token) return;
+  document.getElementById('oura-loading').classList.add('show');
+  document.getElementById('oura-error').classList.remove('show');
+  const days = last7(), start = days[0], end = days[6];
+  const headers = {Authorization:`Bearer ${token}`};
+  try {
+    const [sr, rr] = await Promise.all([
+      fetch(`https://api.ouraring.com/v2/usercollection/daily_sleep?start_date=${start}&end_date=${end}`, {headers}),
+      fetch(`https://api.ouraring.com/v2/usercollection/daily_readiness?start_date=${start}&end_date=${end}`, {headers}),
+    ]);
+    const sj = sr.ok ? await sr.json() : null;
+    const rj = rr.ok ? await rj_json() : null;
+
+    const sleep = {};
+    if(sj && sj.data) {
+      sj.data.forEach(d => {
+        const ts = d.contributors && d.contributors.total_sleep ? Math.round(d.contributors.total_sleep * 8.5) : null;
+        sleep[d.day] = {score: d.score, totalMins: ts};
+      });
+    }
+    const readiness = {};
+    if(rj && rj.data) {
+      rj.data.forEach(d => {
+        readiness[d.day] = {score: d.score, rhr: d.contributors && d.contributors.resting_heart_rate};
+      });
+    }
+    ouraData = {sleep, readiness};
+    renderToday();
+    renderTrends();
+  } catch(e) {
+    const el = document.getElementById('oura-error');
+    el.textContent = 'Could not load Oura data. Your token may have expired.';
+    el.classList.add('show');
+  }
+  document.getElementById('oura-loading').classList.remove('show');
+}
+
+function renderToday() {
+  const sl = ouraData.sleep[today] || {};
+  const rd = ouraData.readiness[today] || {};
+  const ci = todayCI();
+
+  // Metrics
+  const sleepEl = document.getElementById('m-sleep');
+  sleepEl.textContent = sl.score || '—';
+  if(sl.score && sl.score < 70) { sleepEl.className = 'metric-value warn'; document.getElementById('m-sleep-card').className = 'metric warn'; }
+  else { sleepEl.className = 'metric-value'; document.getElementById('m-sleep-card').className = 'metric'; }
+
+  if(sl.totalMins) {
+    const h = Math.floor(sl.totalMins/60), m = sl.totalMins%60;
+    document.getElementById('m-hours').textContent = h+'h '+m+'m';
+    if(sl.totalMins < 420) { document.getElementById('m-hours').className = 'metric-value warn'; document.getElementById('m-hours-card').className = 'metric warn'; }
+  } else { document.getElementById('m-hours').textContent = '—'; }
+
+  const hrEl = document.getElementById('m-hr');
+  hrEl.textContent = rd.rhr ? rd.rhr+' bpm' : '—';
+  if(rd.rhr && rd.rhr > 65) { hrEl.className = 'metric-value warn'; document.getElementById('m-hr-card').className = 'metric warn'; }
+
+  document.getElementById('m-ready').textContent = rd.score || '—';
+
+  // Regulation
+  [1,2,3].forEach(l => {
+    const btn = document.getElementById('reg-'+l);
+    btn.className = 'reg-btn' + (ci.regulation === l ? ' sel-'+l : '');
+  });
+  const rm = document.getElementById('reg-msg');
+  if(ci.regulation && REG_MSGS[ci.regulation]) {
+    rm.textContent = REG_MSGS[ci.regulation].msg;
+    rm.className = 'reg-msg show ' + REG_MSGS[ci.regulation].cls;
+  } else { rm.className = 'reg-msg'; }
+
+  // Habits
+  renderHabits();
+
+  // Note
+  document.getElementById('daily-note').value = ci.notes || '';
+
+  // Alerts
+  renderAlerts();
+}
+
+function renderHabits() {
+  const ci = todayCI();
+  const aDone = HABITS_A.filter(h => ci.habits[h.id]).length;
+  const bDone = HABITS_B.filter(h => ci.habits[h.id]).length;
+  document.getElementById('score-a').textContent = 'A: '+aDone+'/'+HABITS_A.length;
+  document.getElementById('score-b').textContent = 'B: '+bDone+'/'+HABITS_B.length;
+
+  ['a','b'].forEach(tier => {
+    const habits = tier === 'a' ? HABITS_A : HABITS_B;
+    const el = document.getElementById('habits-'+tier);
+    el.innerHTML = '';
+    habits.forEach(h => {
+      const done = !!ci.habits[h.id];
+      const row = document.createElement('div');
+      row.className = 'habit-row' + (done ? ' done-'+tier : '');
+      row.onclick = () => toggleHabit(h.id, tier);
+      const chk = document.createElement('div');
+      chk.className = 'habit-check' + (done ? ' '+tier : '');
+      chk.textContent = done ? '✓' : '';
+      const lbl = document.createElement('span');
+      lbl.className = 'habit-label' + (done ? ' done-'+tier : '');
+      lbl.textContent = h.label;
+      row.appendChild(chk); row.appendChild(lbl);
+      el.appendChild(row);
+    });
+  });
+}
+
+function toggleHabit(id, tier) {
+  const ci = todayCI();
+  if(!checkins[today]) checkins[today] = {habits:{}, regulation:null, notes:''};
+  checkins[today].habits[id] = !checkins[today].habits[id];
+  saveCI(); renderHabits(); renderAlerts();
+}
+
+function setReg(level) {
+  if(!checkins[today]) checkins[today] = {habits:{}, regulation:null, notes:''};
+  checkins[today].regulation = level;
+  saveCI(); renderToday();
+}
+
+function saveNote() {
+  const n = document.getElementById('daily-note').value;
+  if(!checkins[today]) checkins[today] = {habits:{}, regulation:null, notes:''};
+  checkins[today].notes = n;
+  saveCI();
+  const btn = document.getElementById('save-note-btn');
+  btn.textContent = 'Saved ✓';
+  btn.style.background = '#4a7c59';
+  setTimeout(() => { btn.textContent = 'Save note'; btn.style.background = '#1a1814'; }, 1200);
+}
+
+function renderAlerts() {
+  const days = last7(), alerts = [];
+  const sm = days.slice(-3).filter(d => ouraData.sleep[d] && ouraData.sleep[d].score < 70).length;
+  if(sm >= 2) alerts.push('Sleep score below 70 for '+sm+' of last 3 nights');
+  const ci = todayCI();
+  if(ci.regulation === 3) alerts.push('Dysregulation flagged today — MVS mode');
+  const stm = days.filter(d => checkins[d] && checkins[d].habits && checkins[d].habits.stimulants === false).length;
+  if(stm > 0) alerts.push('Stimulant contract: '+stm+' miss'+(stm>1?'es':'')+' this week');
+
+  const badge = document.getElementById('alert-badge');
+  const banner = document.getElementById('alerts-banner');
+  if(alerts.length) {
+    badge.style.display = '';
+    badge.textContent = '⚠ '+alerts.length+' alert'+(alerts.length>1?'s':'');
+    banner.className = 'alerts show';
+    banner.innerHTML = alerts.map(a => '<div class="alert-item">→ '+a+'</div>').join('');
+  } else {
+    badge.style.display = 'none';
+    banner.className = 'alerts';
+  }
+}
+
+function weekStats() {
+  const days = last7();
+  const scores = days.map(d => ouraData.sleep[d] && ouraData.sleep[d].score).filter(Boolean);
+  const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : '—';
+  const taDays = days.filter(d => checkins[d] && checkins[d].habits && HABITS_A.every(h => checkins[d].habits[h.id])).length;
+  const regDays = days.filter(d => checkins[d] && checkins[d].regulation === 1).length;
+  return {avg, taDays, regDays};
+}
+
+function renderTrends() {
+  const days = last7(), labels = days.map(dayLabel);
+  const sleepScores = days.map(d => ouraData.sleep[d] ? ouraData.sleep[d].score : null);
+  const rhrs = days.map(d => ouraData.readiness[d] ? ouraData.readiness[d].rhr : null);
+  const tierA = days.map(d => {
+    const ci = checkins[d];
+    if(!ci || !ci.habits) return null;
+    return Math.round(HABITS_A.filter(h => ci.habits[h.id]).length / HABITS_A.length * 100);
+  });
+
+  function mkChart(id, data, color, refY, yMin, yMax) {
+    if(charts[id]) charts[id].destroy();
+    const ctx = document.getElementById(id).getContext('2d');
+    const refData = labels.map(() => refY);
+    charts[id] = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {data, borderColor:color, backgroundColor:'transparent', pointBackgroundColor:color, pointRadius:3, borderWidth:2, tension:.3, spanGaps:false},
+          {data:refData, borderColor:'rgba(180,0,0,0.15)', borderDash:[4,4], borderWidth:1, pointRadius:0, spanGaps:true},
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{display:false}, ticks:{font:{size:10}, color:'#999'}},
+          y:{min:yMin, max:yMax, grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:10}, color:'#999'}},
+        }
+      }
+    });
+  }
+
+  mkChart('chart-sleep', sleepScores, '#3b82f6', 70, 40, 100);
+  mkChart('chart-hr', rhrs, '#ef4444', 60, 45, 90);
+  mkChart('chart-habits', tierA, '#22c55e', 100, 0, 100);
+
+  // Reg dots
+  const dotsEl = document.getElementById('reg-dots');
+  dotsEl.innerHTML = '';
+  days.forEach((d, i) => {
+    const reg = checkins[d] && checkins[d].regulation;
+    const wrap = document.createElement('div'); wrap.className = 'reg-dot';
+    const inner = document.createElement('div'); inner.className = 'reg-dot-inner';
+    inner.style.background = reg ? REG_BGS[reg] : '#f0ede8';
+    inner.style.color = reg ? REG_COLORS[reg] : '#c8c4be';
+    inner.textContent = reg ? REG_ICONS[reg] : '·';
+    const lbl = document.createElement('div'); lbl.className = 'reg-dot-label';
+    lbl.textContent = labels[i];
+    wrap.appendChild(inner); wrap.appendChild(lbl);
+    dotsEl.appendChild(wrap);
+  });
+
+  const {avg, taDays, regDays} = weekStats();
+  ['w-sleep','rv-sleep'].forEach(id => document.getElementById(id).textContent = avg);
+  ['w-tiera','rv-tiera'].forEach(id => document.getElementById(id).textContent = taDays+'/7');
+  ['w-reg','rv-reg'].forEach(id => document.getElementById(id).textContent = regDays+'/7');
+}
+
+function renderReview() {
+  const el = document.getElementById('review-prompts');
+  el.innerHTML = '';
+  const key = 'life_rv_'+today;
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+
+  REVIEW_SECTIONS.forEach(section => {
+    const sec = document.createElement('div'); sec.className = 'review-section';
+    const title = document.createElement('div'); title.className = 'review-section-title';
+    title.textContent = section.title;
+    sec.appendChild(title);
+    section.prompts.forEach((p, i) => {
+      const k = section.title+'_'+i;
+      const wrap = document.createElement('div'); wrap.className = 'review-prompt-wrap';
+      const prompt = document.createElement('div'); prompt.className = 'review-prompt';
+      prompt.textContent = '→ '+p;
+      const ta = document.createElement('textarea');
+      ta.placeholder = '...'; ta.value = stored[k] || '';
+      ta.oninput = () => {
+        stored[k] = ta.value;
+        try { localStorage.setItem(key, JSON.stringify(stored)); } catch(e) {}
+      };
+      wrap.appendChild(prompt); wrap.appendChild(ta);
+      sec.appendChild(wrap);
+    });
+    el.appendChild(sec);
+  });
+
+  const {avg, taDays, regDays} = weekStats();
+  document.getElementById('rv-sleep').textContent = avg;
+  document.getElementById('rv-tiera').textContent = taDays+'/7';
+  document.getElementById('rv-reg').textContent = regDays+'/7';
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name === 'trends') renderTrends();
+  if(name === 'review') renderReview();
+}
+
+function init() {
+  today = getToday();
+  document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+  loadLocal();
+  if(token) { updateConnBtn(); fetchOura(); }
+  renderToday();
+  renderReview();
+}
+
+init();
 </script>
 </body>
 </html>
-
