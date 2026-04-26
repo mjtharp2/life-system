@@ -124,21 +124,26 @@ textarea:focus{outline:none;border-color:#c8c4be}
     <div class="loading" id="oura-loading">Syncing Oura data...</div>
     <div class="error-msg" id="oura-error"></div>
 
-    <div class="metrics" style="grid-template-columns:repeat(3,1fr)">
+    <div class="metrics">
       <div class="metric" id="m-sleep-card">
         <div class="metric-label">Sleep score</div>
         <div class="metric-value" id="m-sleep">—</div>
-        <div class="metric-sub">Last night</div>
+        <div class="metric-sub">Last night · target &gt;70</div>
       </div>
       <div class="metric" id="m-avg-card">
-        <div class="metric-label">7-day avg score</div>
+        <div class="metric-label">Sleep · 7-day avg</div>
         <div class="metric-value" id="m-avg">—</div>
         <div class="metric-sub">Target &gt;70</div>
       </div>
       <div class="metric" id="m-ready-card">
         <div class="metric-label">Readiness</div>
         <div class="metric-value" id="m-ready">—</div>
-        <div class="metric-sub">Oura score</div>
+        <div class="metric-sub">Today · target &gt;70</div>
+      </div>
+      <div class="metric" id="m-ready-avg-card">
+        <div class="metric-label">Readiness · 7-day avg</div>
+        <div class="metric-value" id="m-ready-avg">—</div>
+        <div class="metric-sub">Target &gt;70</div>
       </div>
     </div>
 
@@ -157,10 +162,12 @@ textarea:focus{outline:none;border-color:#c8c4be}
         <div class="card-title" style="margin:0">Daily habits</div>
         <div class="habit-score"><span class="habit-score-a" id="score-a">A: 0/3</span><span class="habit-score-b" id="score-b">B: 0/4</span></div>
       </div>
-      <div class="section-label" style="margin-top:0">Tier A — non-negotiable</div>
+      <div class="section-label" style="margin-top:0">Non-negotiable</div>
       <div id="habits-a"></div>
-      <div class="section-label">Tier B — tracked</div>
+      <div class="section-label">Daily intentions</div>
       <div id="habits-b"></div>
+      <div class="section-label">Fitness — logging coming soon</div>
+      <div id="habits-fitness"></div>
     </div>
 
     <div class="card">
@@ -227,15 +234,17 @@ textarea:focus{outline:none;border-color:#c8c4be}
 
 <script>
 const HABITS_A = [
-  {id:'sleep', label:'Sleep score target hit (>70)'},
   {id:'stimulants', label:'No unplanned stimulants'},
   {id:'addie', label:'Addie anchor'},
 ];
 const HABITS_B = [
   {id:'focus', label:'90-min focus block'},
-  {id:'workout', label:'Workout / movement'},
   {id:'self_time', label:'Self time (11–11:30pm)'},
-  {id:'phone', label:'Phone outside bedroom'},
+  {id:'emma', label:'Emma commitment honored'},
+  {id:'lauren', label:'Lauren intentional time'},
+];
+const HABITS_FITNESS = [
+  {id:'workout', label:'Workout / movement logged'},
 ];
 const REG_MSGS = {
   1: {msg:'System nominal. Execute the plan.', cls:'reg-msg-1'},
@@ -387,6 +396,16 @@ function renderToday() {
   else { avgEl.className = 'metric-value'; document.getElementById('m-avg-card').className = 'metric'; }
 
   document.getElementById('m-ready').textContent = rd.score || '—';
+  if(rd.score && rd.score < 70) document.getElementById('m-ready-card').className = 'metric warn';
+  else document.getElementById('m-ready-card').className = 'metric';
+
+  // 7-day rolling readiness avg
+  const readScores = days7.map(d => ouraData.readiness[d] && ouraData.readiness[d].score).filter(Boolean);
+  const readAvg = readScores.length ? Math.round(readScores.reduce((a,b)=>a+b,0)/readScores.length) : null;
+  const readAvgEl = document.getElementById('m-ready-avg');
+  readAvgEl.textContent = readAvg || '—';
+  if(readAvg && readAvg < 70) { readAvgEl.className = 'metric-value warn'; document.getElementById('m-ready-avg-card').className = 'metric warn'; }
+  else { readAvgEl.className = 'metric-value'; document.getElementById('m-ready-avg-card').className = 'metric'; }
 
   // Regulation
   [1,2,3].forEach(l => {
@@ -413,18 +432,18 @@ function renderHabits() {
   const ci = todayCI();
   const aDone = HABITS_A.filter(h => ci.habits[h.id]).length;
   const bDone = HABITS_B.filter(h => ci.habits[h.id]).length;
-  document.getElementById('score-a').textContent = 'A: '+aDone+'/'+HABITS_A.length;
-  document.getElementById('score-b').textContent = 'B: '+bDone+'/'+HABITS_B.length;
+  document.getElementById('score-a').textContent = 'Non-neg: '+aDone+'/'+HABITS_A.length;
+  document.getElementById('score-b').textContent = 'Daily: '+bDone+'/'+HABITS_B.length;
 
-  ['a','b'].forEach(tier => {
-    const habits = tier === 'a' ? HABITS_A : HABITS_B;
-    const el = document.getElementById('habits-'+tier);
+  function renderHabitGroup(habits, containerId, tier) {
+    const el = document.getElementById(containerId);
+    if(!el) return;
     el.innerHTML = '';
     habits.forEach(h => {
       const done = !!ci.habits[h.id];
       const row = document.createElement('div');
       row.className = 'habit-row' + (done ? ' done-'+tier : '');
-      row.onclick = () => toggleHabit(h.id, tier);
+      row.onclick = () => toggleHabit(h.id);
       const chk = document.createElement('div');
       chk.className = 'habit-check' + (done ? ' '+tier : '');
       chk.textContent = done ? '✓' : '';
@@ -434,11 +453,14 @@ function renderHabits() {
       row.appendChild(chk); row.appendChild(lbl);
       el.appendChild(row);
     });
-  });
+  }
+
+  renderHabitGroup(HABITS_A, 'habits-a', 'a');
+  renderHabitGroup(HABITS_B, 'habits-b', 'b');
+  renderHabitGroup(HABITS_FITNESS, 'habits-fitness', 'b');
 }
 
-function toggleHabit(id, tier) {
-  const ci = todayCI();
+function toggleHabit(id) {
   if(!checkins[today]) checkins[today] = {habits:{}, regulation:null, notes:''};
   checkins[today].habits[id] = !checkins[today].habits[id];
   saveCI(); renderHabits(); renderAlerts();
@@ -488,7 +510,8 @@ function weekStats() {
   const days = last7();
   const scores = days.map(d => ouraData.sleep[d] && ouraData.sleep[d].score).filter(Boolean);
   const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : '—';
-  const taDays = days.filter(d => checkins[d] && checkins[d].habits && HABITS_A.every(h => checkins[d].habits[h.id])).length;
+  const allNonNeg = [...HABITS_A];
+  const taDays = days.filter(d => checkins[d] && checkins[d].habits && allNonNeg.every(h => checkins[d].habits[h.id])).length;
   const regDays = days.filter(d => checkins[d] && checkins[d].regulation === 1).length;
   return {avg, taDays, regDays};
 }
