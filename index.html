@@ -361,8 +361,16 @@ async function fetchOura() {
 }
 
 function renderToday() {
-  const sl = ouraData.sleep[today] || {};
-  const rd = ouraData.readiness[today] || {};
+  // Use today's data if available, otherwise fall back to most recent
+  const days = last7();
+  const mostRecentSleep = days.slice().reverse().find(d => ouraData.sleep[d] && ouraData.sleep[d].score);
+  const mostRecentSession = days.slice().reverse().find(d => ouraData.sleep[d] && ouraData.sleep[d].rhr);
+  const sl = {
+    ...(ouraData.sleep[mostRecentSleep] || {}),
+    rhr: (ouraData.sleep[mostRecentSession] || {}).rhr,
+    totalMins: (ouraData.sleep[mostRecentSession] || {}).totalMins,
+  };
+  const rd = ouraData.readiness[today] || ouraData.readiness[mostRecentSleep] || {};
   const ci = todayCI();
 
   // Metrics
