@@ -339,7 +339,7 @@ async function fetchOura() {
     renderTrends();
   } catch(e) {
     const el = document.getElementById('oura-error');
-    el.textContent = 'Could not load Oura data. Your token may have expired.';
+    el.textContent = 'Error: ' + e.message + ' | ' + e.name;
     el.classList.add('show');
   }
   document.getElementById('oura-loading').classList.remove('show');
