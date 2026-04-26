@@ -1,0 +1,14 @@
+# Life System Dashboard
+
+This is a personal life-system dashboard. It pulls Oura ring data (via a Cloudflare Worker proxy) and combines it with locally-stored self-tracking — regulation check-ins, habit tracking, a weekly review, and trend charts.
+
+## Architecture
+- Frontend: single-file index.html on GitHub Pages at https://mjtharp2.github.io/life-system
+- Oura proxy: Cloudflare Worker at plain-hill-28ab.mjtharp2.workers.dev
+- Data: localStorage (migrating to D1 in Phase 4)
+
+## Build context
+We are extending this dashboard into a full life-system operating layer with Todoist + Calendar + Scheduler integration. See the architecture spec for the full plan (will be added to repo as system_architecture.md).
+
+## Commit conventions
+Use clear conventional-commit-style messages: feat:, fix:, refactor:, docs:, chore:.
