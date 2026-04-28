@@ -7,6 +7,11 @@ This is a personal life-system dashboard. It pulls Oura ring data (via a Cloudfl
 - Oura proxy: Cloudflare Worker at plain-hill-28ab.mjtharp2.workers.dev
 - Data: localStorage (migrating to D1 in Phase 4)
 
+### Reference docs
+- `life_system_reference.md` — strategy
+- `dashboard_state.md` — current state
+- `system_architecture.md` — build plan
+
 ## Build context
 We are extending this dashboard into a full life-system operating layer with Todoist + Calendar + Scheduler integration. See the architecture spec for the full plan (will be added to repo as system_architecture.md).
 
