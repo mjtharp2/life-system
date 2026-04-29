@@ -10,16 +10,17 @@ Overload → depletion → executive function collapse → compensatory behavior
 
 ## Priority Tiers
 
+*Tiers describe commitments and domains, not people. Both partner relationships are Tier 1 commitments serving different roles. What flexes in bad weeks is expansion and optional initiatives within a domain, never the core relationship itself.*
+
 ### Tier 1 — Protect & Invest
 
 - Health — the foundation. Depletion loop interrupted here or nowhere.
 - Professional — high stakes, promotion trajectory, not optional.
-- Family architecture — intact home, Addie's relational window, co-parenting.
-- Emma as real partner — dedicated time, forward motion on structural questions.
+- Family architecture with Lauren — intact home, co-parenting, Addie's relational window, the shared life infrastructure.
+- Partnership with Emma — dedicated time, emotional center, forward motion on structural questions.
 
 ### Tier 2 — Maintain & Hold
 
-- Lauren as romantic partner — intentional investment, not obligation.
 - Self & growth — protected minimum, stop the bleeding on avoidance.
 - Finances — monthly cash flow visibility only.
 
