@@ -116,10 +116,27 @@ Overload → depletion → executive function collapse → compensatory behavior
 
 ### Lauren
 
-- Once weekly intentional time outside family — dinner, tennis, activity (Friday evenings)
-- Find and book ENM-informed sex-positive couples therapist within 30 days
-- Identify 2-3 shared interest swim lanes beyond tennis
+**Time together**
+
+- Weekly date — Friday evenings, planning alternates between us
+- Monthly bigger date / night out — planning alternates between us
 - Change texture of existing proximity time — less parallel, more connected
+
+**Shared interest swim lanes**
+
+- Lane 1: Tennis — Matt organizes
+- Lane 2: Lauren to develop
+- Lane 3: Lauren to develop
+
+**Sex**
+
+- Once weekly — date night, fallback to Sunday if it doesn't happen
+- Matt to develop framework for talking about preferences and exploration
+
+**6-week review — June 9, 2026**
+
+- Assess this configuration as a whole
+- Decide whether to engage relationship/sex therapist — in line with broader couples therapy track (ENM-informed, see Therapy Pipeline)
 
 ### Emma
 
@@ -226,6 +243,7 @@ Overload → depletion → executive function collapse → compensatory behavior
 - Couples therapist identified — ENM-informed
 - Lauren couples track initiated
 - Swim lanes conversation with Lauren
+- Lauren 6-week review — June 9, assess current configuration, decide on therapist
 - Emma integration specifics defined
 - Red light therapy — assess post-EMG
 - Fernando — monthly 1:1, let him initiate next
