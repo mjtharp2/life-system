@@ -265,6 +265,13 @@ The system review asks: is this working, not just am I executing it.
 - Are Lauren and Emma relationship commitments being honored consistently?
 - Is the dashboard being used — daily check-in happening?
 - What needs to be redesigned vs. what needs more time?
+- At each review, explicitly ask: what in Tier 3 is ready to graduate to Tier 2?
+- Has anything in Tier 1 or 2 stabilized enough to drop down and create room?
+- Is anything in Tier 3 causing slow-burn damage by staying there indefinitely?
+
+## Tier Structure Review
+
+The tier structure is a snapshot of the current season, not a permanent assignment. Intentional neglect requires a review mechanism or it becomes unintentional neglect. The 90-day review is the mandatory checkpoint to reassess all Tier 3 items and determine whether conditions have changed enough to bring anything forward.
 
 ---
 
