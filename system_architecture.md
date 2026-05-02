@@ -11,6 +11,14 @@ It exists to give future Claude sessions full context without rebuilding it from
 
 Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_state.docx` (current technical state).
 
+## Status & Recent Decisions
+
+Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
+
+### 2026-05-01
+- Phase 0 timing updated: scheduled for vacation week (May 7-11), where 4-6 hour focus blocks are realistic. Prior plan was the May 2-3 weekend; vacation work-windows are a better fit given two full-time nannies covering family time.
+- ChatGPT context extraction blocked on export delivery (first request May 1, re-requested same day after it didn't land).
+
 ## The Core Problem
 
 The current dashboard observes the system but does not run it. Tasks live in Todoist (or in head, or scattered). Calendar is fragmented across Outlook (work) and Google (personal). The reference doc lists action items strategically but they have no live status. Daily execution requires holding all of this in working memory.
