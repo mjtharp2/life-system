@@ -17,7 +17,8 @@ Newest entries at top. Log meaningful timing changes, scope shifts, and external
 
 ### 2026-05-01
 - Phase 0 timing updated: scheduled for vacation week (May 7-11), where 4-6 hour focus blocks are realistic. Prior plan was the May 2-3 weekend; vacation work-windows are a better fit given two full-time nannies covering family time.
-- ChatGPT context extraction blocked on export delivery (first request May 1, re-requested same day after it didn't land).
+- ChatGPT context extraction in flight via Cowork (first export request didn't land May 1, re-requested same day).
+- Open architectural question: Cowork-on-always-on-server architecture may significantly reduce Phase 1-3 build scope. Cost is not a meaningful constraint; the real question is whether the operational complexity of running personal infrastructure (vs. fully cloud-hosted via Cloudflare) earns its keep. Revisit Sunday May 4 weekly
 
 ## The Core Problem
 
