@@ -1,0 +1,17 @@
+# Claude Code local cache
+.claude/
+
+# Node
+node_modules/
+
+# Cloudflare Wrangler local cache
+.wrangler/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# OS cruft
+.DS_Store
+Thumbs.db

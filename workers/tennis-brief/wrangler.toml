@@ -1,0 +1,10 @@
+name = "tennis-brief"
+main = "src/index.js"
+compatibility_date = "2026-04-28"
+
+# Daily at 11:30 UTC = 6:30am CDT (Apr–Nov) / 5:30am CST (Nov–Mar).
+[triggers]
+crons = ["30 11 * * *"]
+
+[observability.logs]
+enabled = true
