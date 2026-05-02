@@ -1,0 +1,28 @@
+name: Tennis Brief
+
+on:
+  schedule:
+    # 11:30 UTC = 6:30am CDT (Apr–Nov) / 5:30am CST (Nov–Mar).
+    # DST drift accepted for v1; two-cron solution is a follow-up.
+    - cron: "30 11 * * *"
+  workflow_dispatch:
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run tennis brief
+        working-directory: automations/tennis-brief
+        run: node index.js
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}

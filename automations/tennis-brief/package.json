@@ -1,0 +1,10 @@
+{
+  "name": "tennis-brief",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Daily tennis brief — runs on GitHub Actions, ports from Cloudflare Worker.",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
