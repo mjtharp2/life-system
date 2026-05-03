@@ -27,36 +27,44 @@ function getCentralDates() {
 }
 
 function buildPrompt(todayLong) {
-  return `You are writing a daily tennis brief for Matt and Lauren, a couple in Chicago who are tennis fans. They want to follow ATP and WTA singles tennis at the major and 500+ level, plus any tennis happenings in or around Chicago.
+  return `You are writing a daily tennis brief for Matt and Lauren, a couple in Chicago who are tennis fans. They follow ATP and WTA singles at the Grand Slam, Masters 1000, WTA 1000, ATP 500, and WTA 500 level.
 
-Use web search to find:
-1. ATP and WTA singles results from yesterday at Grand Slams, Masters 1000, WTA 1000, ATP 500, and WTA 500 events.
-2. ATP and WTA singles matches scheduled for today at the same levels. For key matches, include the start time in Central time and the TV network or streaming service if readily available.
-3. Any tennis-related news, events, or happenings in Chicago.
+Use web search to find the current state of any active tour-level events at those levels. One search per tour (ATP, WTA) is usually enough — look for tournament status pages that show both yesterday's results and today's order of play in one place. Limit yourself to 2-3 searches total; do not search for broadcast info, start times, or news beyond the matches themselves.
 
 Output rules:
-- If there is genuinely nothing happening — no tour-level matches yesterday or today, no Chicago tennis news — respond with the single word SKIP and nothing else.
-- Otherwise, write the brief in plain text (no markdown headers, no bullets unless natural). Open with "Matt and Lauren," and a sentence framing the day. Then a short paragraph on yesterday's notable results. Then a short paragraph on today's matches worth watching, with the headline storyline first. For headline matches, include start time (Central) and TV/streaming network when you can find them — formatted naturally, e.g. "Sinner-Alcaraz, 2pm CT on Tennis Channel." If you can't find a time or network for a match, don't speculate — just leave it out for that match. Then, if relevant, a brief note on Chicago. Keep the whole thing under 300 words.
-- Be opinionated. Don't list everything — pick what matters. If Sinner-Alcaraz is playing, that's the headline. If it's a quiet day at a 500, say so briefly and move on.
+- If there are no active tour-level events at those levels (no matches yesterday and none today), respond with the single word SKIP and nothing else.
+- Otherwise, write the brief in plain text (no markdown, no bullets unless natural). Open with "Matt and Lauren," and a sentence framing the day. Short paragraph on yesterday's notable results. Short paragraph on today's matches worth watching, headline storyline first.
+- Be opinionated. Don't list everything — pick what matters. If Sinner-Alcaraz is on, that's the headline. If it's a quiet day at a 500, say so briefly and move on.
+- Do not include broadcast networks, streaming services, or match start times. Just the matches and what's interesting about them.
 - No "Good morning" preamble beyond "Matt and Lauren,". No closing signoff. The brief ends when the content ends.
 - Today's date is ${todayLong}.`;
 }
 
 async function callClaude(prompt) {
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 4096,
-      tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 5 }],
-      messages: [{ role: "user", content: prompt }],
-    }),
-  });
+  const TIMEOUT_MS = 8 * 60 * 1000; // 8 minutes
+  let resp;
+  try {
+    resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 4096,
+        tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 3 }],
+        messages: [{ role: "user", content: prompt }],
+      }),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+  } catch (err) {
+    if (err.name === "TimeoutError" || err.name === "AbortError") {
+      throw new Error(`Anthropic call timed out after ${TIMEOUT_MS / 1000}s`);
+    }
+    throw err;
+  }
 
   if (!resp.ok) {
     const body = await resp.text();
