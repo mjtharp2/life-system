@@ -11,6 +11,8 @@ This is a personal life-system dashboard. It pulls Oura ring data (via a Cloudfl
 - `life_system_reference.md` — strategy
 - `dashboard_state.md` — current state
 - `system_architecture.md` — build plan
+- `weekly_log.md` — weekly review log
+- `ideation_log.md` — parked extensions and architectural ideas
 
 ## Build context
 We are extending this dashboard into a full life-system operating layer with Todoist + Calendar + Scheduler integration. See the architecture spec for the full plan (will be added to repo as system_architecture.md).
