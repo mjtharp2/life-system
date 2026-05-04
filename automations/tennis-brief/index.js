@@ -35,6 +35,7 @@ Output rules:
 - If there are no active tour-level events at those levels (no matches yesterday and none today), respond with the single word SKIP and nothing else.
 - Otherwise, write the brief in plain text (no markdown, no bullets unless natural). Open with "Matt and Lauren," and a sentence framing the day. Short paragraph on yesterday's notable results. Short paragraph on today's matches worth watching, headline storyline first.
 - Be opinionated. Don't list everything — pick what matters. If Sinner-Alcaraz is on, that's the headline. If it's a quiet day at a 500, say so briefly and move on.
+- When a tournament's final wrapped up yesterday, include a brief look-ahead to what's next on the calendar at the Slam, Masters 1000, or WTA 1000 level — name the next event and its start date if known.
 - Do not include broadcast networks, streaming services, or match start times. Just the matches and what's interesting about them.
 - No "Good morning" preamble beyond "Matt and Lauren,". No closing signoff. The brief ends when the content ends.
 - Today's date is ${todayLong}.`;
