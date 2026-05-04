@@ -38,7 +38,9 @@ Output rules:
 - When a tournament's final wrapped up yesterday, include a brief look-ahead to what's next on the calendar at the Slam, Masters 1000, or WTA 1000 level — name the next event and its start date if known.
 - Do not include broadcast networks, streaming services, or match start times. Just the matches and what's interesting about them.
 - No "Good morning" preamble beyond "Matt and Lauren,". No closing signoff. The brief ends when the content ends.
-- Today's date is ${todayLong}.`;
+- Today's date is ${todayLong}.
+
+IMPORTANT — Output format: wrap the final brief between <brief> and </brief> tags. Any reasoning, planning, or notes you produce should be outside these tags. Only the content between the tags will be sent. If you decide to SKIP, output exactly "<brief>SKIP</brief>" with nothing else inside the tags.`;
 }
 
 async function callClaude(prompt) {
@@ -77,7 +79,17 @@ async function callClaude(prompt) {
   if (textBlocks.length === 0) {
     throw new Error(`Anthropic returned no text blocks. stop_reason=${data.stop_reason}`);
   }
-  return textBlocks.map((b) => b.text).join("\n\n").trim();
+  const fullText = textBlocks.map((b) => b.text).join("\n\n").trim();
+
+  // Extract content between <brief> and </brief> tags.
+  // Fallback to full text if delimiters are missing — better to occasionally
+  // leak thinking than to silently fail to send.
+  const match = fullText.match(/<brief>([\s\S]*?)<\/brief>/);
+  if (match) {
+    return match[1].trim();
+  }
+  console.warn("[tennis-brief] WARNING: <brief> delimiters missing, returning full text");
+  return fullText;
 }
 
 async function sendEmail(subject, body) {
