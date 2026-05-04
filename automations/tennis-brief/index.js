@@ -77,7 +77,7 @@ async function callClaude(prompt) {
   if (textBlocks.length === 0) {
     throw new Error(`Anthropic returned no text blocks. stop_reason=${data.stop_reason}`);
   }
-  return textBlocks[textBlocks.length - 1].text.trim();
+  return textBlocks.map((b) => b.text).join("\n\n").trim();
 }
 
 async function sendEmail(subject, body) {
