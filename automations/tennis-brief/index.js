@@ -2,7 +2,7 @@
 // Runs on GitHub Actions. Cron is configured in the workflow YAML, not here.
 
 const RECIPIENTS = ["mjtharp2@gmail.com", "lauren.j.tharp@gmail.com"];
-const FROM = "onboarding@resend.dev";
+const FROM = "tennis@mjtharp.com";
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
 
 function getCentralDates() {
