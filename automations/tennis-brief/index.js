@@ -81,6 +81,11 @@ async function callClaude(prompt) {
   }
   const fullText = textBlocks.map((b) => b.text).join("\n\n").trim();
 
+  // TEMPORARY DEBUG: log full Claude output to diagnose extraction issues.
+  console.log("[tennis-brief] DEBUG fullText start ===");
+  console.log(fullText);
+  console.log("[tennis-brief] DEBUG fullText end ===");
+
   // Extract content between <brief> and </brief> tags.
   // Fallback to full text if delimiters are missing — better to occasionally
   // leak thinking than to silently fail to send.
