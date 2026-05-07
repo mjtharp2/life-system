@@ -27,26 +27,37 @@ Add a voice layer to the substrate so the full system (dashboard, agents, schedu
 
 **Status:** Parked. Reconsider at end-of-July checkpoint or after extraction completes, whichever is later.
 
-### Synthesis-from-curated-sources daily digest
+### Newsletter aggregator and content synthesis system
 
-Tennis brief shipped via GitHub Actions ($0.20/run, ~$6/month) proved out a reusable pattern: scheduled Action reads curated input, synthesizes through Claude with personal context, delivers personalized output. Morning news digest is one application; pattern extends to weekly trainer analysis, therapy prep, Sunday review pre-aggregation, quarterly pattern review across dashboard data.
+Currently receiving ~10 daily newsletter emails from various sources. Read individually, this is a real time and attention tax; many days the relevant content is 10-20% of total volume but requires scanning all of it to find. Build an aggregator that reads daily newsletter emails via Gmail API, synthesizes through Claude with personal context, delivers prioritized digest, marks source emails read, and learns over time which sources earn their place via feedback loop.
 
-**Architectural insight:** The infrastructure (scheduled Action + curated input + Claude synthesis + delivery) is substrate for many applications. Evaluate as "is this synthesis pattern worth investing in once" not as "is the digest worth it on its own."
+**Tennis brief precedent:** GitHub Actions-based scheduled synthesis already proven out at $0.20/run, ~$6/month. Same infrastructure pattern — scheduled Action reads curated input, synthesizes through Claude with personal context, delivers personalized output. Newsletter version is a natural extension.
+
+**Architectural insight:** The infrastructure (scheduled Action + curated input + Claude synthesis + delivery + feedback loop) is substrate for many applications beyond newsletters — weekly trainer analysis, therapy prep, Sunday review pre-aggregation, quarterly pattern review across dashboard data. Evaluate as "is this synthesis pattern worth investing in once" not as "is the digest worth it on its own."
+
+**Core capabilities:**
+- Read daily newsletter emails via Gmail API (filter by sender list)
+- Aggregate, prioritize, and synthesize content into single digest
+- Apply personal context from substrate (current tier focus, regulation state, week shape) to filter for relevance
+- Mark source emails read after processing
+- Feedback mechanism: rate each digest's usefulness, mark which items were actually acted on, system learns over time which sources earn their place vs. which should be cut
+- Extensible to other content sources over time (RSS, Substack, podcasts via transcription, longer-form articles saved to read-later)
 
 **Implementation paths:**
-- Path A (Gmail API): subscribe to briefs in normal inbox, Action reads via Gmail API, synthesizes, sends. ~2-3 hours work. Same Gmail OAuth is on Phase 4 roadmap — building here gets that infrastructure as side effect, but design the OAuth implementation with Phase 4 reuse in mind, not as one-off.
-- Path B (RSS): simpler, no auth, but most briefs lag on RSS vs. email. Probably wrong for morning use case.
+- Path A (Gmail API): subscribe to briefs in normal inbox, Action reads via Gmail API, synthesizes, sends, marks read. ~3-4 hours work including feedback capture surface. Same Gmail OAuth is on Phase 4 roadmap — building here gets that infrastructure as side effect, but design the OAuth implementation with Phase 4 reuse in mind, not as one-off.
+- Path B (RSS): simpler, no auth, but most briefs lag on RSS vs. email and not all publish feeds. Probably wrong for morning use case.
 
-**Critical open question, sharper than originally framed:** "Personal news digest" as smaller-version-of-five-newsletters is solving a problem that already has solutions (read one, skip others). The version that genuinely reduces load is a *filter against current context* — surfaces the 3 things you'd actually act on or want to talk about given what you're working on this week. Build the filter version, not the digest version. If filter version isn't viable, probably shouldn't build at all.
+**Critical open question, sharper than originally framed:** "Personal news digest" as smaller-version-of-ten-newsletters is solving a problem that already has solutions (read one or two, skip others). The version that genuinely reduces load is a *filter against current context* — surfaces the 3-5 things you'd actually act on or want to talk about given what you're working on this week. Build the filter version, not the digest version. The feedback loop is what makes the filter version actually viable — without learning which surfaces earn their place, the system stays generic.
 
 **Other open questions:**
-- What sources would actually be read vs. subscribed-and-ignored? Honest audit needed.
+- What sources are actually in the 10? Honest audit needed — likely 2-3 are read, 4-5 are skimmed, 2-3 are subscribed-and-ignored. Some should be unsubscribed before any digest is built.
 - Does this displace existing reading time or stack on top? Stack-on-top fails Design Principle 1.
+- What does the feedback surface look like? One-tap rating per digest? Per-item? Both?
 - Is the Gmail OAuth pull-forward worth it given Phase 4 timing?
 
-**Sequencing gate:** Read tennis brief daily for 1-2 weeks first. If consistently useful, pattern is proven and digest version is worth real evaluation. If unread by week two, question answers itself. Don't commit to scope before that signal.
+**Sequencing gate:** Read tennis brief daily for 1-2 weeks first. If consistently useful, pattern is proven and digest version is worth real evaluation. If unread by week two, question answers itself. Don't commit to scope before that signal. Pre-work that doesn't require building anything: audit the 10 sources, unsubscribe from anything that's actually noise, narrow to the 5-7 that reliably contain signal.
 
-**Status:** Parked, waiting on tennis brief usage data. Reconsider at end-of-July checkpoint or sooner if the synthesis pattern proves out for other applications first (trainer analysis, Sunday pre-aggregation).
+**Status:** Parked, waiting on tennis brief usage data and source audit. Reconsider at end-of-July checkpoint or sooner if the synthesis pattern proves out for other applications first (trainer analysis, Sunday pre-aggregation).
 
 ### Pattern recognition over dashboard data
 
