@@ -243,6 +243,26 @@ Cross-cutting principle, not a feature. The compounding win of building agents o
 
 **Status:** Standing principle. Apply to every agent that gets built. Document explicit cross-agent rules in architecture spec as they're written.
 
+### ChatGPT corpus extraction and integration
+
+Years of accumulated personal context across thousands of ChatGPT conversations — relationship thinking with Lauren and Emma, training history, health/substance/regulation patterns, professional decisions, strategic thinking. Currently sitting as a downloaded export, unintegrated.
+
+**Two artifacts, not one.** Reference docs (synthesized current-state thinking by domain, ~10-30 pages each, edited and authoritative) versus searchable archive (full corpus indexed and queryable via vector DB + MCP tool). They solve different problems and want different shapes — reference docs answer "what's my current state on X," archive answers "what did I actually say about X two years ago."
+
+**Architectural fit:** Strong. Reference docs are markdown files in repo (public or private depending on sensitivity). Archive uses Cloudflare Vectorize (already in stack ecosystem), embedding API, worker route for query, exposed as MCP tool to Claude conversations.
+
+**Sequencing logic:** Reference docs first (synthesis project, several Cowork sessions). Archive second (infrastructure project, requires Phase 4 substrate). Reference docs likely capture 80% of the value — archive becomes useful when reference docs aren't enough.
+
+**Privacy considerations:** Relationship reference doc in particular will contain content unsuitable for public repo. Three options: private GitHub repo (parity with stack), local-only (lose history), Claude.ai project file (never enters git). Decide before producing content.
+
+**Trigger to revisit:** Either a felt, repeated moment of "I wish I could find what I said about X" — that's the signal the archive is worth investing in — or Phase 4 completion creating clean integration substrate. Until then, the export is saved and not lost.
+
+**Why not a current priority:** Doesn't unblock any active build. Relationship thread is making progress with current-state thinking. Trainer is functioning fine without comprehensive history. Building speculatively before knowing what queries matter risks over-extracting and producing reference docs nobody fetches.
+
+**Related entries:** Restaurant/reading/film taste engines may benefit from extraction (extracted threads likely contain real rating data). Tenex political map should not be in public repo regardless of corpus storage decision.
+
+**Status:** Parked, mapped to Phase 6 in architecture spec. Reconsider when triggers above fire, or at end-of-July checkpoint.
+
 ### Deferred until tech matures (post-2026)
 
 Catalog of ideas that came up but realistically need waiting on:

@@ -228,6 +228,18 @@ Tasks that don't fit are returned as 'overflow' with reason (no matching block, 
 - Push notifications
 - Claude training interface for fitness module
 
+### Phase 6 — ChatGPT Corpus Integration
+
+Two artifacts: curated reference docs (synthesized current-state thinking by domain — relationship, training, health, professional, decision history) and searchable archive (full corpus indexed via Cloudflare Vectorize, exposed as MCP tool for on-demand retrieval).
+
+**Sequencing:** Reference docs first, archive second. Reference docs are an analytical-synthesis project (~2-4 hours per domain, one domain per session). Archive is an infrastructure project (vector DB, embedding pipeline, retrieval endpoint, ~6-10 hours).
+
+**Trigger to start:** Either (a) a real, repeated moment where searchable history would have unblocked something — wait for the lack to be felt, or (b) Phase 4 completes and the substrate can hold the integration cleanly.
+
+**Privacy gate:** Relationship and personal-history reference docs likely contain content unsuitable for the public `life-system` repo. Decide on private repo, local-only, or Claude.ai project file storage before producing content that needs a non-public home.
+
+**What unlocks:** Years of accumulated personal context becomes addressable by current agents. Trainer can reference historical training, relationship work can reference evolved positions, decision-making can reference prior reasoning. Expanded persistent memory across the system.
+
 ## Design Principles
 
 These are the constraints that prevent the system from becoming another source of overload. They take precedence over feature requests.
