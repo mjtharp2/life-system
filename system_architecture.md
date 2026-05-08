@@ -15,6 +15,9 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-08
+- Phase 0 complete. Cloudflare infrastructure layer in place: KV namespace `life-system-tokens` provisioned and bound as `env.TOKENS`. D1 database `life-system-db` provisioned and bound as `env.DB`. Existing Oura proxy worker (`plain-hill-28ab`) brought into the repo at `workers/life-system/`, refactored into multi-route structure: existing Oura proxy preserved at root, `/health` endpoint, `/oauth/todoist/callback` and `/oauth/google/callback` stubs. Worker now deployed via wrangler CLI from repo (no more web UI editing). Phase 1 (Todoist) unblocked — pending Todoist lifecycle review session before coding.
+
 ### 2026-05-01
 - Phase 0 timing updated: scheduled for vacation week (May 7-11), where 4-6 hour focus blocks are realistic. Prior plan was the May 2-3 weekend; vacation work-windows are a better fit given two full-time nannies covering family time.
 - ChatGPT context extraction in flight via Cowork (first export request didn't land May 1, re-requested same day).
