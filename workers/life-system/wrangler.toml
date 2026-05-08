@@ -1,0 +1,6 @@
+name = "plain-hill-28ab"
+main = "src/index.js"
+compatibility_date = "2026-04-28"
+
+# Bindings will be added in step 4 (KV + D1).
+# Routes will be configured after first successful deploy.
