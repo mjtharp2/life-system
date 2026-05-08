@@ -1,6 +1,15 @@
 name = "plain-hill-28ab"
 main = "src/index.js"
 compatibility_date = "2026-04-28"
+preview_urls = false
 
-# Bindings will be added in step 4 (KV + D1).
-# Routes will be configured after first successful deploy.
+# KV namespace for OAuth tokens, refresh tokens, user config
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "9235bf7000194c89ad4c544a95febc4c"
+
+# D1 database for check-ins, scheduling proposals, audit log
+[[d1_databases]]
+binding = "DB"
+database_name = "life-system-db"
+database_id = "ee876af9-61ba-4f96-8123-447815fb9850"
