@@ -12,6 +12,10 @@ Each entry includes: name, description, architectural fit, status, and any seque
 
 Current reference doc treatment of finance is thin (Tier 2, "monthly cash flow visibility only"). The system should eventually surface financial state more deliberately — spending patterns, anomalies, runway, big-decision context, possibly investment tracking — but the right shape isn't clear yet. Not a current priority; needs a dedicated conversation.
 
+**One candidate shape — ambient, not absent:** A single number on the dashboard (monthly burn vs. expected, or runway in months) with no drill-down would honor the current Tier placement while preventing the surprise that creates a future overload spike. Financial surprises are a known dysregulation trigger; an ambient number prevents the "wait, what?" moment without inviting the daily-check rabbit hole. Architectural fit is light if a financial data source exists (Plaid, manual entry, bank export); real engineering if not. This is one possible answer to the scoping question, not the answer.
+
+**Open question for the scoping conversation:** is the current placement (Tier 2 monthly-only, Tier 3 beyond) right, or is finance actually undertracked relative to its capacity to disrupt?
+
 **Trigger to revisit:** when system-design conversation has open agenda space and finance feels like a real gap, or at the 90-day review. Probably mid-to-late summer after Phase 1-3 ship.
 
 **Out of scope for now:** anything beyond monthly visibility. No proactive build, no agent, no dashboard integration. Capture the lack of structure, revisit when ready.
@@ -160,16 +164,6 @@ Oura readiness paired with calendar density to propose daily intensity: "today i
 **Why valuable:** Currently the scheduler operates at weekly granularity. Daily readiness variance is real and the system could honor it without the user manually re-planning.
 
 **Status:** Parked. Natural Phase 4+ extension once weekly scheduler is trusted. Don't build until weekly proposal flow is load-bearing — adding daily proposals on top of an unused weekly proposal is just more noise.
-
-### Money as ambient, not absent
-
-Tier 3 currently means monthly check-in only. "Ambient" is different from "absent" — a single number on the dashboard (monthly burn vs. expected, or runway in months) with no drill-down would honor the Tier 3 placement while preventing the surprise that creates a future overload spike.
-
-**Architectural fit:** Light if a financial data source exists (Plaid, manual entry, bank export). Real engineering if not.
-
-**Why valuable:** Financial surprises are a known dysregulation trigger. A single ambient number prevents the "wait, what?" moment without inviting the daily-check rabbit hole.
-
-**Status:** Parked. Worth honest evaluation: is Tier 3 the right placement, or is finances actually undertracked relative to its capacity to disrupt? Reconsider at end-of-July checkpoint.
 
 ### Creative container surface
 
