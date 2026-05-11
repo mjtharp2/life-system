@@ -238,6 +238,22 @@ The review itself: formal phase audit. For each active phase across domains:
 
 Review is based on accumulated observations from weekly check-ins plus deliberate evaluation at the session. No trigger-definition rigor required (see explicit decision in 2026-05-10 Status entry).
 
+### 90-Day Review Protocol
+
+Each quarterly 90-day review session covers:
+
+1. **Domain backward review.** Walk through the questions in `life_system_reference.md` "90-Day Review" section — is sleep floor holding, is depletion cycle shorter, are relationship commitments being honored, is the dashboard being used daily, etc.
+
+2. **Phase progression audit.** Per Phase Progression Review section above, evaluate every active phase across domains (Health 1-3, system architecture 0-6, therapy pipeline tracks). Advance ready phases, re-scope stuck ones, add new phases if needed.
+
+3. **Ideation log surfacing.** Fetch `ideation_log.md`. Surface any entries with "trigger to revisit: 90-day review" or similar trigger language. For each: action, re-park with updated trigger, or delete.
+
+4. **System Cadences update.** Update the System Cadences section below with new last-review date. Next-due automatically becomes ~13 weeks out.
+
+5. **Architecture spec audit.** Quick scan: do design principles still hold? Any new principles needed? Any sections that have gone stale or need revision?
+
+Output: a 90-day review entry in `weekly_log.md` capturing decisions made, phases advanced, and watch-fors carried forward into the next quarter.
+
 ## System Cadences
 
 State tracking for system-managed review cadences. The weekly check-in fetches this section to determine which cadences are approaching their next instance.
