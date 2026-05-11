@@ -26,6 +26,7 @@ Newest entries at top. Log meaningful timing changes, scope shifts, and external
 
 ### 2026-05-08
 - Phase 0 complete. Cloudflare infrastructure layer in place: KV namespace `life-system-tokens` provisioned and bound as `env.TOKENS`. D1 database `life-system-db` provisioned and bound as `env.DB`. Existing Oura proxy worker (`plain-hill-28ab`) brought into the repo at `workers/life-system/`, refactored into multi-route structure: existing Oura proxy preserved at root, `/health` endpoint, `/oauth/todoist/callback` and `/oauth/google/callback` stubs. Worker now deployed via wrangler CLI from repo (no more web UI editing). Phase 1 (Todoist) unblocked — pending Todoist lifecycle review session before coding.
+- Phase 0 shipped Friday May 8 in ~45min, well under the 4-6 hour estimate. Unblocks Phase 1 and Phase 2 architecturally. Phase 1 committed for May 16-17 weekend with hard deadline 5/17.
 
 ### 2026-05-01
 - Phase 0 timing updated: scheduled for vacation week (May 7-11), where 4-6 hour focus blocks are realistic. Prior plan was the May 2-3 weekend; vacation work-windows are a better fit given two full-time nannies covering family time.
@@ -255,14 +256,14 @@ Recurring weekly, no separate tracking needed.
 
 > Phase 0 must complete before any feature work. Subsequent phases are independent and can ship sequentially.
 
-### Phase 0 — Infrastructure
+### Phase 0 — Infrastructure ✅ Complete (shipped 2026-05-08)
 
 - [x] Set up Claude Code locally connected to life-system repo
-- [ ] Provision Cloudflare KV namespace (life-system-tokens)
-- [ ] Provision Cloudflare D1 database (life-system-db)
-- [ ] Refactor existing worker into multi-route worker structure
-- [ ] Set up wrangler.toml configuration with bindings
-- [ ] Create OAuth callback handler stub for Todoist + Google
+- [x] Provision Cloudflare KV namespace (life-system-tokens)
+- [x] Provision Cloudflare D1 database (life-system-db)
+- [x] Refactor existing worker into multi-route worker structure
+- [x] Set up wrangler.toml configuration with bindings
+- [x] Create OAuth callback handler stub for Todoist + Google
 
 ### Phase 1 — Todoist Read + Write
 
