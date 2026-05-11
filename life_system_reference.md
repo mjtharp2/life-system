@@ -112,7 +112,9 @@ Overload → depletion → executive function collapse → compensatory behavior
 - Hold the floor on Sentinel and Netcov — nothing bleeds
 - 90 minutes protected focus block daily — scheduled, sacred, tracked
 - Health reset does the heavy lifting — showing up rested is the primary investment
-- First 100-day calls with senior Tenex leaders: Mike, Varun, Gabe, Perrin, Joe, Ron, Greg, David
+- First 100-day calls with senior Tenex leaders — relationship-building across firm
+
+**Note on scope:** Substantive professional work (strategic planning, portfolio company specifics, executive decisions, personnel) happens in a separate work-context Claude account. This section tracks the *shape* and *posture* of professional work for life-system triage purposes — what to protect time for, where the cognitive load sits, and how it interacts with other priorities. Sensitive or proprietary detail does not belong in this reference doc.
 
 ### Lauren
 
@@ -138,12 +140,16 @@ Overload → depletion → executive function collapse → compensatory behavior
 - Assess this configuration as a whole
 - Decide whether to engage relationship/sex therapist — in line with broader couples therapy track (ENM-informed, see Therapy Pipeline)
 
+The Lauren ↔ Emma integration design is an active cross-cutting strategic thread. The substantive thinking lives in a dedicated relationship-design conversation in the Life Design project. Concrete next actions arising from that thread are captured in Todoist as parallel tasks (one in Lauren, one in Emma).
+
 ### Emma
 
 - Honor defined time commitment consistently — Thursday and Saturday nights
 - Rebalance 1:1 vs. social within existing time — more ordinary life presence
 - Couples therapy track — ENM-informed therapist, working agreement on relationship structure
 - Integration specifics — define what more integration looks like concretely
+
+The Emma ↔ Lauren integration design is an active cross-cutting strategic thread. The substantive thinking lives in a dedicated relationship-design conversation in the Life Design project. Concrete next actions arising from that thread are captured in Todoist as parallel tasks (one in Emma, one in Lauren).
 
 ### Parenting
 

@@ -8,6 +8,16 @@ Each entry includes: name, description, architectural fit, status, and any seque
 
 ## Active Entries
 
+### Finance — needs future-state scoping
+
+Current reference doc treatment of finance is thin (Tier 2, "monthly cash flow visibility only"). The system should eventually surface financial state more deliberately — spending patterns, anomalies, runway, big-decision context, possibly investment tracking — but the right shape isn't clear yet. Not a current priority; needs a dedicated conversation.
+
+**Trigger to revisit:** when system-design conversation has open agenda space and finance feels like a real gap, or at the 90-day review. Probably mid-to-late summer after Phase 1-3 ship.
+
+**Out of scope for now:** anything beyond monthly visibility. No proactive build, no agent, no dashboard integration. Capture the lack of structure, revisit when ready.
+
+**Status:** Parked.
+
 ### Voice interface as unified system channel
 
 Add a voice layer to the substrate so the full system (dashboard, agents, scheduler, taste/health/trainer data) is reachable via audio through phone or desk speaker, with all input channels flowing back through one consistent system state.
