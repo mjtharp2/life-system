@@ -88,6 +88,7 @@ Each entry captures: backward review of the prior week, forward plan for the com
 - **System architecture spec sync.** Verify Part 2 updates to `system_architecture.md` actually propagated. Add System Cadences section if missing. Confirm Phase 0 marked complete in the spec.
 - **Tuesday extra-Emma-night experiment.** Did the extra night work for compensation purposes, or did it just add load to a re-entry week?
 - **Friday 7:30+ split-mode block.** Did sequencing work in real-time, or did one mode (build vs. sex discussion prep) crowd the other out?
+- Phase 1 architecture decision: Anthropic Todoist connector covers most of planned Phase 1 build scope. Need to decide before Friday/Saturday build window whether dashboard scope shrinks or proceeds as specced. See system_architecture.md Open Questions.
 
 ### Process Note — Todoist Lifecycle Locked This Week
 

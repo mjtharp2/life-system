@@ -372,6 +372,7 @@ Items deferred to specific phase decisions or pending more information.
 - **Phone capture path** — Todoist mobile is the obvious answer, but worth confirming this is friction-free vs. needing a custom shortcut.
 - **Travel week auto-detection** — what signals reliably indicate travel? Calendar event title patterns? Location change?
 - **Sentinel/Netcov calendar access** — does Tenex IT permit personal app OAuth against work mailbox?
+- **Anthropic Todoist connector vs. dashboard Phase 1 build** — Claude.ai has a native Todoist connector covering find/add/update/complete operations across tasks, projects, sections, labels, filters. This duplicates much of Phase 1's planned dashboard build. Does Phase 1 scope shrink (dashboard becomes read-only Today view + complete; heavy operations move to Claude conversations)? Or does the dashboard build proceed as specced for always-available glance-ability? Decide before Phase 1 build window (May 16-17).
 
 ---
 
