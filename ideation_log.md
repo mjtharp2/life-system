@@ -278,6 +278,3 @@ Catalog of ideas that came up but realistically need waiting on:
 - **Automated taste learning without explicit rating.** Multi-billion-dollar problem at population scale; not viable at single-user scale.
 
 **Status:** Standing reference. Reconsider individual items at quarterly checkpoints if tech landscape shifts. Most likely first to mature: ambient voice (gated by Realtime API + consumer hardware, late 2026/early 2027 window).
-
-<!-- test-ping 2026-05-11 -->
-
