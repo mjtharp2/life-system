@@ -34,34 +34,19 @@ Tokens expire every 30 days. When expired, regenerate using this flow:
 _0XBPWQQ_333c71e3-0fdc-49c6-991f-154ee319f1af
 ```
 
-> TODO: Build automatic token refresh flow so this doesn't require manual steps. (Phase 4 in architecture spec.)
+> TODO: Build automatic token refresh flow so this doesn't require manual steps. OAuth callback infrastructure now exists (Phase 0 complete — multi-route worker with `/oauth/*/callback` stubs and KV token store). Full auto-refresh implementation is Phase 4 in the architecture spec.
 
-### Cloudflare Worker Code
+### Cloudflare Worker
 
-Current worker code (`plain-hill-28ab`). Edit at cloudflare.com → Workers & Pages → plain-hill-28ab → Edit code:
+The dashboard's worker layer is now multi-route, deployed via wrangler from the repo (path: `workers/life-system/`). The previous single-purpose Oura CORS proxy is preserved at the root path; new endpoints exist for health checks and OAuth callback stubs (Todoist, Google) ready for Phase 1 and Phase 2 build.
 
-```javascript
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    const path = url.searchParams.get('path');
-    const token = url.searchParams.get('token');
-    if (!path || !token) return new Response('Missing params', { status: 400 });
-    const ouraUrl = 'https://api.ouraring.com/v2/usercollection/' + decodeURIComponent(path);
-    const ouraRes = await fetch(ouraUrl, { headers: { Authorization: 'Bearer ' + token } });
-    const data = await ouraRes.text();
-    return new Response(data, {
-      status: ouraRes.status,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-  }
-}
-```
+Worker development moved from Cloudflare web UI editing to local code with version control via Claude Code. Refactors and feature additions happen in the repo, not in the dashboard UI.
 
-> Note: Phase 0 of the architecture spec refactors this into a multi-route worker (Oura + Todoist + Calendar + scheduler).
+**Cloudflare resources provisioned:**
+- KV namespace `life-system-tokens` — bound to worker, holds OAuth tokens and config
+- D1 database `life-system-db` — bound to worker, holds relational data (check-ins, scheduling proposals, audit logs)
+
+For details on routes, bindings, and current state, see the worker code at `workers/life-system/` in the repo.
 
 ## What's Built
 
