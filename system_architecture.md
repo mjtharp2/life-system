@@ -15,6 +15,15 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-10
+- Todoist lifecycle review completed (Sunday check-in Part 2). Project structure locked: 9 top-level projects + 3 Work sub-projects, 10 labels, Todoist native priorities for tier, native Deadline + Due date for hard-date vs. do-date distinction.
+- Architectural patterns established: `needs-scoping` state for thematic work with deadline-as-staleness signal; Pattern A (reference doc canonical for phased commitments, Todoist mirrors active phase).
+- Triage cadence: Sunday weekly check-in handles both triage and planning. Friday flex block freed for execution only.
+- Phase progression review cadence defined: weekly surfacing + quarterly formal audit. Quarterly review is system-triggered via System Cadences section, not manual calendar blocking.
+- Decision: condition-based phase transition triggers explicitly rejected. Phase progression evaluation happens via weekly surfacing + quarterly review, based on accumulated observations and deliberate judgment, not predefined criteria.
+- Build project populated with Phase 1/2/3 tasks and habit tracking refactor.
+- Phase 1 (Todoist integration) build window confirmed for May 16-17.
+
 ### 2026-05-08
 - Phase 0 complete. Cloudflare infrastructure layer in place: KV namespace `life-system-tokens` provisioned and bound as `env.TOKENS`. D1 database `life-system-db` provisioned and bound as `env.DB`. Existing Oura proxy worker (`plain-hill-28ab`) brought into the repo at `workers/life-system/`, refactored into multi-route structure: existing Oura proxy preserved at root, `/health` endpoint, `/oauth/todoist/callback` and `/oauth/google/callback` stubs. Worker now deployed via wrangler CLI from repo (no more web UI editing). Phase 1 (Todoist) unblocked — pending Todoist lifecycle review session before coding.
 
@@ -72,37 +81,73 @@ Rationale: extends existing infrastructure, single account, free tier covers usa
 
 ## Todoist Structure
 
-> **Note:** This structure is a working draft. A dedicated review session is planned before Phase 1 begins to finalize lifecycle rules, recurring task handling, overflow policy, and integration with any existing Todoist setup. Do not treat as final.
+The locked structure for task management. Phase 1 build integrates against this.
 
-### Projects
+### Projects (9 top-level + 3 Work sub-projects)
 
-| Project | Purpose | State |
-|---|---|---|
-| Inbox | Capture lands here. Untriaged, no metadata. Processed during flex block. | Untriaged |
-| Active | Triaged tasks. Either scheduled (due date set) or queued (no due date, awaiting next proposal). | Triaged |
-| Waiting On | Blocked on someone else. Mirrors reference doc Waiting On section. | Blocked |
-| Someday | Tier 3 / intentional neglect / parking lot. Not pulled by scheduler. | Deferred |
-| Reference | Non-actionable but worth keeping (links, info, notes). | Reference |
+- **Work** (with sub-projects: Sentinel, Netcov, Tenex)
+- **Health**
+- **Lauren**
+- **Emma**
+- **Family**
+- **Friends**
+- **Self**
+- **Build**
+- **House**
 
-### Labels
+Inbox is Todoist's built-in untriaged bucket, not a separate project.
 
-Labels carry the metadata the scheduler needs to match tasks to blocks.
+### Labels (10 total)
 
-- **Tier** — `@t1` / `@t2` / `@t3`
-- **Domain** — `@health` / `@pro` / `@lauren` / `@emma` / `@parenting` / `@self` / `@social` / `@finance`
-- **Duration** — `@15min` / `@30min` / `@60min` / `@90min` / `@deep` (90+)
-- **Block type** — `@focus` (deep work block) / `@admin` (flex block) / `@anywhere`
+**State (4, exactly one per triaged item):**
+- `active` — being worked, gets scheduled
+- `waiting` — blocked on someone/something else
+- `someday` — deferred, not pulled by scheduler
+- `needs-scoping` — committed but requires design/sequencing before becoming actionable
 
-### Filters
+**Estimated time (5, opportunistic):**
+- `15min`, `30min`, `60min`, `90min`, `2hr+`
 
-The dashboard surfaces tasks via these filter views, not raw projects.
+**Focus (1, opportunistic):**
+- `focus` — requires uninterrupted block
 
-- **Today** — due today, sorted by tier ascending
-- **This Week** — due in next 7 days
-- **Triage Queue** — Inbox project items missing tier label
-- **Queued by Tier** — Active project, no due date, grouped by tier
-- **Waiting On** — Waiting On project
-- **Stuck** — Active, no due date, no activity in 30+ days (parking lot warning)
+### Tier
+
+Todoist native priorities: P1 / P2 / P3 (P4 unused, "no tier set"). No tier label needed.
+
+### Dates
+
+Two distinct fields, both Todoist-native:
+
+- **Deadline** — hard external date by which the work must be complete. Set when there's a real outside-imposed date.
+- **Due date** — the do-date, the day work is planned to happen. Set during Sunday planning for items committed to that week.
+
+Both can coexist on a task. Neither is required.
+
+### Filters (7)
+
+- **Triage Queue** — items in Inbox
+- **Today** — Todoist built-in
+- **This Week** — items due in next 7 days
+- **T1 Active** — `p1` & `@active`
+- **Waiting On** — `@waiting`
+- **Someday Review** — `@someday`
+- **Stuck** — `no date & @active`
+
+### Lifecycle
+
+- **Capture:** lands in Inbox with no metadata required. Friction-free capture per design principle 3.
+- **Triage:** assigned during Sunday weekly check-in/planning session. Process Inbox: assign project, state, tier, deadline if hard, optional time/focus labels.
+- **Sunday planning:** in same session as triage, assign do dates (due dates in Todoist) to active items committed to the week ahead.
+- **Mid-week:** adjust do dates as reality shifts; capture new items to Inbox for next Sunday's triage.
+
+### Pattern: Thematic work needing design before action
+
+Strategic threads that need scoping/sequencing before they produce executable next actions are captured as "Build plan for X" tasks with `needs-scoping` state. A deadline is assigned to create a staleness signal — when the deadline passes without progress, the lack of action surfaces. Substance and design happen in the appropriate context (work Claude account for professional themes, life design conversations for personal themes); the life system tracks only that the work exists and when it's getting stale.
+
+### Pattern: Phased commitments tracked in reference doc, not Todoist
+
+For items that map to named phases of the strategic plan (Health phases 1-3, therapy pipeline tracks, system architecture phases 0-6, etc.), the reference doc (`life_system_reference.md`) is canonical. Todoist contains only items currently in active execution. Future-phase commitments live in the reference doc until their phase activates, at which point they migrate to Todoist as active items. This prevents Todoist bloat with un-actionable future commitments while keeping the strategic plan fully addressable in markdown.
 
 ## Calendar Architecture
 
@@ -151,16 +196,17 @@ After fixed + skeleton placements, classify remaining time:
 
 ### Step D — Match Tasks to Blocks
 
-Pull all tasks from Active project with no due date. Sort by tier ascending (T1 first), then by age descending (older tasks first).
+Pull tasks from active projects (any project except Someday) with `@active` state and no due date set. Sort by deadline urgency first (items with deadlines in the planning window prioritized), then by tier, then by age descending (older first).
 
 For each task, find best-fit block:
-
-1. Block type label must match (focus task → focus block, etc.)
-2. Block duration must accommodate task duration
+1. Block type label (`focus` vs. flex) must match if specified
+2. Block duration must accommodate task duration label if set
 3. Domain-aware placement — relationship tasks go on relationship nights, etc.
 4. Greedy fill: T1 first, then T2. T3 only if blocks remain.
 
-Tasks that don't fit are returned as 'overflow' with reason (no matching block, schedule too full, etc.).
+Tasks that don't fit are returned as 'overflow' with reason.
+
+Todoist's native Deadline field is treated as the hard external date. The due date written by the scheduler is the do-date (planned execution day). The scheduler proposes due dates against deadlines; the user approves.
 
 ### Step E — Render Proposal
 
@@ -175,6 +221,35 @@ Tasks that don't fit are returned as 'overflow' with reason (no matching block, 
 - Create Google Calendar events for skeleton blocks (configurable per block type)
 - Create Google Calendar events for high-tier scheduled deep work (configurable)
 - Log full proposal + approval state to D1 audit table
+
+## Phase Progression Review
+
+Phases across domains (Health 1-3, system build 0-6, therapy pipeline, etc.) advance based on explicit review, not implicit drift. Two cadences:
+
+**Weekly check-in surfacing.** During Sunday check-in's forward plan, a brief scan: any phase showing readiness to advance, or obviously stuck? Light-touch — captures observations as watch-fors or quarterly-review inputs, doesn't formally evaluate. Weekly check-in also surfaces approaching 90-day review when within 2 weeks.
+
+**Quarterly 90-day system review.** System-triggered based on date-of-last-review tracking in the System Cadences section below. When the next review is within 2 weeks, weekly check-in surfaces it as a watch-for. When within 1 week, weekly check-in expands surfacing to include "block ~2 hours for the review, identify inputs." Review session produces a new last-review timestamp that resets the counter.
+
+The review itself: formal phase audit. For each active phase across domains:
+- Are the conditions for advancement met? If yes, advance.
+- Is the phase stuck? If yes, re-scope or accept and re-tier.
+- Are new phases needed that weren't in original plan? If yes, add.
+
+Review is based on accumulated observations from weekly check-ins plus deliberate evaluation at the session. No trigger-definition rigor required (see explicit decision in 2026-05-10 Status entry).
+
+## System Cadences
+
+State tracking for system-managed review cadences. The weekly check-in fetches this section to determine which cadences are approaching their next instance.
+
+### 90-Day System Review
+
+- Last review: never (system formalized 2026-04-26)
+- Next due: 2026-07-26
+- Status: not yet due
+
+### Sunday Weekly Check-in
+
+Recurring weekly, no separate tracking needed.
 
 ## Build Phases
 
