@@ -15,6 +15,18 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-11 — OPEN ARCHITECTURAL DECISION
+
+Native Claude connectors (Todoist, Google Calendar, Apple Health/iPhone, Spotify, Gmail, Drive) now cover most integration scope the dashboard was planned to build. This raises a real architecture question: does Phase 1-3 reorient around the agent layer, with the dashboard becoming a glance surface only, and native connectors as the primary integration layer?
+
+Three architectures emerge:
+
+- **A — Dashboard-centric (current spec):** worker is integration layer, dashboard is operations surface. Build cost high, native connectors duplicated.
+- **B — Agent-centric:** Claude conversations are primary surface, native connectors handle integration. Massively reduced build, but loses always-available glance.
+- **C — Hybrid:** dashboard for glance/regulation-dip use, conversations for operational/multi-step work, worker + D1 for state and scheduled jobs. Likely correct answer.
+
+**Decision needed before Phase 1 build window (May 16-17).** Dedicated reorientation conversation required — this is a strategic architecture decision, not a triage call. Hold Phase 1 build until decided.
+
 ### 2026-05-10
 - Todoist lifecycle review completed (Sunday check-in Part 2). Project structure locked: 9 top-level projects + 3 Work sub-projects, 10 labels, Todoist native priorities for tier, native Deadline + Due date for hard-date vs. do-date distinction.
 - Architectural patterns established: `needs-scoping` state for thematic work with deadline-as-staleness signal; Pattern A (reference doc canonical for phased commitments, Todoist mirrors active phase).
