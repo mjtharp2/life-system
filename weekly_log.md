@@ -79,6 +79,7 @@ Each entry captures: backward review of the prior week, forward plan for the com
 
 ### Watch-Fors for Next Sunday's Review
 
+- **CRITICAL — Architecture reorientation decision before Phase 1 build.** Native connectors (Todoist, Calendar, Health, Spotify, Gmail, Drive) cover most planned Phase 1-3 scope. Evaluate three architectures (dashboard-centric / agent-centric / hybrid) in a dedicated session Friday or Saturday morning before Phase 1 build window. Phase 1 build is paused pending decision. See system_architecture.md 2026-05-11 Status entry.
 - **Wednesday stimulant pattern.** Watch for second instance of "no weekend opportunity → Wednesday use" logic re-firing. Frame: additive to the night, or use-it-or-lose-it?
 - **Capacity pressure direction.** "Slightly pressed" this week — did saying no to commitments help, did pile-up continue, or did it escalate?
 - **Phase 1 ship.** Did it ship by 5/17? If yes, on to next gate. If no, why — scope, energy, or displacement?
