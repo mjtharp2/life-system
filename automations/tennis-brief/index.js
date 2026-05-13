@@ -1,7 +1,7 @@
 // Daily tennis brief: Claude (with web search) → Resend → email.
 // Runs on GitHub Actions. Cron is configured in the workflow YAML, not here.
 
-const RECIPIENTS = ["mjtharp2@gmail.com", "lauren.j.tharp@gmail.com"];
+const RECIPIENTS = ["mjtharp2@gmail.com", "lauren.j.tharp@gmail.com", "samuel.b.morgan0@gmail.com"];
 const FROM = "tennis@mjtharp.com";
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
 
