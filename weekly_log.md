@@ -6,6 +6,108 @@ Companion to `life_system_reference.md` (strategy), `dashboard_state.md` (techni
 
 Each entry captures: backward review of the prior week, forward plan for the coming week, skeleton deviations, and watch-fors. Source data for the 90-day review.
 
+## Week of May 18-25, 2026
+
+*Check-in completed Sunday May 17. First check-in with live Todoist read/write integration.*
+
+### Backward Review — Week of May 11-17
+
+**Headline:** Solid week. Baseline structure starting to form. Watch slight slippage as system moves toward normalcy — week 1 was novelty energy, week 2 was the test, weeks 3+ is where structure either becomes infrastructure or erodes back to defaults.
+
+**Sleep.** Marginally better than prior week (which was 67 7-day avg). Still room for improvement; short of 70 target. Apple Health data pipe surfaced meaningful friction during check-in — needs investigation outside the session.
+
+**Workouts.** Excellent.
+
+**Relationships.** Solid week with Lauren, Addie, and kids. Tuesday extra Emma night experiment from prior week worked well — additive, not load. Integration arc: slight progress; next step clarified as concrete prep work (schedule + format + pre-questions + own answers + agenda), not more meta-planning.
+
+**Work.** Fine, generally positive. No major updates. Still busy, less free time than ideal — accepted as the texture of life right now.
+
+**Outside progress.**
+- **Phase 1 did NOT ship to original deadline (5/17).** This was a deliberate architectural redirect rather than a slip — v1 design has brittleness and inefficiency, new markdowns in progress. Significant pivot.
+- **Todoist read/write integration shipped.** First check-in with live task triage capability — this entry's forward plan was built directly against Todoist state, not just captured in prose.
+- Therapy skipped (Morin out of town). 2-week gap continues; next session next week.
+- EMG still on track for June 12.
+- System architecture spec sync done.
+
+**Stimulants / Ulysses contract.** Solid pattern. No second-instance Wednesday use re-firing. Contract held.
+
+**Regulation events:** None.
+
+**Friday 7:30+ block.** First "wasted" block since system went in — unproductive Friday flex. User handled cleanly without self-flagellation. One data point.
+
+**New-cadence Sunday.** Working. Tonight's session combined backward review + Todoist triage + forward planning successfully (same exercise practically, not separate blocks).
+
+### Forward Plan — Week of May 18-25
+
+**Operating mode:** Substantial deviation week. Wed-Thu work travel (Baltimore), Memorial Day weekend with Emma + in-laws. Schedule has more fixed structure than usual due to travel and family commitments. Slippage watch carries forward — multiple windows are travel/family-coupled rather than skeleton-shaped.
+
+**P1 stack rank for the week:** CS outline builds (Mon evening) → Lauren/Emma integration prep (Wed Baltimore hotel) → Sentinel GTM diagnostic (Thu plane ride home) → marketing VP offer + Netsuite (Mon workday).
+
+**Day by day:**
+
+- **Mon 5/18** — AM workout · standard workday with heavy task stack (Netsuite, Marketing VP offer, Eric Tomah, Fortis, monday.com Sentinel, Claude/code review) · PM Addie shift · **evening working block: CS outline builds for Wed/Thu sessions**
+- **Tue 5/19** — AM VO2 work · standard workday · brief Emma stop after work (non-overnight, skeleton deviation) · evening Lauren
+- **Wed 5/20** — Super early flight to Baltimore · no workout · workday · **Baltimore hotel evening: Lauren + Emma integration prep tasks**
+- **Thu 5/21** — AM hotel gym · plane ride home: **Sentinel GTM diagnostic plan** · return PM · evening Lauren
+- **Fri 5/22** — AM gym · short workday (Memorial Day weekend kickoff) · Emma overnight
+- **Sat 5/23** — AM yoga with Emma (substitutes for Sunday stretching) · Emma day + overnight
+- **Sun 5/24** — AM cardio (Z2 or tennis, substitutes for tennis) · travel to Beverly Shores · Sunday check-in still happens
+- **Mon 5/26 (Memorial Day)** — Beverly Shores → return PM · likely no work, family time
+
+**Workout pattern this week:**
+- Mon AM workout · Tue AM VO2 · Wed rest (travel) · Thu AM hotel gym · Fri AM gym · Sat yoga · Sun cardio. Six sessions counting yoga.
+
+**Todoist changes executed during this check-in:**
+- Sentinel GTM diagnostic plan → due Thu 5/21
+- Both "Next steps on integration" tasks (Lauren + Emma) → due Wed 5/20
+- Netcov cadence + Tenex 100-day → pushed to Tue 5/27
+- Phase 1 Todoist + Phase 2 calendar build tasks deleted (architecture redirect, will rebuild)
+- New: Marketing VP offer made for Sentinel (Mon, P1)
+- New: CS outline builds for Wed/Thu sessions (Mon, P1)
+- Triaged: Claude/code review → Mon, Mykonos → today, office decor → no date P3
+- P3 and below not scheduled this week
+
+### Skeleton Deviations This Week
+
+- Tue brief Emma stop (non-overnight) — additional time, not standard rotation
+- Wed-Thu travel — Lauren M/T/W/F rotation breaks Wed
+- Thu return PM — standard Emma night skipped, compensated by Fri+Sat Emma overnights
+- Sat yoga substitutes for Sun stretching
+- Sun cardio substitutes for tennis (pre-travel)
+- Sun-Mon Beverly Shores = family-of-in-laws weekend, no standard Mon work shape
+
+### Watch-Fors for Next Sunday's Review
+
+- **Slippage as normalcy sets in.** Week 3 is the structural test. Did the system stay load-bearing under a heavy-deviation week, or did multiple deviations compound?
+- **CS outline builds Mon evening.** Did the working block actually happen, or did Mon's heavy daytime stack push it out?
+- **Wed Baltimore hotel evening — integration prep.** Did both Lauren and Emma prep tasks get meaningful movement in one window, or did one crowd out the other?
+- **Thu plane ride GTM work.** Did travel-as-deep-work actually work, or did the assumption break? First experiment with intentional plane-ride deep work.
+- **Friday slip pattern.** Was 5/15's wasted block a one-off, or does 5/22's short workday produce a second instance?
+- **Phase 1 redirect.** Have the new architecture markdowns landed in the repo by next Sunday? What's the new plan, what's the new timeline?
+- **Apple Health data pipe.** Needs investigation outside of check-in sessions — flagged as a future repair task, not a check-in burden.
+- **Todoist as triage surface.** First week running live. Did capture continue (new items landing in Inbox) or did the system go quiet because attention was on the lifecycle work?
+- **Tenex 100-day stale deadline (5/17).** Push date moved, but original deadline remained on the task. Clean up next Sunday or sooner if needed.
+- **Beverly Shores Sunday check-in.** Quiet morning vs. evening — did the timing work? Was there enough quiet to do real planning?
+
+### Phase-Progression Scan (light touch)
+
+- *System architecture:* **Phase 1 + Phase 2 deleted from Todoist pending rebuild.** Significant redirect — user notes brittleness and inefficiency in v1, new markdowns being written. Not a stuck signal; a deliberate architectural pivot. Quarterly-review input: was the v1 design assumption fundamentally wrong, or did it just need refinement?
+- *Health phases:* EMG-gated, pipeline in waiting. June 12 EMG approaching — within 4 weeks now.
+- *Therapy:* 2-week gap (Morin out two consecutive weeks). Next session next week. No advance/stuck signal.
+- *Sentinel GTM diagnostic:* External 6/1 deadline 2 weeks out. Scheduled for Thu plane ride this week. On track.
+
+### 90-Day Review Proximity
+
+No signal available — System Cadences section of `system_architecture.md` still not present (or this entry's check did not catch it). Carry forward as repair task.
+
+### Process Notes
+
+- First check-in with Todoist live read/write. Task triage and planning happened in-thread, in real time. The new cadence (Sunday handles triage + planning together) worked as designed.
+- Apple Health data pipe needs work outside check-in sessions. Mining detailed sleep data inline is high-cost low-value compared to user's own read of the week.
+- Architecture spec sync from last check-in completed.
+
+---
+
 ## Week of May 11-17, 2026
 
 *Check-in completed Sunday May 10. Variant structure: split across Part 1 (backward review), Part 2 (Todoist lifecycle review in System Design thread), Part 3 (forward plan).*
