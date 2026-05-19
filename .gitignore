@@ -16,3 +16,7 @@ node_modules/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Backfill source data — not committed, exists locally only
+scripts/backfill-yamls/
+scripts/backfill-failures/
