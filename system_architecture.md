@@ -15,6 +15,9 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-18
+- Phase 1 (HTTP substrate) complete. Training-log domain tables added to life-system-db (5 tables, 10 indexes, prefixed `training_`). HTTP routes at `/api/training-log/sessions` with bearer-token auth (env.TRAINING_LOG_TOKEN). Worker refactored into modules (src/lib/, src/routes/) so shared DB and auth logic can be reused by Phase 2 MCP server tools. Backfill script ingested 18 historical trainer sessions covering 2026-04-27 through 2026-05-18. Phase 2 (MCP server for conversation writes) unblocked, deferred to a separate session.
+
 ### 2026-05-11 — OPEN ARCHITECTURAL DECISION
 
 Native Claude connectors (Todoist, Google Calendar, Apple Health/iPhone, Spotify, Gmail, Drive) now cover most integration scope the dashboard was planned to build. This raises a real architecture question: does Phase 1-3 reorient around the agent layer, with the dashboard becoming a glance surface only, and native connectors as the primary integration layer?

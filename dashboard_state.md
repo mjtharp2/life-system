@@ -1,6 +1,6 @@
 # Life System Dashboard — Technical State
 
-*Last updated: April 26, 2026 · Companion to `system_architecture.md`*
+*Last updated: May 18, 2026 · Companion to `system_architecture.md`*
 
 ## Infrastructure
 
@@ -12,7 +12,7 @@
 | GitHub Repo | github.com/mjtharp2/life-system (public) |
 | Cloudflare Worker | https://plain-hill-28ab.mjtharp2.workers.dev |
 | Oura OAuth App | Client ID: `5ab2f062-8edd-4887-90d3-b92178fce175` |
-| Worker Purpose | Oura API CORS proxy — passes path + token params to Oura v2 API |
+| Worker Purpose | Multi-route worker — Oura CORS proxy + training-log API + health + OAuth callback stubs (see Cloudflare Worker section) |
 
 ### Oura Token Management
 
@@ -38,15 +38,25 @@ _0XBPWQQ_333c71e3-0fdc-49c6-991f-154ee319f1af
 
 ### Cloudflare Worker
 
-The dashboard's worker layer is now multi-route, deployed via wrangler from the repo (path: `workers/life-system/`). The previous single-purpose Oura CORS proxy is preserved at the root path; new endpoints exist for health checks and OAuth callback stubs (Todoist, Google) ready for Phase 1 and Phase 2 build.
+The worker now lives in the repo at `workers/life-system/` (Phase 0 moved it out of Cloudflare web-UI editing). It is multi-route:
 
-Worker development moved from Cloudflare web UI editing to local code with version control via Claude Code. Refactors and feature additions happen in the repo, not in the dashboard UI.
+- `/` — Oura API CORS proxy, preserved unchanged. The dashboard depends on the exact `?path&token` query pattern; do not change it.
+- `/health` — liveness check; reports KV/D1 binding status.
+- `/api/training-log/sessions` — training-log read/write, bearer-token auth. `POST` inserts a session and children via a D1 `batch()` with idempotency on `(date, type)`; `GET` returns sessions with joined lifts, sets, cardio, and flags.
+- `/oauth/todoist/callback`, `/oauth/google/callback` — OAuth callback stubs for Phase 1 (Todoist) and Phase 2 (Google); log-and-placeholder until those phases ship.
 
-**Cloudflare resources provisioned:**
-- KV namespace `life-system-tokens` — bound to worker, holds OAuth tokens and config
-- D1 database `life-system-db` — bound to worker, holds relational data (check-ins, scheduling proposals, audit logs)
+Source is refactored into modules — `src/index.js` (route dispatch), `src/routes/`, `src/lib/` (shared DB + auth helpers) — so Phase 2 MCP server tools can reuse the same DB and auth logic the HTTP routes use.
 
-For details on routes, bindings, and current state, see the worker code at `workers/life-system/` in the repo.
+**Bindings:**
+- `env.TOKENS` — KV namespace `life-system-tokens` (OAuth tokens, refresh tokens, user config)
+- `env.DB` — D1 database `life-system-db` (check-ins, scheduling proposals, training log)
+
+**Secrets:**
+- `env.TRAINING_LOG_TOKEN` — bearer token gating the `/api/training-log/*` routes
+
+**Training schema:** `workers/life-system/schema.sql` — five tables prefixed `training_` (sessions, lift_entries, sets, cardio_entries, flags) with 10 indexes. Mirrors the trainer YAML structure for a lossless round-trip.
+
+**Deploys:** `cd workers/life-system && npx wrangler deploy` — no more web-UI editing. Refactors and feature additions happen in the repo under version control.
 
 ## What's Built
 
