@@ -1,11 +1,15 @@
 // Life System worker — multi-route handler.
 // - Root path with ?path&token query: Oura CORS proxy (preserved from original)
 // - /health: liveness check
+// - /api/training-log/sessions: training log read/write (bearer-token auth)
 // - /oauth/todoist/callback: Todoist OAuth redirect handler (Phase 1 stub)
 // - /oauth/google/callback: Google OAuth redirect handler (Phase 2 stub)
 //
 // KV binding: env.TOKENS — for OAuth tokens, refresh tokens, user config
-// D1 binding: env.DB — for check-ins, scheduling proposals, audit log
+// D1 binding: env.DB — for check-ins, scheduling proposals, training log
+// Secret: env.TRAINING_LOG_TOKEN — bearer token for /api/training-log/* routes
+
+import { handleTrainingLog } from "./routes/training-log.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -23,6 +27,11 @@ export default {
       });
     }
 
+    // Training log API routes (auth gated inside the handler).
+    if (url.pathname === "/api/training-log/sessions") {
+      return handleTrainingLog(request, env);
+    }
+
     // Oura CORS proxy — preserved at root path with ?path&token query.
     // Dashboard depends on this exact URL pattern; do not change.
     if (url.pathname === "/" && url.searchParams.has("path") && url.searchParams.has("token")) {
@@ -30,8 +39,6 @@ export default {
     }
 
     // OAuth callbacks — stubs for Phase 1 (Todoist) and Phase 2 (Google).
-    // Currently log the callback and return a placeholder. Real token
-    // exchange happens when the respective phases ship.
     if (url.pathname === "/oauth/todoist/callback") {
       return oauthCallbackStub("todoist", url);
     }
