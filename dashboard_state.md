@@ -1,6 +1,6 @@
 # Life System Dashboard — Technical State
 
-*Last updated: May 18, 2026 · Companion to `system_architecture.md`*
+*Last updated: May 24, 2026 · Companion to `system_architecture.md`*
 
 ## Infrastructure
 
@@ -12,7 +12,7 @@
 | GitHub Repo | github.com/mjtharp2/life-system (public) |
 | Cloudflare Worker | https://plain-hill-28ab.mjtharp2.workers.dev |
 | Oura OAuth App | Client ID: `5ab2f062-8edd-4887-90d3-b92178fce175` |
-| Worker Purpose | Multi-route worker — Oura CORS proxy + training-log API + health + OAuth callback stubs (see Cloudflare Worker section) |
+| Worker Purpose | Multi-route worker — Oura CORS proxy + training-log API + MCP server (substrate access for Claude conversations) + health + OAuth callback stubs (see Cloudflare Worker section) |
 
 ### Oura Token Management
 
@@ -44,15 +44,23 @@ The worker now lives in the repo at `workers/life-system/` (Phase 0 moved it out
 - `/health` — liveness check; reports KV/D1 binding status.
 - `/api/training-log/sessions` — training-log read/write, bearer-token auth. `POST` inserts a session and children via a D1 `batch()` with idempotency on `(date, type)`; `GET` returns sessions with joined lifts, sets, cardio, and flags.
 - `/oauth/todoist/callback`, `/oauth/google/callback` — OAuth callback stubs for Phase 1 (Todoist) and Phase 2 (Google); log-and-placeholder until those phases ship.
+- `/mcp` — MCP streamable HTTP endpoint (stateless JSON, protocol 2025-06-18). OAuth 2.1 bearer auth from KV with audience binding to the canonical URI. Hand-rolled JSON-RPC dispatch (the official TS SDK assumes Node req/res streams).
+- `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` — RFC 9728 + RFC 8414 discovery; lets MCP clients auto-configure from a single `/mcp` URL.
+- `/oauth/mcp/authorize`, `/oauth/mcp/token` — OAuth 2.1 endpoints. Pre-shared client credentials (no DCR), PKCE S256 required, RFC 8707 resource indicator bound to `/mcp`. `/authorize` GET renders a minimal Approve consent page; POST issues a single-use authorization code. `/token` handles `authorization_code` and `refresh_token` grants.
 
-Source is refactored into modules — `src/index.js` (route dispatch), `src/routes/`, `src/lib/` (shared DB + auth helpers) — so Phase 2 MCP server tools can reuse the same DB and auth logic the HTTP routes use.
+**MCP tools (v1):** `training_write_session`, `training_query_log`. Both call the same `db.js` functions as the HTTP routes (`validateSessionPayload`, `findExistingSession`, `insertTrainingSession`, `queryTrainingSessions`) — one substrate, two access paths, zero duplicated logic. The tool registry in `src/lib/mcp-tools.js` is structured so future domains (regulation, check-ins, scheduler proposals) add a file + registry entries; no dispatch refactor.
+
+**Substrate access architecture:** The MCP connector is installed account-wide in Claude.ai and is the **primary** read/write path for substrate data from any Claude conversation (trainer, future scheduler/review agents). The Phase 1 `/api/training-log/*` HTTP routes are the **secondary** path, retained for scheduled agents, Claude Code, and curl. Training is the first domain exposed; future domains add tools to the same connector.
+
+Source is refactored into modules — `src/index.js` (route dispatch), `src/routes/`, `src/lib/` (shared DB + auth helpers + MCP tool registry + OAuth artifact store).
 
 **Bindings:**
-- `env.TOKENS` — KV namespace `life-system-tokens` (OAuth tokens, refresh tokens, user config)
+- `env.TOKENS` — KV namespace `life-system-tokens` (OAuth tokens, refresh tokens, MCP access/refresh tokens, user config)
 - `env.DB` — D1 database `life-system-db` (check-ins, scheduling proposals, training log)
 
 **Secrets:**
 - `env.TRAINING_LOG_TOKEN` — bearer token gating the `/api/training-log/*` routes
+- `env.MCP_CLIENT_ID`, `env.MCP_CLIENT_SECRET` — pre-shared OAuth client credentials for the MCP server; pasted into the Claude.ai custom connector's Advanced Settings
 
 **Training schema:** `workers/life-system/schema.sql` — five tables prefixed `training_` (sessions, lift_entries, sets, cardio_entries, flags) with 10 indexes. Mirrors the trainer YAML structure for a lossless round-trip.
 

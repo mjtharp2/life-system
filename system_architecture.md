@@ -15,6 +15,9 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-24
+- Phase 2 (MCP server) complete. The life-system worker now hosts an OAuth 2.1 MCP server exposing the substrate to Claude.ai conversations. This is now the PRIMARY conversation-side interface to all substrate data — every Claude conversation (trainer, future scheduler/review agents) reads and writes through this one connector. The Phase 1 HTTP routes remain as the secondary path for scheduled agents, Claude Code, and curl. Two tools live: training_write_session and training_query_log, both calling the same db.js functions as the HTTP routes. Tool registry is structured so future domains (regulation events, check-ins, scheduler proposals, etc.) add a file + registry entries with no dispatch refactor. Connector installed account-wide; read path verified end-to-end against live D1. Write path not yet verified — pending one supervised write test before trainer instructions flip to auto-write.
+
 ### 2026-05-18
 - Phase 1 (HTTP substrate) complete. Training-log domain tables added to life-system-db (5 tables, 10 indexes, prefixed `training_`). HTTP routes at `/api/training-log/sessions` with bearer-token auth (env.TRAINING_LOG_TOKEN). Worker refactored into modules (src/lib/, src/routes/) so shared DB and auth logic can be reused by Phase 2 MCP server tools. Backfill script ingested 18 historical trainer sessions covering 2026-04-27 through 2026-05-18. Phase 2 (MCP server for conversation writes) unblocked, deferred to a separate session.
 
