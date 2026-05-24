@@ -15,6 +15,33 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-24 — Calendar federation wired and verified
+
+All four scheduler input sources are now live and verified end-to-end:
+
+- **Sentinel** work calendar via the Microsoft 365 connector (full detail,
+  UTC-stamped).
+- **Tenex** work calendar via published ICS subscribed into personal Google
+  Calendar, read through the Google connector. Reached this way because the
+  M365 connector binds one tenant at a time and Sentinel holds that slot;
+  Tenex-through-Google avoids a second tenant connection and keeps firm data
+  out of a direct connector grant.
+- **Google** personal calendar via the native connector.
+- **Todoist** via native connector (previously verified); **trainer log** via
+  the custom MCP server / D1 (previously built).
+
+Federation is read-time, not mirrored — consistent with the substrate model
+(external systems remain their own source of truth). Access methods, the
+match-by-import-type rule for the Tenex feed, and the three preprocessing rules
+(normalize to Central; drop `transparency: transparent` cancelled events; read
+availability not content) are documented in dashboard_state.md → Data Sources
+& Access.
+
+This completes the input layer for the "poor man's scheduler" — the weekly
+planner can now read all sources live within a Sunday check-in conversation. The
+competent scheduler agent remains future work; spec it from what the poor man's
+version surfaces in practice rather than designing in the abstract.
+
 ### 2026-05-24
 - Phase 2 (MCP server) complete. The life-system worker now hosts an OAuth 2.1 MCP server exposing the substrate to Claude.ai conversations. This is now the PRIMARY conversation-side interface to all substrate data — every Claude conversation (trainer, future scheduler/review agents) reads and writes through this one connector. The Phase 1 HTTP routes remain as the secondary path for scheduled agents, Claude Code, and curl. Two tools live: training_write_session and training_query_log, both calling the same db.js functions as the HTTP routes. Tool registry is structured so future domains (regulation events, check-ins, scheduler proposals, etc.) add a file + registry entries with no dispatch refactor. Connector installed account-wide; read path verified end-to-end against live D1. Write path not yet verified — pending one supervised write test before trainer instructions flip to auto-write.
 
