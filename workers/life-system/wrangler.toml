@@ -13,3 +13,8 @@ id = "9235bf7000194c89ad4c544a95febc4c"
 binding = "DB"
 database_name = "life-system-db"
 database_id = "ee876af9-61ba-4f96-8123-447815fb9850"
+
+# Secrets (set out-of-band via `wrangler secret put <NAME>`, never committed):
+#   TRAINING_LOG_TOKEN  — bearer token for /api/training-log/* routes
+#   MCP_CLIENT_ID       — pre-shared OAuth client_id for the MCP server
+#   MCP_CLIENT_SECRET   — pre-shared OAuth client_secret for the MCP server
