@@ -199,6 +199,59 @@ ouraData = {
 }
 ```
 
+## Data Sources & Access
+
+The system federates across external sources rather than mirroring them (see
+substrate model in system_architecture.md). Each source notes how it's reached
+and any preprocessing required before an agent can use it.
+
+### Source-of-truth map
+
+| Domain | Source of truth | Access method | Notes |
+|---|---|---|---|
+| Tasks / ideation | Todoist | Native Claude connector | Verified working. Taxonomy already built. |
+| Personal calendar | Google Calendar (personal) | Native Claude connector | Primary calendar (mjtharp2@gmail.com) + subscribed feeds. |
+| Sentinel work calendar | Sentinel M365 tenant | Microsoft 365 connector | Full event detail. Events return UTC-stamped. |
+| Tenex work calendar | Tenex M365 tenant | Published ICS → subscribed into personal Google Calendar | Reached via the Google connector, NOT the M365 connector (one tenant per M365 connector; Sentinel holds that slot). Appears as the sole `@import.calendar.google.com` calendar, summary "Calendar" (name is fixed by the feed and cannot be renamed in Google). Mixed per-event timezones in feed. |
+| Health / sleep / workouts | Apple Health (aggregates Oura) | Apple Health connector | Replaces former dashboard Oura panel. |
+| Training log | D1 (`life-system-db`, `training_*` tables) | Custom MCP server (conversation agents) + bearer-token HTTP routes (scheduled/build agents) | System's own substrate, not external. |
+| Check-ins / regulation events / scheduler state | D1 (`life-system-db`) | Same dual-path as training log | System's own substrate. |
+| Strategy / history / decisions | This repo (markdown) | web_fetch (read) / Claude Code (write) | Tiered; see system_architecture.md. |
+
+### Weekly planner / check-in calendar access
+
+The Sunday weekly planner runs as a Claude.ai conversation and reads calendars
+via the connectors at session start. It does NOT use hardcoded calendar IDs
+(Google can reassign import IDs on re-subscribe). Method:
+
+1. **Google** — call `list_calendars`. Read the personal primary
+   (mjtharp2@gmail.com) and the **Tenex feed, identified as the sole
+   `@import.calendar.google.com` entry** (summary "Calendar"; the only
+   import-type calendar now that the stale Gemspring feed is deleted).
+2. **Sentinel** — call the Microsoft 365 connector for the Sentinel tenant.
+3. Apply the federation preprocessing rules below.
+
+NOTE: match-by-import-type holds only while Tenex is the single ICS subscription.
+If another `@import` feed is ever added, disambiguation breaks — at that point
+move calendar IDs into a `config` table in `life-system-db` and have the planner
+read them via the MCP connector. (Deferred; not needed today.)
+
+### Calendar federation — preprocessing rules
+
+Any agent reading calendars across these sources MUST:
+
+1. **Normalize all times to America/Chicago (Central).** Sources return mixed
+   timezones — Sentinel M365 returns UTC; the Tenex ICS feed carries mixed
+   per-event timezones (America/Chicago and America/New_York within the same
+   feed). Trusting raw timezone fields will misplace events.
+2. **Drop cancelled events.** Cancelled occurrences persist as ghost entries in
+   the ICS feed. Filter on `transparency: transparent` (reliable) rather than
+   the "Canceled:" subject prefix (cosmetic).
+3. **Read availability, not content.** The scheduler needs times + busy/free +
+   tentative status, not meeting bodies, attendees, or join links. For M365,
+   key on `showAs` (busy / tentative / free). Pulling full event detail is for
+   identity/verification only, not routine scheduling.
+
 ---
 
 *Companion to `life_system_reference.md` (strategy) and `system_architecture.md` (build plan). Update at each phase boundary or material change.*
