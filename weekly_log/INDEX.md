@@ -25,12 +25,13 @@ Use `not_recorded` for any field the entry doesn't capture. Don't infer.
 
 ## Current pointer
 
-Most recent entry: **`2026-05-18.md`** (week of May 18-25, 2026; check-in 2026-05-17).
+Most recent entry: **`2026-05-25.md`** (week of May 25-31, 2026; check-in 2026-05-25, holiday-shifted).
 
 ## Recent weeks
 
 | File | Week | Headline | Sleep 7d (prior wk) | Regulation | Contract |
 |---|---|---|---|---|---|
+| `2026-05-25.md` | May 25-31 | Strong week (8/10). Back to standard rhythm; meeting-saturated work week, focus work carved from the workday. First live autonomous Todoist + calendar writes. | not_recorded | none | held |
 | `2026-05-18.md` | May 18-25 | Solid week. Baseline structure starting to form. Watch slippage as system moves toward normalcy. | not_recorded | none | held |
 | `2026-05-11.md` | May 11-17 | Solid. Week-1 euphoria fading as predicted; system held under vacation disruption. Phase 0 shipped Friday. | 67 | none | wavered |
 | `2026-05-04.md` | May 4-11 | Excellent first week. Strong start, motivating. Reframe is the bigger win than execution. | not_recorded | none | held |
@@ -39,18 +40,16 @@ Most recent entry: **`2026-05-18.md`** (week of May 18-25, 2026; check-in 2026-0
 
 ## Active watch-fors (carry into next check-in's backward review)
 
-From `2026-05-18.md`:
+From `2026-05-25.md`:
 
-- `slippage_as_normalcy` — week 3 is the structural test under a heavy-deviation week
-- `cs_outline_builds_mon_evening` — did Mon's heavy daytime stack push the evening working block out?
-- `baltimore_integration_prep` — did Lauren + Emma prep both move in one hotel window?
-- `plane_ride_deep_work` — first experiment with travel-as-deep-work (Sentinel GTM diagnostic)
-- `friday_slip_pattern` — was 5/15's wasted block a one-off, or did 5/22's short workday produce a second instance?
-- `phase_1_redirect` — have the new architecture markdowns landed?
-- `apple_health_pipe` — needs investigation outside check-in sessions
-- `todoist_as_triage_surface` — did capture continue in week 1 of live read/write?
-- `tenex_100day_stale_deadline` — original 5/17 deadline still on the task after push
-- `beverly_shores_checkin_timing` — did Sunday check-in work away from home?
+- `vo2_third_attempt` — slid twice; Thu 5/28 is attempt three with a protected slot
+- `work_focus_fit_offhours` — did GTM (Wed) + two CS blocks (Thu) survive the wall-to-wall meeting week?
+- `family5_sunday` — first scheduled all-five block; additive or load?
+- `tue_pm_lift` — first evening lift under the shuffled-shift pattern
+- `friday_date_night` — PM Addie shift + sitter date; did it come together?
+- `lauren_integration_still_blocked` — June 9 review's upstream; still blocked?
+- `first_autonomous_writes` — did this session's live writes hold up in practice?
+- `achilles_watch` — probable early tendinopathy; eval if not settling in ~a week
 
 ---
 
