@@ -1,135 +1,121 @@
 # Weekly Check-In — Session Protocol
 
-*The ritual-runner for the weekly check-in. A fresh thread reads this, runs the
-session, and writes a new entry to `weekly_log/`. Tier 2 — loaded when running a
-check-in, not every conversation.*
+*The ritual-runner for the weekly check-in. A fresh thread reads this and runs
+the session as a conversation, then writes a new entry to `weekly_log/`. Tier 2
+— loaded when running a check-in, not every conversation.*
 
-## What this session is
+**How to run this: it's a conversation, not a report.** Ask, wait for the
+answer, follow it. Gather context from the user before analyzing or
+recommending — in both the backward and forward halves. Read substrate to
+support and cross-check what they tell you, never to pre-form conclusions and
+present them. Keep your turns short. Do not narrate your own process, do not
+display step structure or taxonomies to the user, do not open with walls of
+analysis. One or two things at a time.
 
-One session, two halves: backward review of the week just completed, then
-forward plan for the week ahead. The forward plan is scheduler-assisted — it
-reads live calendars, tasks, and substrate and proposes the week against the
-skeleton. Output is a new `weekly_log/YYYY-MM-DD.md` entry and an updated INDEX.
+**Read path note:** `web_fetch` serves stale cached copies of this repo. Use
+curl/bash against `raw.githubusercontent.com` where available. If you must use
+web_fetch and a doc looks stale or contradicts the project instructions,
+re-pull before trusting it.
 
-Runs as its own fresh thread each week. Continuity lives in the substrate (the
-log library), not thread history. Do not rely on prior conversation — read the
-library.
+## Step 0 — Orient quietly
 
-## Step 0 — Orient (read substrate first)
+Read, without commentary to the user:
+- this protocol
+- `weekly_log/INDEX.md` (conventions, current pointer, active watch-fors)
+- the most recent entry (the current pointer in INDEX)
+- `life_system_reference.md` (strategy, skeleton, regulation protocol)
+- `system_architecture.md` (build state + System Cadences, for the 90-day check)
 
-Read, in order:
-1. `weekly_log/INDEX.md` — conventions, current pointer, recent-weeks
-   trajectory, and the active watch-fors from last week. These drive the
-   backward review.
-2. The most recent entry (current pointer from INDEX) — last week's full
-   backward review, forward plan, watch-fors.
-3. `life_system_reference.md` — strategy, tiers, weekly skeleton, regulation
-   protocol.
-4. `system_architecture.md` — current build state + System Cadences section
-   (for the 90-day proximity check).
+Note today's date; compute the output filename `weekly_log/YYYY-MM-DD.md`
+(Monday of the week being planned). Do not report orientation back to the user
+— just begin the conversation.
 
-Compute the Monday of the week being planned (the upcoming Monday if today is
-Sunday; today itself if today is Monday) = this session's output filename
-`weekly_log/YYYY-MM-DD.md`.
+## Step 1 — Backward review (open with their read)
 
-## Step 1 — Backward Review
+**Open by asking how the week went — their read first, before you analyze.**
+Let them talk. Then walk last week's watch-fors *with* them, one thread at a
+time, bringing in what the substrate shows as you go (trainer log via
+`training_query_log`; Todoist completions; calendar actuals; Apple Health) — as
+support for the conversation, not as a pre-written verdict you present.
 
-Open on last week's watch-fors. Walk each: resolved, persisting, or escalating?
-That's the spine.
+Cover, conversationally and without interrogating: regulation events
+(none / L1 / L2 / L3), stimulant/vape contract, sleep, relationships, work,
+what shipped vs. slipped. Where the substrate already answers something,
+confirm it briefly rather than asking.
 
-Assemble actuals from substrate, not memory:
-- **Sleep/recovery** — Apple Health connector: 7-day sleep avg, notable nights,
-  RHR/HRV if relevant.
-- **Workouts** — trainer log via custom MCP `training_query_log` (recent
-  sessions) cross-referenced with Health (performed). Adherence vs. planned.
-- **Tasks shipped vs. slipped** — Todoist: due last week, completed,
-  rescheduled, open. Flag anything rescheduled 3+ times.
-- **Calendar actuals** — skeleton called-for vs. what calendars show happened
-  (skeleton compliance: workouts, relationship nights, focus blocks).
+**Close the backward review with an open catch question:** "Anything else from
+the week worth capturing that I haven't asked about?"
 
-Qualitative layer the user supplies in conversation (do not fabricate — prompt
-for these): relationships, work, regulation state, stimulant/vape contract,
-anything notable.
+## Step 2 — Forward gathering (ask before planning)
 
-**Regulation events** — explicitly ask and record: none / Level 1 / 2 / 3.
+**Before any planning, ask the small opening set and wait for the answers:**
+- What's idiosyncratic about the coming week — anything different from the
+  normal skeleton?
+- Any fixed parenting blocks / immovable Tharp Family commitments to plan
+  around?
 
-Produce a Headline (one line) and the structured-signal values for frontmatter.
-
-## Step 2 — Forward Plan (scheduler-assisted)
-
-### 2a. Read constraints (availability, not content)
-
-Read times + busy/tentative/free; do NOT pull meeting bodies/attendees.
+These are the baseline the plan is built on. Only after you have them, read the
+week's constraints to fill in *around* what they told you — availability, not
+content (times + busy/tentative/free; don't pull meeting bodies/attendees):
 - **Google** — `list_calendars`, then read ONLY allowlisted calendars: personal
   primary, Tharp Family (`@group` ID), Tenex feed (sole
   `@import.calendar.google.com` entry). Ignore sports / Home Maintenance /
   Emma's / legacy Family.
 - **Sentinel** — Microsoft 365 connector, Sentinel tenant.
-- **Todoist** — active tasks with coming week in scope; do-dated items; queued
-  items eligible to schedule.
+- **Todoist** — active + queued items in scope for the coming week.
 
-Preprocessing (see dashboard_state.md → Data Sources for full rules):
-- Normalize all times to America/Chicago. Sentinel returns UTC; Tenex feed
-  carries mixed per-event timezones. Normalize before reasoning.
-- Drop cancelled events — filter `transparency: transparent`, not "Canceled:"
-  subject text.
-- For M365, key on `showAs` (busy/tentative/free); treat tentative as soft.
+Preprocessing (full rules in dashboard_state.md → Data Sources & Access):
+normalize all times to America/Chicago (Sentinel returns UTC; Tenex feed
+mixed); drop cancelled events (`transparency: transparent`, not the "Canceled:"
+subject text); for M365 key on `showAs`, treat tentative as soft.
 
-### 2b. Propose the week
+## Step 3 — Triage (conversational)
 
-Against the skeleton (reference doc) and the constraints, propose day-by-day.
+Ask about live to-dos as part of gathering — not autonomous Inbox processing.
+What's actually live, what's stale, what's committed to the coming week. Work
+through Inbox items with the user; assign project / tier / deadline / dates.
+Catch stale deadlines by asking, don't auto-fix. Sunday is the primary triage
+block; Friday flex is execution, not triage.
+
+## Step 4 — Propose the week
+
+On the gathered baseline + constraints, propose the coming week day-by-day.
 Shaping inputs:
-- Skeleton is the load-bearing default (gym/cardio/tennis, relationship nights,
-  focus blocks, family time).
-- Last week's slips — carry forward; escalate 3x-rescheduled items.
-- Recent regulation state — if Level 2 signals or pressed capacity, size the
-  week SMALLER. The system serves regulation, not optimization.
-- Trainer's recent/upcoming programming — protect prescribed sessions +
+- The skeleton is the load-bearing default (gym/cardio/tennis, relationship
+  nights, focus blocks, family time).
+- Last week's slips — carry forward; escalate anything rescheduled 3+ times.
+- Recent regulation state — if the week was pressed or showed L2 signals, size
+  the coming week SMALLER. The system serves regulation, not optimization.
+- Trainer's recent/upcoming programming — protect prescribed sessions and
   recovery windows.
-- Sentinel + Tenex commitments are immovable constraints; fit around them.
+- Sentinel + Tenex commitments are immovable; fit around them.
 
-Output as a reviewable day-by-day block. PROPOSE ONLY — no calendar writes in
-this step. User reviews/edits in conversation.
+**Propose only — do not write to calendars.** The user reviews and edits.
 
-### 2c. Write-back (after approval, per-surface rules)
+Write-back, once trusted: Todoist + personal Google primary directly; Tharp
+Family confirm-before-each add/move/edit/delete (re-read it immediately before
+writing — shared calendar Lauren writes and nannies coordinate against); never
+write Sentinel, Tenex, or any M365 calendar. Early runs: write-back stays
+manual (user makes the entries). Do not combine first-proposal with
+first-autonomous-write.
 
-Only after user approves:
-- **Todoist** — do-dates on committed items.
-- **Personal Google primary** — personal blocks (workouts, focus, appts).
-- **Tharp Family** — parenting/family events ONLY; confirm before each
-  add/move/edit/delete; re-read the calendar immediately before writing so the
-  change reflects current state (shared calendar — Lauren writes, nannies read
-  and coordinate against it).
-- **Never write** — Sentinel, Tenex, any M365 calendar. Read-only constraints.
+## Step 5 — Phase / 90-day scan (light touch)
 
-Early-runs note: write-back may stay manual (user makes entries) until propose
-quality and write path are both trusted. Do not combine first-proposal and
-first-autonomous-write in one session.
+Quick read on whether any strategic phase (health, system architecture, therapy
+track) shows readiness to advance or signs of being stuck — surface as
+watch-fors, don't deep-evaluate (that's the quarterly job). 90-day proximity
+from System Cadences: within 2 weeks → watch-for; within 1 week → "block ~2
+hours, identify inputs"; due/overdue → next check-in is a 90-day review session.
 
-## Step 3 — Phase scan + 90-day proximity (light touch)
+## Step 6 — Write the entry
 
-- Phase-progression scan: quick read on whether any strategic phase (health,
-  system architecture, therapy track) shows readiness to advance or signs of
-  stuck. Light surfacing only — capture as watch-fors or 90-day-review inputs.
-  Rigorous evaluation is the quarterly job.
-- 90-day proximity: read System Cadences in system_architecture.md. Within 2
-  weeks → watch-for. Within 1 week → add "block ~2 hours, identify inputs."
-  Due/overdue → next week is a 90-day review session.
+Write `weekly_log/YYYY-MM-DD.md`: frontmatter (signals from this session) +
+narrative (Backward Review, Forward Plan, Skeleton Deviations, Watch-Fors,
+Phase Scan, any Process Notes). Verbatim user context where it matters; don't
+over-summarize.
 
-## Step 4 — Triage (Sunday is primary triage block)
+Update `INDEX.md`: move the current pointer to this entry, prepend it to the
+recent-weeks table, refresh the active watch-fors.
 
-Process Todoist Inbox: assign project / tier / deadline / optional time + focus
-labels. Assign do-dates to items committed to the week ahead. Friday flex block
-is execution, not triage.
-
-## Step 5 — Write the entry
-
-Write `weekly_log/YYYY-MM-DD.md` (Monday of the planned week) in library
-format: frontmatter (from this session's signals) + narrative (Backward Review,
-Forward Plan, Skeleton Deviations, Watch-Fors, Phase Scan, Process Notes).
-
-Update INDEX.md: move current pointer to this entry, prepend to recent-weeks
-table, refresh active watch-fors.
-
-Watch-Fors are the handoff — write them as the explicit things next week's
-backward review opens on.
+Watch-Fors are the handoff to next week — write them as the explicit things
+next week's backward review opens on.
