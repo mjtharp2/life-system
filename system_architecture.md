@@ -15,6 +15,26 @@ Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_stat
 
 Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
 
+### 2026-05-25 — Weekly ritual migrated to library + protocol model
+
+`weekly_log.md` (single append-only file) split into `weekly_log/` — per-week
+files (`YYYY-MM-DD.md`, named by the Monday of the week being planned) with
+frontmatter (queryable signals) + verbatim narrative, plus `INDEX.md`
+(conventions, current pointer, recent-weeks trajectory, active watch-fors).
+Original archived to `archive/weekly_log_pre-library.md`.
+
+The check-in process, previously described inline in project instructions, is
+now `weekly_checkin_protocol.md` (Tier 2) — a fresh thread reads it and runs the
+ritual: backward review off prior watch-fors, scheduler-assisted forward plan
+(reads Sentinel via M365 connector, Tenex + personal + Tharp Family via Google
+connector, Todoist, trainer MCP; preprocessing per dashboard_state.md Data
+Sources), phase/90-day scan, triage, writes the new entry.
+
+Rationale: continuity moves to substrate (queryable library) rather than thread
+scrollback; fresh-thread-per-week reading the library never degrades, unlike a
+rolling thread. Scheduler-propose logic lives in the protocol; first runs may
+keep write-back manual until propose quality + write path are trusted.
+
 ### 2026-05-24 — Calendar federation wired and verified
 
 Scheduler input sources are live and verified end-to-end:
