@@ -209,48 +209,92 @@ and any preprocessing required before an agent can use it.
 
 | Domain | Source of truth | Access method | Notes |
 |---|---|---|---|
-| Tasks / ideation | Todoist | Native Claude connector | Verified working. Taxonomy already built. |
-| Personal calendar | Google Calendar (personal) | Native Claude connector | Primary calendar (mjtharp2@gmail.com) + subscribed feeds. |
-| Sentinel work calendar | Sentinel M365 tenant | Microsoft 365 connector | Full event detail. Events return UTC-stamped. |
-| Tenex work calendar | Tenex M365 tenant | Published ICS → subscribed into personal Google Calendar | Reached via the Google connector, NOT the M365 connector (one tenant per M365 connector; Sentinel holds that slot). Appears as the sole `@import.calendar.google.com` calendar, summary "Calendar" (name is fixed by the feed and cannot be renamed in Google). Mixed per-event timezones in feed. |
+| Tasks / ideation | Todoist | Native Claude connector (read/write) | Verified working. Taxonomy already built. |
+| Personal calendar | Google Calendar (personal) | Native Claude connector (read/write) | Primary + specific allowlisted calendars only — see allowlist below. |
+| Sentinel work calendar | Sentinel M365 tenant | Microsoft 365 connector (read-only) | Full event detail. Events return UTC-stamped. |
+| Tenex work calendar | Tenex M365 tenant | Published ICS → subscribed into personal Google Calendar (read-only) | Reached via the Google connector, NOT the M365 connector (one tenant per M365 connector; Sentinel holds that slot). Appears as the sole `@import.calendar.google.com` entry, summary "Calendar" (name fixed by the feed, can't be renamed in Google). Mixed per-event timezones. Physically read-only (can't write back to a subscribed ICS feed). |
 | Health / sleep / workouts | Apple Health (aggregates Oura) | Apple Health connector | Replaces former dashboard Oura panel. |
 | Training log | D1 (`life-system-db`, `training_*` tables) | Custom MCP server (conversation agents) + bearer-token HTTP routes (scheduled/build agents) | System's own substrate, not external. |
 | Check-ins / regulation events / scheduler state | D1 (`life-system-db`) | Same dual-path as training log | System's own substrate. |
 | Strategy / history / decisions | This repo (markdown) | web_fetch (read) / Claude Code (write) | Tiered; see system_architecture.md. |
 
-### Weekly planner / check-in calendar access
+### Google Calendar — scheduling allowlist
 
-The Sunday weekly planner runs as a Claude.ai conversation and reads calendars
-via the connectors at session start. It does NOT use hardcoded calendar IDs
-(Google can reassign import IDs on re-subscribe). Method:
+The personal Google instance holds many calendars; only a specified subset are
+scheduling inputs. The planner reads ONLY these:
 
-1. **Google** — call `list_calendars`. Read the personal primary
-   (mjtharp2@gmail.com) and the **Tenex feed, identified as the sole
-   `@import.calendar.google.com` entry** (summary "Calendar"; the only
-   import-type calendar now that the stale Gemspring feed is deleted).
+| Calendar | ID / identification | Role |
+|---|---|---|
+| Personal primary | mjtharp2@gmail.com | Personal commitments. Default WRITE target. |
+| Tharp Family | `daf34f44e930e4f2be5ded80522f7fa59c327bf26f849130d67a9e8c26e26e65@group.calendar.google.com` | Parenting shifts + family-coordinated events. READ constraint AND WRITE target (see write routing). |
+| Tenex (work) | sole `@import.calendar.google.com` entry (summary "Calendar") | Tenex work commitments. READ-only. |
+
+**Explicitly excluded from scheduling reads:**
+- Sports feeds (Bulls, Cubs, Bears, Illini basketball/football, Chelsea) — would
+  flood proposals with false "busy" blocks for games not necessarily attended.
+- Home Maintenance Calendar — reference reminders, not time-blocking commitments.
+- Emma's Calendar (emm.bernstein@gmail.com) — another person's time; visibility
+  only, not Matt's scheduling constraint.
+- "Family" calendar (`family11194695938602297769`, UTC) — superseded by Tharp
+  Family Calendar for scheduling purposes.
+
+Reading the full instance indiscriminately degrades proposals. The allowlist is
+the input contract; revisit it deliberately if a new calendar should count.
+
+### Weekly planner / assistant — calendar access method
+
+The planner/assistant runs as a Claude.ai conversation and reads sources via the
+connectors at session start. It does NOT use hardcoded calendar IDs where
+avoidable (Google can reassign import IDs on re-subscribe). Method:
+
+1. **Google** — call `list_calendars`, then read ONLY the allowlisted calendars:
+   personal primary, Tharp Family (by the `@group` ID above), and the Tenex feed
+   (the sole `@import.calendar.google.com` entry). Ignore all others.
 2. **Sentinel** — call the Microsoft 365 connector for the Sentinel tenant.
-3. Apply the federation preprocessing rules below.
+3. **Todoist** — native connector.
+4. **Substrate** — trainer log, check-ins, regulation state via the custom MCP
+   server / D1; skeleton + tiers from the reference docs.
+5. Apply the preprocessing and write rules below.
 
-NOTE: match-by-import-type holds only while Tenex is the single ICS subscription.
-If another `@import` feed is ever added, disambiguation breaks — at that point
-move calendar IDs into a `config` table in `life-system-db` and have the planner
-read them via the MCP connector. (Deferred; not needed today.)
+NOTE: Tenex match-by-import-type holds only while it's the single ICS
+subscription. If another `@import` feed is ever added, disambiguation breaks —
+at that point move calendar IDs into a `config` table in `life-system-db` and
+read them via MCP. (Deferred; not needed today.)
 
-### Calendar federation — preprocessing rules
+### Federation, preprocessing, and write rules
 
-Any agent reading calendars across these sources MUST:
+Any agent reading these sources or writing back MUST:
 
 1. **Normalize all times to America/Chicago (Central).** Sources return mixed
    timezones — Sentinel M365 returns UTC; the Tenex ICS feed carries mixed
    per-event timezones (America/Chicago and America/New_York within the same
    feed). Trusting raw timezone fields will misplace events.
+
 2. **Drop cancelled events.** Cancelled occurrences persist as ghost entries in
    the ICS feed. Filter on `transparency: transparent` (reliable) rather than
    the "Canceled:" subject prefix (cosmetic).
-3. **Read availability, not content.** The scheduler needs times + busy/free +
-   tentative status, not meeting bodies, attendees, or join links. For M365,
-   key on `showAs` (busy / tentative / free). Pulling full event detail is for
+
+3. **Read availability, not content.** Scheduling needs times + busy/free +
+   tentative status, not meeting bodies, attendees, or join links. For M365, key
+   on `showAs` (busy / tentative / free). Full event detail is for
    identity/verification only, not routine scheduling.
+
+4. **Write routing.** Writes route by target:
+   - **Personal primary (mjtharp2@gmail.com)** — workouts, focus blocks,
+     personal appointments/tasks. Default write target. May earn autonomous
+     (no-confirm) writes once the agent's judgment is proven.
+   - **Tharp Family** — parenting shifts and family-coordinated events. Full
+     read/write: the agent can add, move, edit, and delete here — managing
+     parenting-shift logistics is a primary function. ONE GUARDRAIL: confirm
+     before any add / move / edit / delete on this calendar. It's shared
+     (Matt + Lauren write; nannies read and coordinate against it), so a quick
+     confirm before any mutation is cheap insurance against a change propagating
+     wrongly to childcare. Reads and proposals need no confirmation — only the
+     mutation itself. Before showing a confirm, RE-READ this calendar so the
+     proposed change reflects current state (Lauren may have edited it since
+     session start) — correctness, not ceremony.
+   - **Never write** — Tenex feed (physically read-only ICS), Sentinel / any
+     M365 work calendar (read-only by choice). Constraints, not targets.
 
 ---
 
