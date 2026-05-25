@@ -77,6 +77,14 @@ through Inbox items with the user; assign project / tier / deadline / dates.
 Catch stale deadlines by asking, don't auto-fix. Sunday is the primary triage
 block; Friday flex is execution, not triage.
 
+**Read the full backlog, not a filtered slice.** Pull every open task across all
+projects and all states — @active, waiting, and needs-scoping, dated and
+undated — not just dated items, not just the Inbox, not just P1. Use priority to
+surface and rank (highest-tier first), never as a filter that hides lower-tier
+work. Failure mode to avoid: triaging only dated items + Inbox (which buries
+undated high-tier work parked in waiting/needs-scoping), or filtering to P1
+(which ignores the rest of the backlog). Categorize by domain, offer windows.
+
 ## Step 4 — Propose the week
 
 On the gathered baseline + constraints, propose the coming week day-by-day.
@@ -89,6 +97,14 @@ Shaping inputs:
 - Trainer's recent/upcoming programming — protect prescribed sessions and
   recovery windows.
 - Sentinel + Tenex commitments are immovable; fit around them.
+- A PM parenting shift does NOT preclude couple/relationship time — don't read a
+  shift as blocking a date or quality time. Confirm rather than assume.
+
+**Conflict cadence:** when gathered constraints collide with the skeleton,
+surface one conflict at a time and ask what the user wants before resolving it —
+don't auto-resolve or present a finished schedule. Propose before writing; keep
+write-back manual until propose quality and the write path are both trusted
+(don't combine a first proposal with a first autonomous write).
 
 **Propose only — do not write to calendars.** The user reviews and edits.
 

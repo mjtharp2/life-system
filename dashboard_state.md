@@ -270,6 +270,11 @@ Any agent reading these sources or writing back MUST:
    per-event timezones (America/Chicago and America/New_York within the same
    feed). Trusting raw timezone fields will misplace events.
 
+   **Specific Tenex-feed trap:** the import feed often stamps an event with a
+   timezone label whose offset is *already* Central (e.g. a −05:00 event labeled
+   America/New_York). Re-converting from the label subtracts an hour that was
+   never there. Always compute from the absolute UTC instant, not the label.
+
 2. **Drop cancelled events.** Cancelled occurrences persist as ghost entries in
    the ICS feed. Filter on `transparency: transparent` (reliable) rather than
    the "Canceled:" subject prefix (cosmetic).
@@ -295,6 +300,31 @@ Any agent reading these sources or writing back MUST:
      session start) — correctness, not ceremony.
    - **Never write** — Tenex feed (physically read-only ICS), Sentinel / any
      M365 work calendar (read-only by choice). Constraints, not targets.
+
+5. **Close, don't delete.** For items flagged "kill" or obsolete, complete/close
+   them (reversible) rather than hard-delete; leave permanent deletion to the
+   user. And don't pre-complete work that isn't done yet (e.g. a task due later
+   today) — let it close when the work actually happens.
+
+### Childcare roster & parenting-shift conventions
+
+Reading the Tharp Family calendar:
+- **Bruna, Karriemah** — nannies; recurring weekday daytime coverage. Their
+  entries describe who's covering, not Matt's scheduling constraints.
+- **Mo, Deb** — babysitters / backup coverage. A "Mo" or "Deb" block means
+  coverage is already handled for that window — read it as availability freed,
+  not a commitment to plan around (e.g. "Mo 5-8" while Karriemah is off is what
+  frees an Emma overnight).
+
+Writing parenting shifts (Tharp Family calendar):
+- Discrete events named `[Name] morning shift` / `[Name] afternoon shift`.
+- Canonical times: morning 7:00-8:00am, afternoon 5:30-8:00pm (Central).
+- Matt and Lauren take complementary halves each day (one AM, one PM); the user
+  supplies the week's split. Write both parents' shifts.
+- Subject to the Tharp Family confirm-before-mutation guardrail (re-read first).
+  Don't duplicate a shift the other parent already entered; if an existing entry
+  differs (e.g. a 5:00 vs 5:30 start), surface it rather than silently editing
+  the other parent's event.
 
 ---
 
