@@ -1,5 +1,8 @@
 # Life System — Weekly Log
 
+> **SUPERSEDED 2026-05-25** by the `weekly_log/` directory (per-week library).
+> Preserved for lineage. Do not edit. New entries go in `weekly_log/`.
+
 *Sunday check-in artifacts. Append-only. Newest entries at top.*
 
 Companion to `life_system_reference.md` (strategy), `dashboard_state.md` (technical state), and `system_architecture.md` (build plan).

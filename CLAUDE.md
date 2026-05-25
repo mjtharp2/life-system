@@ -11,7 +11,7 @@ This is a personal life-system dashboard. It pulls Oura ring data (via a Cloudfl
 - `life_system_reference.md` — strategy
 - `dashboard_state.md` — current state
 - `system_architecture.md` — build plan
-- `weekly_log.md` — weekly review log
+- `weekly_log/` — per-week check-in library; start at `weekly_log/INDEX.md`. Each entry is `YYYY-MM-DD.md` (Monday of the planned week) with YAML frontmatter + narrative. Original single-file log preserved at `archive/weekly_log_pre-library.md`.
 - `ideation_log.md` — parked extensions and architectural ideas
 
 ## Build context

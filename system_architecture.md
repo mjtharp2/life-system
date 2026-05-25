@@ -300,7 +300,7 @@ Each quarterly 90-day review session covers:
 
 5. **Architecture spec audit.** Quick scan: do design principles still hold? Any new principles needed? Any sections that have gone stale or need revision?
 
-Output: a 90-day review entry in `weekly_log.md` capturing decisions made, phases advanced, and watch-fors carried forward into the next quarter.
+Output: a 90-day review entry in the `weekly_log/` library (the entry file for the current planning week) capturing decisions made, phases advanced, and watch-fors carried forward into the next quarter. See `weekly_log/INDEX.md` for the per-entry conventions.
 
 ## System Cadences
 
