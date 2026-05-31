@@ -252,3 +252,195 @@ export async function queryTrainingSessions(env, filters = {}) {
     flags: flagsBySession[s.id] || [],
   }));
 }
+
+// ─── Weekly check-ins ──────────────────────────────────────────────────────
+// Schema in schema-weekly-checkins.sql. Same patterns as training_* fns above:
+// UUID PK, batch insert, FK ON DELETE CASCADE, replace = atomic delete-then-insert.
+
+/**
+ * Validates a check-in payload structurally.
+ * Returns { valid: true } or { valid: false, error: "message" }.
+ */
+export function validateCheckinPayload(payload) {
+  if (!payload || typeof payload !== "object") {
+    return { valid: false, error: "Payload must be a JSON object" };
+  }
+  if (typeof payload.week_start !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(payload.week_start)) {
+    return { valid: false, error: "week_start must be a YYYY-MM-DD string (Monday of planned week)" };
+  }
+  if (typeof payload.checkin_date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(payload.checkin_date)) {
+    return { valid: false, error: "checkin_date must be a YYYY-MM-DD string" };
+  }
+  if (typeof payload.headline !== "string" || payload.headline.length === 0) {
+    return { valid: false, error: "headline must be a non-empty string" };
+  }
+  if (payload.watchfors !== undefined && !Array.isArray(payload.watchfors)) {
+    return { valid: false, error: "watchfors must be an array of strings" };
+  }
+  if (payload.training_slots !== undefined && !Array.isArray(payload.training_slots)) {
+    return { valid: false, error: "training_slots must be an array" };
+  }
+  for (const [i, slot] of (payload.training_slots || []).entries()) {
+    if (typeof slot.day !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(slot.day)) {
+      return { valid: false, error: `training_slots[${i}].day must be YYYY-MM-DD` };
+    }
+  }
+  return { valid: true };
+}
+
+/**
+ * Inserts a check-in + its training slots into D1 atomically.
+ * Returns { checkin_id } or throws on database error.
+ * Caller should call findExistingCheckin first for week_start collision handling.
+ */
+export async function insertWeeklyCheckin(env, payload) {
+  const checkinId = crypto.randomUUID();
+  const statements = buildCheckinInsertStatements(env, checkinId, payload);
+  await env.DB.batch(statements);
+  return { checkin_id: checkinId };
+}
+
+/**
+ * Replaces an existing check-in with a corrected full payload, preserving its
+ * checkin_id (UUID). DELETE cascades to weekly_training_slots; INSERT re-lays
+ * the new payload's slots. All in a single D1 batch.
+ * Returns { checkin_id } on success, { error: "not_found" }, or
+ * { error: "collision", collidingId } when changing week_start to one already
+ * used by a different row.
+ */
+export async function replaceWeeklyCheckin(env, checkinId, payload) {
+  const existing = await env.DB.prepare(
+    "SELECT id, week_start FROM weekly_checkins WHERE id = ?"
+  ).bind(checkinId).first();
+  if (!existing) return { error: "not_found" };
+
+  if (existing.week_start !== payload.week_start) {
+    const collide = await env.DB.prepare(
+      "SELECT id FROM weekly_checkins WHERE week_start = ? AND id != ?"
+    ).bind(payload.week_start, checkinId).first();
+    if (collide) return { error: "collision", collidingId: collide.id };
+  }
+
+  const deleteStmt = env.DB.prepare(
+    "DELETE FROM weekly_checkins WHERE id = ?"
+  ).bind(checkinId);
+  const insertStmts = buildCheckinInsertStatements(env, checkinId, payload);
+  await env.DB.batch([deleteStmt, ...insertStmts]);
+  return { checkin_id: checkinId };
+}
+
+/**
+ * Returns the existing checkin_id for the given week_start, or null.
+ */
+export async function findExistingCheckin(env, weekStart) {
+  const result = await env.DB.prepare(
+    "SELECT id FROM weekly_checkins WHERE week_start = ?"
+  ).bind(weekStart).first();
+  return result ? result.id : null;
+}
+
+/**
+ * Queries check-ins with optional filters. Returns check-ins with training
+ * slots joined. Two modes:
+ *   - Default: returns an array of check-in rows (each with `training_slots` array).
+ *   - slots_only: with `week_start`, returns the single check-in's slots only —
+ *     trainer's fast-path one-call read. Returns { week_start, checkin_id, slots }.
+ */
+export async function queryWeeklyCheckins(env, filters = {}) {
+  const { week_start, start_date, end_date, limit = 4, slots_only = false } = filters;
+  const clampedLimit = Math.min(Math.max(parseInt(limit, 10) || 4, 1), 20);
+
+  // Slots-only fast path
+  if (slots_only) {
+    if (!week_start) throw new Error("slots_only requires week_start");
+    const checkin = await env.DB.prepare(
+      "SELECT id FROM weekly_checkins WHERE week_start = ?"
+    ).bind(week_start).first();
+    if (!checkin) return { week_start, checkin_id: null, slots: [] };
+    const slotsResult = await env.DB.prepare(
+      "SELECT * FROM weekly_training_slots WHERE checkin_id = ? ORDER BY order_in_week, day, time"
+    ).bind(checkin.id).all();
+    return { week_start, checkin_id: checkin.id, slots: slotsResult.results || [] };
+  }
+
+  // Full query
+  const where = [];
+  const bindings = [];
+  if (week_start) { where.push("week_start = ?"); bindings.push(week_start); }
+  if (start_date) { where.push("week_start >= ?"); bindings.push(start_date); }
+  if (end_date) { where.push("week_start <= ?"); bindings.push(end_date); }
+  const whereClause = where.length > 0 ? "WHERE " + where.join(" AND ") : "";
+
+  const checkinsResult = await env.DB.prepare(
+    `SELECT * FROM weekly_checkins ${whereClause} ORDER BY week_start DESC LIMIT ?`
+  ).bind(...bindings, clampedLimit).all();
+
+  const checkins = checkinsResult.results || [];
+  if (checkins.length === 0) return [];
+
+  const ids = checkins.map((c) => c.id);
+  const placeholders = ids.map(() => "?").join(",");
+  const slotsResult = await env.DB.prepare(
+    `SELECT * FROM weekly_training_slots WHERE checkin_id IN (${placeholders}) ORDER BY checkin_id, order_in_week, day, time`
+  ).bind(...ids).all();
+
+  const slotsByCheckin = {};
+  for (const s of slotsResult.results || []) {
+    (slotsByCheckin[s.checkin_id] ||= []).push(s);
+  }
+
+  return checkins.map((c) => ({
+    ...c,
+    watchfors: c.watchfors ? JSON.parse(c.watchfors) : [],
+    training_slots: slotsByCheckin[c.id] || [],
+  }));
+}
+
+/**
+ * Builds the array of D1 statements that insert a check-in and its training slots.
+ * Shared by insertWeeklyCheckin (fresh insert) and replaceWeeklyCheckin
+ * (insert-after-delete with preserved checkin_id).
+ */
+function buildCheckinInsertStatements(env, checkinId, payload) {
+  const now = new Date().toISOString();
+  const statements = [];
+
+  statements.push(env.DB.prepare(`
+    INSERT INTO weekly_checkins (
+      id, week_start, checkin_date,
+      sleep_avg_7d, regulation_events, workout_adherence, stimulant_contract, operating_mode,
+      headline, watchfors, narrative_path, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    checkinId,
+    payload.week_start,
+    payload.checkin_date,
+    payload.sleep_avg_7d ?? null,
+    payload.regulation_events ?? null,
+    payload.workout_adherence ?? null,
+    payload.stimulant_contract ?? null,
+    payload.operating_mode ?? null,
+    payload.headline ?? null,
+    JSON.stringify(payload.watchfors || []),
+    payload.narrative_path ?? null,
+    now
+  ));
+
+  for (const [i, slot] of (payload.training_slots || []).entries()) {
+    statements.push(env.DB.prepare(`
+      INSERT INTO weekly_training_slots (id, checkin_id, day, time, category, constraint_note, order_in_week)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      crypto.randomUUID(),
+      checkinId,
+      slot.day,
+      slot.time ?? null,
+      slot.category ?? null,
+      // Accept either `constraint_note` or `constraint` from callers — DB stores under constraint_note.
+      slot.constraint_note ?? slot.constraint ?? null,
+      slot.order_in_week ?? i
+    ));
+  }
+
+  return statements;
+}

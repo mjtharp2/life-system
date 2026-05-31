@@ -16,6 +16,11 @@ import {
   replaceTrainingSession,
   findExistingSession,
   queryTrainingSessions,
+  validateCheckinPayload,
+  insertWeeklyCheckin,
+  replaceWeeklyCheckin,
+  findExistingCheckin,
+  queryWeeklyCheckins,
 } from "./db.js";
 
 // ─── Zod parsers (runtime arg validation) ──────────────────────────────────
@@ -38,6 +43,23 @@ const QueryLogArgsZ = z.object({
   session_tag: z.string().min(1).optional(),
   lift_name: z.string().min(1).optional(),
   limit: z.number().int().min(1).max(100).default(20),
+}).strict();
+
+const WriteCheckinArgsZ = z.object({
+  checkin_data: z.record(z.string(), z.unknown()).describe("Full check-in payload — see tool description for fields"),
+}).strict();
+
+const UpdateCheckinArgsZ = z.object({
+  checkin_id: z.string().uuid("checkin_id must be a UUID returned by weekly_write_checkin or weekly_query_checkin"),
+  checkin_data: z.record(z.string(), z.unknown()).describe("Full corrected check-in payload — see tool description for fields"),
+}).strict();
+
+const QueryCheckinArgsZ = z.object({
+  week_start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "week_start must be YYYY-MM-DD").optional(),
+  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "start_date must be YYYY-MM-DD").optional(),
+  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "end_date must be YYYY-MM-DD").optional(),
+  limit: z.number().int().min(1).max(20).default(4),
+  slots_only: z.boolean().default(false),
 }).strict();
 
 // ─── JSON Schemas (wire format for tools/list) ─────────────────────────────
@@ -117,6 +139,78 @@ const queryLogInputSchema = {
     session_tag: { type: "string", description: "Filter by session.type (exact match), e.g. 'cardio_zone2'" },
     lift_name: { type: "string", description: "Only return sessions that contain this lift name (exact match)" },
     limit: { type: "integer", minimum: 1, maximum: 100, default: 20, description: "Maximum sessions to return (default 20)" },
+  },
+};
+
+const writeCheckinInputSchema = {
+  type: "object",
+  required: ["checkin_data"],
+  additionalProperties: false,
+  properties: {
+    checkin_data: {
+      type: "object",
+      description: "Full check-in payload. Required: week_start (YYYY-MM-DD, Monday of planned week), checkin_date (YYYY-MM-DD), headline (one-line week summary). All other fields optional; see properties below.",
+      required: ["week_start", "checkin_date", "headline"],
+      additionalProperties: true,
+      properties: {
+        week_start: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "Monday of the planned week (YYYY-MM-DD). UNIQUE — one check-in per week." },
+        checkin_date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "When the check-in was actually done." },
+        sleep_avg_7d: { type: "number", description: "Apple Health / Oura 7-day sleep score average for the week being reviewed." },
+        regulation_events: { type: "string", description: "'none' | 'level_1' | 'level_2' | 'level_3' | short description." },
+        workout_adherence: { type: "string", description: "Qualitative free-text (e.g. 'solid', 'excellent', 'missed 2')." },
+        stimulant_contract: { type: "string", description: "'held' | 'wavered_once' | 'wavered_multiple' | 'not_recorded'." },
+        operating_mode: { type: "string", description: "Short framing label, e.g. 'pressed', 'travel', 'recovery'." },
+        headline: { type: "string", minLength: 1, description: "One-line week summary." },
+        watchfors: {
+          type: "array",
+          items: { type: "string" },
+          description: "Short slug strings carried into next week's backward review.",
+        },
+        narrative_path: { type: "string", description: "Relative path to the markdown entry, e.g. 'weekly_log/2026-06-01.md'." },
+        training_slots: {
+          type: "array",
+          description: "Trainer-bridge contract: the agreed training slots for the week. Each slot a hint for the trainer planner.",
+          items: {
+            type: "object",
+            required: ["day"],
+            additionalProperties: true,
+            properties: {
+              day: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "ISO YYYY-MM-DD (the specific date the slot is for)." },
+              time: { type: "string", description: "e.g. '06:00' or 'evening'." },
+              category: { type: "string", description: "lift | cardio | tennis | mobility | rest." },
+              constraint_note: { type: "string", description: "e.g. '45min cap', 'hotel/no equipment', 'lower-impact: achilles'." },
+              order_in_week: { type: "integer", description: "0-indexed display order. Defaults to array position." },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const updateCheckinInputSchema = {
+  type: "object",
+  required: ["checkin_id", "checkin_data"],
+  additionalProperties: false,
+  properties: {
+    checkin_id: {
+      type: "string",
+      format: "uuid",
+      description: "The UUID returned by weekly_write_checkin (or surfaced by weekly_query_checkin) identifying the check-in to replace.",
+    },
+    checkin_data: writeCheckinInputSchema.properties.checkin_data,
+  },
+};
+
+const queryCheckinInputSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    week_start: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "Filter to one specific week (its Monday date)." },
+    start_date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "Inclusive lower bound on week_start." },
+    end_date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "Inclusive upper bound on week_start." },
+    limit: { type: "integer", minimum: 1, maximum: 20, default: 4, description: "Maximum check-ins to return (default 4)." },
+    slots_only: { type: "boolean", default: false, description: "Trainer fast-path. Requires week_start. Returns { week_start, checkin_id, slots } — just the slot array, not the full check-in." },
   },
 };
 
@@ -280,9 +374,179 @@ Returns:
   },
 ];
 
+// ─── Weekly check-in domain tools ──────────────────────────────────────────
+
+const weeklyTools = [
+  {
+    name: "weekly_write_checkin",
+    title: "Write Weekly Check-In",
+    description: `Insert a weekly check-in row plus its agreed training slots into the substrate.
+
+Use this after completing a weekly check-in conversation. The narrative lives in weekly_log/YYYY-MM-DD.md; this row holds the queryable signals + the trainer-bridge contract (training_slots).
+
+Unique key is (week_start) — one check-in per planned week. Re-running for the same week is plausible: collisions return the existing checkin_id; call weekly_update_checkin to replace, not weekly_write_checkin again.
+
+Args:
+  checkin_data (object): Full check-in payload.
+    Required:
+      - week_start (string, YYYY-MM-DD): Monday of the planned week. UNIQUE key.
+      - checkin_date (string, YYYY-MM-DD): when the check-in was done.
+      - headline (string): one-line week summary.
+    Optional:
+      - sleep_avg_7d (number): Apple Health / Oura 7-day sleep avg for the prior week
+      - regulation_events (string): 'none' | 'level_1' | 'level_2' | 'level_3' | freeform
+      - workout_adherence (string): qualitative
+      - stimulant_contract (string): 'held' | 'wavered_once' | 'wavered_multiple' | 'not_recorded'
+      - operating_mode (string): short framing, e.g. 'pressed', 'travel'
+      - watchfors (string[]): slugs carried into next week's backward review
+      - narrative_path (string): relative path to weekly_log/<file>.md
+      - training_slots[]: each { day (YYYY-MM-DD), time?, category?, constraint_note?, order_in_week? }
+
+Returns:
+  { "checkin_id": "<uuid>", "week_start": "<date>", "created": true }                              on fresh insert
+  { "checkin_id": "<uuid>", "week_start": "<date>", "created": false, "reason": "already_exists" } when week_start already used
+
+Errors:
+  - "Invalid check-in payload: <reason>" — structural validation failed
+  - "Database error: <reason>" — D1 write failed`,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+    },
+    inputSchema: writeCheckinInputSchema,
+    parser: WriteCheckinArgsZ,
+    async handler(args, env) {
+      const payload = args.checkin_data;
+      const validation = validateCheckinPayload(payload);
+      if (!validation.valid) {
+        return errorResult(`Invalid check-in payload: ${validation.error}`);
+      }
+      const existingId = await findExistingCheckin(env, payload.week_start);
+      if (existingId) {
+        return okResult({ checkin_id: existingId, week_start: payload.week_start, created: false, reason: "already_exists" });
+      }
+      try {
+        const { checkin_id } = await insertWeeklyCheckin(env, payload);
+        return okResult({ checkin_id, week_start: payload.week_start, created: true });
+      } catch (e) {
+        return errorResult(`Database error: ${e.message}`);
+      }
+    },
+  },
+  {
+    name: "weekly_update_checkin",
+    title: "Update Weekly Check-In",
+    description: `Replace an existing weekly check-in (and its training slots) with a corrected full payload.
+
+Full-replace semantics: existing training_slots are deleted and the new payload's contents are inserted in their place — atomically, in a single D1 batch. The checkin_id (UUID) is preserved across the replacement. Other check-ins are unaffected.
+
+Use this when:
+  - A check-in needs amending after the fact (correction surfaced post-write).
+  - A weekly check-in is being re-run for the same week.
+
+Args:
+  checkin_id (string, UUID): The checkin_id returned by weekly_write_checkin (or surfaced by weekly_query_checkin).
+  checkin_data (object): Full corrected check-in payload — same shape as weekly_write_checkin. The new payload's week_start may differ from the original; if so, it must not collide with another existing check-in.
+
+Returns:
+  { "checkin_id": "<uuid>", "updated": true }
+
+Errors:
+  - "Invalid check-in payload: <reason>"
+  - "Check-in not found: <checkin_id>"
+  - "Would collide with existing check-in <other_uuid> at week_start <date>"
+  - "Database error: <reason>"`,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+    inputSchema: updateCheckinInputSchema,
+    parser: UpdateCheckinArgsZ,
+    async handler(args, env) {
+      const { checkin_id, checkin_data } = args;
+      const validation = validateCheckinPayload(checkin_data);
+      if (!validation.valid) {
+        return errorResult(`Invalid check-in payload: ${validation.error}`);
+      }
+      try {
+        const result = await replaceWeeklyCheckin(env, checkin_id, checkin_data);
+        if (result.error === "not_found") {
+          return errorResult(`Check-in not found: ${checkin_id}`);
+        }
+        if (result.error === "collision") {
+          return errorResult(`Would collide with existing check-in ${result.collidingId} at week_start ${checkin_data.week_start}`);
+        }
+        return okResult({ checkin_id: result.checkin_id, updated: true });
+      } catch (e) {
+        return errorResult(`Database error: ${e.message}`);
+      }
+    },
+  },
+  {
+    name: "weekly_query_checkin",
+    title: "Query Weekly Check-Ins",
+    description: `Query weekly check-ins with optional filters. Read-only.
+
+Two modes:
+  - Default (full): returns check-in rows with training_slots fully joined.
+  - slots_only (trainer fast-path): with week_start, returns ONLY the slots array
+    for that week — one call, no join assembly on the caller's side.
+
+Args:
+  week_start (string, YYYY-MM-DD, optional): filter to one specific week.
+  start_date (string, YYYY-MM-DD, optional): inclusive lower bound on week_start.
+  end_date (string, YYYY-MM-DD, optional): inclusive upper bound on week_start.
+  limit (integer, optional): max check-ins to return, 1-20, default 4. Newest first.
+  slots_only (boolean, optional, default false): trainer fast-path. Requires week_start.
+
+Returns:
+  Default:
+    { "checkins": [
+        { id, week_start, checkin_date, sleep_avg_7d, regulation_events, workout_adherence,
+          stimulant_contract, operating_mode, headline, watchfors: [...], narrative_path, created_at,
+          training_slots: [{ id, checkin_id, day, time, category, constraint_note, order_in_week }] },
+        ...
+      ]
+    }
+  slots_only:
+    { "week_start": "<date>", "checkin_id": "<uuid>", "slots": [{...}, ...] }
+    If no check-in exists for week_start: { "week_start": "<date>", "checkin_id": null, "slots": [] }
+
+Errors:
+  - "slots_only requires week_start" — slots_only=true without week_start
+  - "Database error: <reason>"`,
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+    inputSchema: queryCheckinInputSchema,
+    parser: QueryCheckinArgsZ,
+    async handler(args, env) {
+      try {
+        if (args.slots_only && !args.week_start) {
+          return errorResult("slots_only requires week_start");
+        }
+        const result = await queryWeeklyCheckins(env, args);
+        if (args.slots_only) {
+          return okResult(result);
+        }
+        return okResult({ checkins: result });
+      } catch (e) {
+        return errorResult(`Database error: ${e.message}`);
+      }
+    },
+  },
+];
+
 // ─── Aggregate registry ────────────────────────────────────────────────────
 // Future domains: import their tool array and spread it in below.
-export const TOOLS = [...trainingTools];
+export const TOOLS = [...trainingTools, ...weeklyTools];
 
 export function listToolsForClient() {
   return TOOLS.map((t) => ({

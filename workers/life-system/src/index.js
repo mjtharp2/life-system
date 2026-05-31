@@ -15,6 +15,7 @@
 //   env.MCP_CLIENT_ID, env.MCP_CLIENT_SECRET — pre-shared OAuth client creds for MCP
 
 import { handleTrainingLog } from "./routes/training-log.js";
+import { handleWeeklyCheckins } from "./routes/weekly-checkins.js";
 import { handleMcp, handleMcpOptions } from "./routes/mcp.js";
 import {
   handleProtectedResourceMetadata,
@@ -49,6 +50,16 @@ export default {
       url.pathname.startsWith("/api/training-log/sessions/")
     ) {
       return handleTrainingLog(request, env);
+    }
+
+    // Weekly check-ins API routes (auth gated inside the handler).
+    // Matches /api/weekly-checkins (collection: POST, GET) and
+    // /api/weekly-checkins/:id (collection-item: PUT).
+    if (
+      url.pathname === "/api/weekly-checkins" ||
+      url.pathname.startsWith("/api/weekly-checkins/")
+    ) {
+      return handleWeeklyCheckins(request, env);
     }
 
     // Oura CORS proxy — preserved at root path with ?path&token query.
