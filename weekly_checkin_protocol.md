@@ -102,18 +102,20 @@ Shaping inputs:
 
 **Conflict cadence:** when gathered constraints collide with the skeleton,
 surface one conflict at a time and ask what the user wants before resolving it —
-don't auto-resolve or present a finished schedule. Propose before writing; keep
-write-back manual until propose quality and the write path are both trusted
-(don't combine a first proposal with a first autonomous write).
+don't auto-resolve or present a finished schedule.
 
-**Propose only — do not write to calendars.** The user reviews and edits.
+Propose the week, the user reviews and edits, then write the agreed plan.
 
-Write-back, once trusted: Todoist + personal Google primary directly; Tharp
-Family confirm-before-each add/move/edit/delete (re-read it immediately before
-writing — shared calendar Lauren writes and nannies coordinate against); never
-write Sentinel, Tenex, or any M365 calendar. Early runs: write-back stays
-manual (user makes the entries). Do not combine first-proposal with
-first-autonomous-write.
+**Set write-mode once at the top of the forward plan** — ask "autonomous writes
+on or off this session?" and proceed accordingly for the rest of the session;
+don't re-confirm scope per item.
+
+Write targets:
+- **Todoist** and **personal Google primary** — write directly.
+- **Tharp Family** — confirm before each add/move/edit/delete; re-read the
+  calendar immediately before writing (shared — Lauren writes, nannies
+  coordinate against it). This confirm-gate stands regardless of write-mode.
+- **Never write** Sentinel, Tenex, or any M365 calendar — read-only constraints.
 
 ## Step 5 — Phase / 90-day scan (light touch)
 
