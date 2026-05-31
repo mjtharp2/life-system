@@ -42,7 +42,12 @@ export default {
     }
 
     // Training log API routes (auth gated inside the handler).
-    if (url.pathname === "/api/training-log/sessions") {
+    // Matches /api/training-log/sessions (collection: POST, GET) and
+    // /api/training-log/sessions/:id (collection-item: PUT).
+    if (
+      url.pathname === "/api/training-log/sessions" ||
+      url.pathname.startsWith("/api/training-log/sessions/")
+    ) {
       return handleTrainingLog(request, env);
     }
 

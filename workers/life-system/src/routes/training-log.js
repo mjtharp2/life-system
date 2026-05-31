@@ -3,11 +3,11 @@
 // Internal logic lives in src/lib/db.js so MCP tools (Phase 2) can reuse it.
 
 import { checkBearerToken } from "../lib/auth.js";
-import { validateSessionPayload, insertTrainingSession, findExistingSession, queryTrainingSessions } from "../lib/db.js";
+import { validateSessionPayload, insertTrainingSession, replaceTrainingSession, findExistingSession, queryTrainingSessions } from "../lib/db.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
@@ -25,6 +25,16 @@ export async function handleTrainingLog(request, env) {
     });
   }
 
+  // /api/training-log/sessions/:id — collection-item routes
+  const url = new URL(request.url);
+  const itemMatch = url.pathname.match(/^\/api\/training-log\/sessions\/([^/]+)$/);
+  if (itemMatch) {
+    const sessionId = itemMatch[1];
+    if (request.method === "PUT") return handlePut(request, env, sessionId);
+    return jsonResponse({ success: false, error: "Method not allowed" }, 405);
+  }
+
+  // /api/training-log/sessions — collection routes
   if (request.method === "POST") return handlePost(request, env);
   if (request.method === "GET") return handleGet(request, env);
   return jsonResponse({ success: false, error: "Method not allowed" }, 405);
@@ -55,6 +65,45 @@ async function handlePost(request, env) {
   try {
     const result = await insertTrainingSession(env, payload);
     return jsonResponse({ success: true, session_id: result.session_id }, 201);
+  } catch (e) {
+    return jsonResponse({ success: false, error: `Database error: ${e.message}` }, 500);
+  }
+}
+
+async function handlePut(request, env, sessionId) {
+  // Defense-in-depth UUID shape check; db.js handles existence.
+  if (!/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(sessionId)) {
+    return jsonResponse({ success: false, error: "Invalid session_id (must be a UUID)" }, 400);
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch (e) {
+    return jsonResponse({ success: false, error: "Invalid JSON in request body" }, 400);
+  }
+
+  const validation = validateSessionPayload(payload);
+  if (!validation.valid) {
+    return jsonResponse({ success: false, error: validation.error }, 400);
+  }
+
+  try {
+    const result = await replaceTrainingSession(env, sessionId, payload);
+    if (result.error === "not_found") {
+      return jsonResponse({ success: false, error: "Session not found", session_id: sessionId }, 404);
+    }
+    if (result.error === "collision") {
+      return jsonResponse(
+        {
+          success: false,
+          error: `Would collide with existing session ${result.collidingId} at (${payload.session.date}, ${payload.session.type})`,
+          colliding_session_id: result.collidingId,
+        },
+        409
+      );
+    }
+    return jsonResponse({ success: true, session_id: result.session_id, updated: true }, 200);
   } catch (e) {
     return jsonResponse({ success: false, error: `Database error: ${e.message}` }, 500);
   }

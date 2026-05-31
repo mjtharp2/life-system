@@ -53,6 +53,51 @@ export function validateSessionPayload(payload) {
  */
 export async function insertTrainingSession(env, payload) {
   const sessionId = crypto.randomUUID();
+  const statements = buildSessionInsertStatements(env, sessionId, payload);
+  await env.DB.batch(statements);
+  return { session_id: sessionId };
+}
+
+/**
+ * Replaces an existing session with a corrected full payload.
+ * - Verifies the session exists by sessionId; returns { error: "not_found" } if not.
+ * - If the new (date, type) differs from the current row's and would collide with a
+ *   DIFFERENT existing session, returns { error: "collision", collidingId }.
+ * - Otherwise, in a single D1 batch (atomic):
+ *     DELETE FROM training_sessions WHERE id = ?      -- cascades to all children
+ *     INSERT the new payload's rows under the SAME sessionId
+ *   The session's identity (UUID) is preserved across the replacement.
+ * Returns { session_id } on success.
+ */
+export async function replaceTrainingSession(env, sessionId, payload) {
+  const existing = await env.DB.prepare(
+    "SELECT id, date, type FROM training_sessions WHERE id = ?"
+  ).bind(sessionId).first();
+  if (!existing) return { error: "not_found" };
+
+  const newDate = payload.session.date;
+  const newType = payload.session.type;
+  if (existing.date !== newDate || existing.type !== newType) {
+    const collide = await env.DB.prepare(
+      "SELECT id FROM training_sessions WHERE date = ? AND type = ? AND id != ?"
+    ).bind(newDate, newType, sessionId).first();
+    if (collide) return { error: "collision", collidingId: collide.id };
+  }
+
+  const deleteStmt = env.DB.prepare(
+    "DELETE FROM training_sessions WHERE id = ?"
+  ).bind(sessionId);
+  const insertStmts = buildSessionInsertStatements(env, sessionId, payload);
+  await env.DB.batch([deleteStmt, ...insertStmts]);
+  return { session_id: sessionId };
+}
+
+/**
+ * Builds the array of D1 statements that insert a session and all its children.
+ * Shared by insertTrainingSession (fresh insert with a generated UUID) and
+ * replaceTrainingSession (insert-after-delete with the existing UUID preserved).
+ */
+function buildSessionInsertStatements(env, sessionId, payload) {
   const now = new Date().toISOString();
   const s = payload.session;
   const r = payload.readiness || {};
@@ -113,8 +158,7 @@ export async function insertTrainingSession(env, payload) {
     `).bind(crypto.randomUUID(), sessionId, i, f.type ?? null, f.detail ?? null));
   }
 
-  await env.DB.batch(statements);
-  return { session_id: sessionId };
+  return statements;
 }
 
 /**

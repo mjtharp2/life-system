@@ -13,6 +13,7 @@ import { z } from "zod";
 import {
   validateSessionPayload,
   insertTrainingSession,
+  replaceTrainingSession,
   findExistingSession,
   queryTrainingSessions,
 } from "./db.js";
@@ -24,6 +25,11 @@ import {
 
 const WriteSessionArgsZ = z.object({
   session_data: z.record(z.string(), z.unknown()).describe("Full session payload — see tool description for fields"),
+}).strict();
+
+const UpdateSessionArgsZ = z.object({
+  session_id: z.string().uuid("session_id must be a UUID returned by training_write_session or training_query_log"),
+  session_data: z.record(z.string(), z.unknown()).describe("Full corrected session payload — see tool description for fields"),
 }).strict();
 
 const QueryLogArgsZ = z.object({
@@ -85,6 +91,20 @@ const writeSessionInputSchema = {
         schema_version: { type: "string", description: "Defaults to '1.0'" },
       },
     },
+  },
+};
+
+const updateSessionInputSchema = {
+  type: "object",
+  required: ["session_id", "session_data"],
+  additionalProperties: false,
+  properties: {
+    session_id: {
+      type: "string",
+      format: "uuid",
+      description: "The UUID returned by training_write_session (or surfaced by training_query_log) identifying the session to replace.",
+    },
+    session_data: writeSessionInputSchema.properties.session_data,
   },
 };
 
@@ -155,6 +175,55 @@ Errors:
       try {
         const { session_id } = await insertTrainingSession(env, payload);
         return okResult({ session_id, created: true });
+      } catch (e) {
+        return errorResult(`Database error: ${e.message}`);
+      }
+    },
+  },
+  {
+    name: "training_update_session",
+    title: "Update Training Session",
+    description: `Replace an existing training session with a corrected full payload.
+
+Use this when the user corrects something about a session that was already written — wrong weight, missing set, missed flag, mislabeled date, etc. The trainer typically calls this after the user surfaces a correction in the same conversation that wrote the session.
+
+Full-replace semantics: the existing session's lifts, sets, cardio entries, and flags are deleted, and the new payload's contents are inserted in their place — atomically, in a single D1 batch (transaction). The session_id (UUID) is preserved across the replacement; the row identity does not change. Other sessions are unaffected.
+
+Args:
+  session_id (string, UUID): The session_id returned by training_write_session (or surfaced by training_query_log) for the session to replace.
+  session_data (object): Full corrected session payload. Same shape as training_write_session — see that tool's description for required and optional fields. The new payload's (date, type) may differ from the original; if so, the new (date, type) must not collide with any other existing session.
+
+Returns:
+  { "session_id": "<uuid>", "updated": true }
+
+Errors:
+  - "Invalid session payload: <reason>" — structural validation failed
+  - "Session not found: <session_id>" — no session row with that ID
+  - "Would collide with existing session <other_uuid> at (<date>, <type>)" — new (date, type) is already taken by a different session
+  - "Database error: <reason>" — D1 batch failed`,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+    inputSchema: updateSessionInputSchema,
+    parser: UpdateSessionArgsZ,
+    async handler(args, env) {
+      const { session_id, session_data } = args;
+      const validation = validateSessionPayload(session_data);
+      if (!validation.valid) {
+        return errorResult(`Invalid session payload: ${validation.error}`);
+      }
+      try {
+        const result = await replaceTrainingSession(env, session_id, session_data);
+        if (result.error === "not_found") {
+          return errorResult(`Session not found: ${session_id}`);
+        }
+        if (result.error === "collision") {
+          return errorResult(`Would collide with existing session ${result.collidingId} at (${session_data.session.date}, ${session_data.session.type})`);
+        }
+        return okResult({ session_id: result.session_id, updated: true });
       } catch (e) {
         return errorResult(`Database error: ${e.message}`);
       }
