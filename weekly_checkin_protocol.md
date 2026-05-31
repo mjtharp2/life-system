@@ -135,5 +135,25 @@ over-summarize.
 Update `INDEX.md`: move the current pointer to this entry, prepend it to the
 recent-weeks table, refresh the active watch-fors.
 
+**Write the structured signals to substrate.** After the markdown entry is
+written, call `weekly_write_checkin` with the structured payload:
+- week_start (Monday of the planned week, YYYY-MM-DD)
+- checkin_date (today)
+- headline (the one-line week summary)
+- sleep_avg_7d, regulation_events, workout_adherence, stimulant_contract,
+  operating_mode — the signals gathered this session (omit any not captured)
+- watchfors (the watch-for slugs carried to next week — same ones written to
+  INDEX)
+- narrative_path (the relative path to the markdown entry just written, e.g.
+  weekly_log/2026-06-01.md)
+- training_slots: the week's agreed workout slots, each { day (YYYY-MM-DD),
+  time, category (lift/cardio/tennis/mobility/rest), constraint_note (optional) }
+
+This is the same content as the markdown entry's frontmatter plus the training
+slots — the markdown is the human-readable record, the substrate row is the
+queryable one and the trainer's slot source. If re-running a check-in for a week
+already written, use `weekly_update_checkin` with the existing checkin_id
+instead.
+
 Watch-Fors are the handoff to next week — write them as the explicit things
 next week's backward review opens on.
