@@ -280,6 +280,13 @@ export function validateCheckinPayload(payload) {
   if (payload.training_slots !== undefined && !Array.isArray(payload.training_slots)) {
     return { valid: false, error: "training_slots must be an array" };
   }
+  for (const field of ["energy_self_rating", "mood_self_rating", "sleep_quality_self_rating"]) {
+    const v = payload[field];
+    if (v === undefined || v === null) continue;
+    if (!Number.isInteger(v) || v < 1 || v > 10) {
+      return { valid: false, error: `${field} must be an integer 1-10 (got ${JSON.stringify(v)})` };
+    }
+  }
   for (const [i, slot] of (payload.training_slots || []).entries()) {
     if (typeof slot.day !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(slot.day)) {
       return { valid: false, error: `training_slots[${i}].day must be YYYY-MM-DD` };
@@ -409,8 +416,9 @@ function buildCheckinInsertStatements(env, checkinId, payload) {
     INSERT INTO weekly_checkins (
       id, week_start, checkin_date,
       sleep_avg_7d, regulation_events, workout_adherence, stimulant_contract, operating_mode,
+      energy_self_rating, mood_self_rating, sleep_quality_self_rating,
       headline, watchfors, narrative_path, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     checkinId,
     payload.week_start,
@@ -420,6 +428,9 @@ function buildCheckinInsertStatements(env, checkinId, payload) {
     payload.workout_adherence ?? null,
     payload.stimulant_contract ?? null,
     payload.operating_mode ?? null,
+    payload.energy_self_rating ?? null,
+    payload.mood_self_rating ?? null,
+    payload.sleep_quality_self_rating ?? null,
     payload.headline ?? null,
     JSON.stringify(payload.watchfors || []),
     payload.narrative_path ?? null,

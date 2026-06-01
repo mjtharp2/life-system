@@ -156,6 +156,9 @@ const writeCheckinInputSchema = {
         week_start: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "Monday of the planned week (YYYY-MM-DD). UNIQUE — one check-in per week." },
         checkin_date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$", description: "When the check-in was actually done." },
         sleep_avg_7d: { type: "number", description: "Apple Health / Oura 7-day sleep score average for the week being reviewed." },
+        energy_self_rating: { type: "integer", minimum: 1, maximum: 10, description: "Subjective energy across the week being reviewed (1-10)." },
+        mood_self_rating: { type: "integer", minimum: 1, maximum: 10, description: "Subjective mood across the week being reviewed (1-10)." },
+        sleep_quality_self_rating: { type: "integer", minimum: 1, maximum: 10, description: "Subjective sleep quality across the week being reviewed (1-10)." },
         regulation_events: { type: "string", description: "'none' | 'level_1' | 'level_2' | 'level_3' | short description." },
         workout_adherence: { type: "string", description: "Qualitative free-text (e.g. 'solid', 'excellent', 'missed 2')." },
         stimulant_contract: { type: "string", description: "'held' | 'wavered_once' | 'wavered_multiple' | 'not_recorded'." },
@@ -394,6 +397,9 @@ Args:
       - headline (string): one-line week summary.
     Optional:
       - sleep_avg_7d (number): Apple Health / Oura 7-day sleep avg for the prior week
+      - energy_self_rating (integer 1-10): subjective energy across the prior week
+      - mood_self_rating (integer 1-10): subjective mood across the prior week
+      - sleep_quality_self_rating (integer 1-10): subjective sleep quality across the prior week
       - regulation_events (string): 'none' | 'level_1' | 'level_2' | 'level_3' | freeform
       - workout_adherence (string): qualitative
       - stimulant_contract (string): 'held' | 'wavered_once' | 'wavered_multiple' | 'not_recorded'
@@ -506,8 +512,10 @@ Args:
 Returns:
   Default:
     { "checkins": [
-        { id, week_start, checkin_date, sleep_avg_7d, regulation_events, workout_adherence,
-          stimulant_contract, operating_mode, headline, watchfors: [...], narrative_path, created_at,
+        { id, week_start, checkin_date, sleep_avg_7d,
+          energy_self_rating, mood_self_rating, sleep_quality_self_rating,
+          regulation_events, workout_adherence, stimulant_contract, operating_mode,
+          headline, watchfors: [...], narrative_path, created_at,
           training_slots: [{ id, checkin_id, day, time, category, constraint_note, order_in_week }] },
         ...
       ]
