@@ -142,6 +142,8 @@ Overload → depletion → executive function collapse → compensatory behavior
 
 The Lauren ↔ Emma integration design is an active cross-cutting strategic thread. The substantive thinking lives in a dedicated relationship-design conversation in the Life Design project. Concrete next actions arising from that thread are captured in Todoist as parallel tasks (one in Lauren, one in Emma).
 
+**Integration approach (updated 2026-05-31):** The direct integration conversation with Lauren is postponed — she's feeling nervous and isn't ready. New approach: build integration *benefit* for Lauren first (parenting coverage, Emma-in-the-family-fold time that gives Lauren genuine off-duty nights) before leading with the structural conversation. This reframes the **June 9 six-week review** from "did the integration talk happen" to "is the benefit-first approach landing."
+
 ### Emma
 
 - Honor defined time commitment consistently — Thursday and Saturday nights
@@ -149,7 +151,7 @@ The Lauren ↔ Emma integration design is an active cross-cutting strategic thre
 - Couples therapy track — ENM-informed therapist, working agreement on relationship structure
 - Integration specifics — define what more integration looks like concretely
 
-The Emma ↔ Lauren integration design is an active cross-cutting strategic thread. The substantive thinking lives in a dedicated relationship-design conversation in the Life Design project. Concrete next actions arising from that thread are captured in Todoist as parallel tasks (one in Emma, one in Lauren).
+The Emma ↔ Lauren integration design is an active cross-cutting strategic thread. The substantive thinking lives in a dedicated relationship-design conversation in the Life Design project. Concrete next actions arising from that thread are captured in Todoist as parallel tasks (one in Emma, one in Lauren). Integration approach reframed 2026-05-31 to benefit-first — see the Lauren section.
 
 ### Parenting
 

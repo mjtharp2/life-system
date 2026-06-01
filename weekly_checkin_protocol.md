@@ -85,6 +85,8 @@ work. Failure mode to avoid: triaging only dated items + Inbox (which buries
 undated high-tier work parked in waiting/needs-scoping), or filtering to P1
 (which ignores the rest of the backlog). Categorize by domain, offer windows.
 
+Triage status is mandatory to record in the entry's Process Notes — one of: (a) triage run this session, (b) deferred to manual this week (note it explicitly and add a `todoist_triage_*` watch-for so next week confirms the manual pass happened). Do not let triage silently drop.
+
 ## Step 4 — Propose the week
 
 On the gathered baseline + constraints, propose the coming week day-by-day.

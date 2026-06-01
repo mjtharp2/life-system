@@ -15,9 +15,9 @@
 - `checkin_date` — when the check-in actually happened (typically the Sunday before `week_start`).
 - **Quantitative measurements describe the PRIOR week reviewed**, not the planned week — those are the only measurements that exist at check-in time:
   - `energy_self_rating`, `mood_self_rating`, `sleep_quality_self_rating` — integer 1-10.
-  - `sleep_avg_7d` — Apple Health / Oura 7-day sleep score average (0-100).
+  - `sleep_avg_7d` — Apple Health / Oura 7-day sleep score average (0-100). Source from Oura; Apple returns overlapping stage samples, not a score.
   - `workouts_completed` — integer count.
-- `regulation_events` — `none`, or a list of `level_1` / `level_2` / `level_3`.
+- `regulation_events` — `none`, or a list of `level_1` / `level_2` / `level_3`. (Ulysses-contract breaks are tracked separately in `stimulant_contract`, not here.)
 - `stimulant_contract` — `held` / `wavered` / `broken` / `not_recorded`.
 - `carryover_watchfors` — short slugs derived from the entry's Watch-Fors section. These drive the next check-in's backward review.
 
@@ -25,31 +25,33 @@ Use `not_recorded` for any field the entry doesn't capture. Don't infer.
 
 ## Current pointer
 
-Most recent entry: **`2026-05-25.md`** (week of May 25-31, 2026; check-in 2026-05-25, holiday-shifted).
+Most recent entry: **`2026-06-01.md`** (week of June 1-7, 2026; check-in 2026-05-31).
 
 ## Recent weeks
 
 | File | Week | Headline | Sleep 7d (prior wk) | Regulation | Contract |
 |---|---|---|---|---|---|
-| `2026-05-25.md` | May 25-31 | Strong week (8/10). Back to standard rhythm; meeting-saturated work week, focus work carved from the workday. First live autonomous Todoist + calendar writes. | not_recorded | none | held |
+| `2026-06-01.md` | Jun 1-7 | Hold-the-line week: two conference days + meeting-wall Monday leave no focus container, deep work unplaced; anchors fit. Prior week strong but contract broke + work blocks slipped again. | not_recorded (~6h/night, under floor) | none | broken |
+| `2026-05-25.md` | May 25-31 | Strong week, 8/10. Productive, on schedule; VO2 finally landed, Achilles settling. First live autonomous Todoist + calendar writes. | not_recorded | none | held |
 | `2026-05-18.md` | May 18-25 | Solid week. Baseline structure starting to form. Watch slippage as system moves toward normalcy. | not_recorded | none | held |
 | `2026-05-11.md` | May 11-17 | Solid. Week-1 euphoria fading as predicted; system held under vacation disruption. Phase 0 shipped Friday. | 67 | none | wavered |
-| `2026-05-04.md` | May 4-11 | Excellent first week. Strong start, motivating. Reframe is the bigger win than execution. | not_recorded | none | held |
 
 (Sleep / regulation / contract values describe the week being backward-reviewed, not the week being planned.)
 
 ## Active watch-fors (carry into next check-in's backward review)
 
-From `2026-05-25.md`:
+From `2026-06-01.md`:
 
-- `vo2_third_attempt` — slid twice; Thu 5/28 is attempt three with a protected slot
-- `work_focus_fit_offhours` — did GTM (Wed) + two CS blocks (Thu) survive the wall-to-wall meeting week?
-- `family5_sunday` — first scheduled all-five block; additive or load?
-- `tue_pm_lift` — first evening lift under the shuffled-shift pattern
-- `friday_date_night` — PM Addie shift + sitter date; did it come together?
-- `lauren_integration_still_blocked` — June 9 review's upstream; still blocked?
-- `first_autonomous_writes` — did this session's live writes hold up in practice?
-- `achilles_watch` — probable early tendinopathy; eval if not settling in ~a week
+- `work_focus_no_container` — no daytime focus block exists this week; did the `needs-scoping` work-load decision get made or slide?
+- `stimulant_contract_reset` — back to held after last week's break?
+- `emma_kids_at_home_thu` — first instance of the integration-benefit-for-Lauren approach (Emma + kids at the house Thu); additive or friction?
+- `lauren_6week_review_0609` — June 9 six-week review, now on benefit-first footing; is it landing?
+- `sleep_under_floor` — ~6h/night, under the 7h floor all week; did a lighter week recover it or did conference/concert sink it?
+- `conference_concert_midweek_load` — Wed-Thu high-load stretch (2 conference days + concert + Emma/kids night); where did sleep/regulation land?
+- `vo2_wed_am_regression_risk` — VO2 back in the AM/time-boxed slot that failed twice before; hold or fourth slide?
+- `todoist_triage_skipped` — triage not run this check-in (manual this week); did the manual pass happen, any Inbox drift?
+- `therapy_cadence_choppy` — Morin out again, 3rd disruption in ~a month; does a real cadence re-establish?
+- `lift_gate_discipline` — did lifts stay within programmed gates, or did the push-past pattern continue?
 
 ---
 
