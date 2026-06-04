@@ -87,6 +87,14 @@ a signal worth surfacing in the prioritization stage. This depends on date
 assignment becoming more diligent than it has been — early weeks won't have
 much slip data; it accumulates as the convention strengthens.
 
+Implementation lean: compute slips on the fly each week by comparing this
+week's date assignments against the prior weeks' in the `weekly_checkins`
+substrate history — a single source of truth, no Todoist-side counter to
+maintain. The alternative (a per-task slip label incremented on every move)
+is rejected for now: it adds write churn and a second state to keep in sync.
+The substrate is already there from the weekly-checkin work, so slip data is
+a natural Step-5 (90-day arc) feed off history rather than stored task state.
+
 ## Inbox triage
 
 Items in the inbox need a project, a priority tier, and (usually) a state
