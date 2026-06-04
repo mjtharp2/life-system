@@ -70,6 +70,28 @@ Overload → depletion → executive function collapse → compensatory behavior
 - Saturday 2:00-3:00pm — secondary buffer before Emma
 - Monday lunch — micro Todoist processing block
 
+### Scheduler-Written Blocks
+
+The block types the weekly scheduler places onto the **personal Google
+primary** calendar (work calendars are read-only constraints; Tharp Family is
+confirm-gated — see `system_architecture.md` write rules). The scheduler fits
+these around fixed external commitments each week:
+
+- **Workouts** — per the Workout Pattern above and the default pattern in
+  `trainer/program.md`, with location.
+- **Addie shifts** — morning/evening per the Fixed Anchors table.
+- **Relationship nights** — Lauren Mon/Tue/Wed/Fri, Emma Thu/Sat, per Fixed
+  Anchors.
+- **Daily 90-minute focus block** — placed in the highest-quality available
+  slot (scheduled, sacred, tracked — see Professional tier).
+- **Friday flex block** 3:30-5:00pm — admin/triage.
+- **Sunday weekly review** 3:00-3:30pm.
+- **Self time** 11:00-11:30pm — daily.
+
+These are the load-bearing defaults the staged-negotiation check-in works
+from; idiosyncrasies of a given week (travel, low-energy, parenting changes)
+modulate placement but not the underlying shape.
+
 ### Travel Weeks (approx every 3rd week, Tue-Thu)
 
 - Monday and Friday structure identical

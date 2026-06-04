@@ -95,6 +95,26 @@ is rejected for now: it adds write churn and a second state to keep in sync.
 The substrate is already there from the weekly-checkin work, so slip data is
 a natural Step-5 (90-day arc) feed off history rather than stored task state.
 
+## Saved filters
+
+The standing Todoist filters that back the triage and weekly-prioritization
+views. Filter queries use Todoist's native syntax (`@label`, `p1`, `no date`),
+so they reference the state labels above by name.
+
+- **Triage Queue** — items in Inbox (untriaged capture).
+- **Today** — Todoist built-in.
+- **This Week** — items due in the next 7 days.
+- **T1 Active** — `p1 & @active`.
+- **Waiting On** — `@waiting`.
+- **Someday Review** — `@someday`.
+- **Stuck** — `no date & @active` (active work with no do-date — the slip /
+  drift catch).
+
+These are convenience surfaces, not the source of truth. Stage 5 of the
+check-in reads the full active backlog directly (per the prioritization rules
+above), not a filtered slice — the filters exist for at-a-glance use, not to
+bound what triage considers.
+
 ## Inbox triage
 
 Items in the inbox need a project, a priority tier, and (usually) a state
