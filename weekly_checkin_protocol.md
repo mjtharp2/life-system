@@ -87,37 +87,89 @@ undated high-tier work parked in waiting/needs-scoping), or filtering to P1
 
 Triage status is mandatory to record in the entry's Process Notes — one of: (a) triage run this session, (b) deferred to manual this week (note it explicitly and add a `todoist_triage_*` watch-for so next week confirms the manual pass happened). Do not let triage silently drop.
 
-## Step 4 — Propose the week
+## Step 4 — Stage and commit the week
 
-On the gathered baseline + constraints, propose the coming week day-by-day.
-Shaping inputs:
-- The skeleton is the load-bearing default (gym/cardio/tennis, relationship
-  nights, focus blocks, family time).
-- Last week's slips — carry forward; escalate anything rescheduled 3+ times.
-- Recent regulation state — if the week was pressed or showed L2 signals, size
-  the coming week SMALLER. The system serves regulation, not optimization.
-- Trainer's recent/upcoming programming — protect prescribed sessions and
-  recovery windows.
-- Sentinel + Tenex commitments are immovable; fit around them.
-- A PM parenting shift does NOT preclude couple/relationship time — don't read a
-  shift as blocking a date or quality time. Confirm rather than assume.
+The forward plan is a **staged negotiation with sequential writes**. Each stage
+commits its result to the relevant external surface (calendar / Todoist) before
+the next stage begins, so each stage works against the actually-committed shape
+of the week, not a draft. The substrate write happens once at the end (Step 6)
+with the composed session signals; per-stage writes go to calendar and Todoist
+only.
 
-**Conflict cadence:** when gathered constraints collide with the skeleton,
-surface one conflict at a time and ask what the user wants before resolving it —
-don't auto-resolve or present a finished schedule.
+**Set write-mode once at the top** of the forward plan ("autonomous writes on
+or off this session?") and proceed; don't re-confirm scope per item. The
+Tharp-Family confirm-before-mutation rule stands regardless of write-mode.
 
-Propose the week, the user reviews and edits, then write the agreed plan.
+### Stage 1 — Parenting windows (batch)
 
-**Set write-mode once at the top of the forward plan** — ask "autonomous writes
-on or off this session?" and proceed accordingly for the rest of the session;
-don't re-confirm scope per item.
+Ask the user for the week's parenting pattern in one prompt. The user
+typically already knows it and will reply in shorthand (e.g. "Mon AM, Tue PM,
+Wed all day, Thu AM, Sat afternoon"). Parse the shorthand into a full week of
+Tharp Family events. Surface the parsed set for one confirm covering the
+batch, then batch-write the whole week to Tharp Family Calendar in a single
+write. Re-read the calendar immediately before writing (Lauren may have added
+events since session start).
 
-Write targets:
-- **Todoist** and **personal Google primary** — write directly.
-- **Tharp Family** — confirm before each add/move/edit/delete; re-read the
-  calendar immediately before writing (shared — Lauren writes, nannies
-  coordinate against it). This confirm-gate stands regardless of write-mode.
-- **Never write** Sentinel, Tenex, or any M365 calendar — read-only constraints.
+Do NOT proceed to stage 2 until parenting is committed.
+
+### Stage 2 — Workout windows
+
+With parenting committed, place workout windows against the remaining shape of
+the week. Inputs:
+
+- The **default workout pattern** (from `trainer/program.md` → Default Weekly
+  Pattern): 3 gym days, Saturday tennis, 1 home VO2 max day, Sunday stretching,
+  1 flex day (often yoga).
+- The trainer's recent state and any forward hints from
+  `training_query_log` — recent log entries' `next_session.prescription_hints`
+  signal what the trainer expects to do next.
+- The week's idiosyncrasies (travel, low-energy days, injury constraints
+  surfaced in the forward-gathering open).
+
+Propose the workout windows day-by-day in a single block; user adjusts in
+conversation. Once agreed, write the workout blocks to the **personal Google
+primary** calendar. Hold the structured slot data (day, time, category,
+constraint_note) in agent memory for the end-of-session substrate write — do
+not call `weekly_write_checkin` here.
+
+### Stage 3 — Flag clearly-open windows
+
+With parenting and workouts committed, identify time blocks that are now
+clearly open (no work meeting, no parenting, no workout). Surface them to the
+user as the week's available scheduling capacity — not as a question, just as
+visible inventory the later stages will allocate against. No writes in this
+stage; it's information for stages 5–6.
+
+### Stage 4 — Day-by-day work-calendar triage
+
+Walk the week's work-calendar blocks (Sentinel + Tenex), day by day, asking
+per block what's skippable. The user decides; the agent does NOT write to work
+calendars regardless of the answer (work calendars are read-only constraints
+in this system — drops happen via the user manually declining or removing
+themselves from the meeting, not via agent write).
+
+This stage will be slow on early runs because the agent has no
+calendar-interpretation rules yet to skip asking on known-defaults. As rules
+accumulate in `dashboard_state.md` → Calendar interpretation, the agent
+short-circuits known cases and only asks on ambiguous blocks. Expected
+behavior, not a bug.
+
+### Stage 5 — Non-negotiable Todoist items
+
+Pull active Todoist items that are non-negotiable for this week (P1, deadlines
+this week, anything flagged accordingly per the Todoist taxonomy doc when it
+exists). Slot them into available windows from stage 3. Write the agreed
+do-dates to Todoist as they're committed.
+
+### Stage 6 — Prioritize remaining backlog against remaining slots
+
+Surface the remaining Todoist backlog ranked by priority/age/relevance. Work
+through it with the user against the time still available after stages 1–5.
+Write agreed do-dates to Todoist as they're committed.
+
+When the backlog exceeds the available slots (it usually will), name what's
+being deferred explicitly and surface it as a watch-for for next week's review.
+Do not silently drop items off the consideration list.
 
 ## Step 5 — Phase / 90-day scan (light touch)
 
@@ -136,6 +188,11 @@ over-summarize.
 
 Update `INDEX.md`: move the current pointer to this entry, prepend it to the
 recent-weeks table, refresh the active watch-fors.
+
+By this point in the session, parenting blocks (Tharp Family), workout windows
+(personal Google), and Todoist do-dates have already been written to their
+respective surfaces during stages 1, 2, 5, and 6. This Step 6 substrate write
+is the session-level composition — it does not duplicate per-stage writes.
 
 **Write the structured signals to substrate.** After the markdown entry is
 written, call `weekly_write_checkin` with the structured payload:

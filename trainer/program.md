@@ -26,6 +26,34 @@
 | Sat | 9–11 AM | Tennis (or makeup gym session) |
 | Sun | — | Mobility / stretching |
 
+## Default Weekly Pattern (for the scheduler)
+
+This is the default workout shape the scheduler reads when allocating workout
+windows in stage 2 of the weekly check-in. The trainer does not prescribe
+sessions a week in advance — it programs each session live on the day. This
+pattern tells the scheduler what kind of session each day defaults to, so it
+can allocate the time window. The trainer fills in the specifics when the
+session begins.
+
+- **3 gym days per week** (typically Mon, Wed, Fri — adjusted around parenting
+  + work constraints; the scheduler places them against the week's actual
+  shape).
+- **Saturday — tennis.**
+- **One home day — VO2 max** (Zone 4/5 cardio at home, no equipment needed).
+- **Sunday — stretching / mobility.**
+- **One flex day — frequently yoga**, otherwise rest or makeup work as the
+  week dictates.
+
+Constraints that modulate the default: travel (compresses; favor bodyweight /
+hotel-gym substitutes), injury (the scheduler should carry forward any
+`constraint_note` on workout slots), low-energy weeks (reduce intensity, keep
+the slot but the trainer programs lighter).
+
+The scheduler writes the agreed slots to `weekly_checkins.training_slots`
+(via `weekly_write_checkin`). The trainer reads them at session start via
+`weekly_query_checkin slots_only` and programs against each slot's day, time,
+category, and any constraint_note.
+
 ## Session templates
 
 ### Mon PM — Conditioning + Pec Rehab
