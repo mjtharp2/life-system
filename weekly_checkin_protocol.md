@@ -150,9 +150,29 @@ themselves from the meeting, not via agent write).
 
 This stage will be slow on early runs because the agent has no
 calendar-interpretation rules yet to skip asking on known-defaults. As rules
-accumulate in `dashboard_state.md` → Calendar interpretation, the agent
-short-circuits known cases and only asks on ambiguous blocks. Expected
-behavior, not a bug.
+accumulate (carried forward at the end of each weekly_log entry — see below),
+the agent short-circuits known cases and only asks on ambiguous blocks.
+Expected behavior, not a bug.
+
+**Calendar interpretation rules.** Read the prior week's entry's "Calendar
+interpretation rules" section at session start. As you walk each block in
+stage 4:
+
+- If a rule applies to a block, confirm with the user before acting on it
+  ("rule says Monday all-hands is skippable — still true?"). User says yes →
+  apply, move on. User says no → rule didn't hold this session; flag it for
+  the Step 7 review (proposed deletion). One non-holding is enough to propose
+  deletion; user confirms in Step 7.
+- If the user flags a meeting as durably skippable / fixed / soft-recurring
+  (any judgment that's true beyond this week), capture it as a proposed rule
+  addition for the Step 7 review. Don't write it yet — Step 7 is the review
+  point.
+- Rules that didn't fire this session (the event didn't happen — holiday,
+  cancellation, you weren't on the invite this week) are irrelevant: ignore,
+  don't surface in Step 7.
+
+The rules accumulate slowly. Early weeks will be mostly additions; deletions
+appear once rules have lived long enough to be tested by reality.
 
 ### Stage 5 — Prioritize Todoist against the week
 
@@ -234,3 +254,38 @@ instead.
 
 Watch-Fors are the handoff to next week — write them as the explicit things
 next week's backward review opens on.
+
+## Step 7 — Calendar interpretation rules review
+
+Before closing the session, present the rules list and proposed changes for
+user review. Three pieces:
+
+1. **Current rules** carried forward from the prior week's entry's "Calendar
+   interpretation rules" section. Display the full list — the weekly review
+   is the moment they're visible.
+2. **Proposed additions** — rule-worthy moments captured during stage 4.
+3. **Proposed deletions** — rules flagged as not-holding during stage 4.
+
+User approves, adjusts, or rejects each change. Agreed rules become the
+updated list.
+
+Write the updated list as the **"Calendar interpretation rules"** section at
+the end of the new weekly_log entry. Use a consistent header (exactly that
+text — the next week's check-in needs to find it by name). Format each rule
+with light structure:
+
+    - **[event identifier]** — [judgment]. *Added [date]. [optional note].*
+
+Example:
+
+    - **Monday 9am all-hands** — always skippable. *Added 2026-06-01.*
+    - **Quarterly board prep block** — fixed, do not move. *Added 2026-06-08.*
+
+The rules section lives in the narrative weekly_log entry (the markdown file),
+not in the `weekly_write_checkin` substrate row. The substrate row's
+`narrative_path` already points at this file; next week's check-in fetches it
+and reads the rules from the end.
+
+If no rules existed and no additions came up this session, write a
+"Calendar interpretation rules" section header with a note that the list is
+empty — keeps the structure consistent for parsing next week.

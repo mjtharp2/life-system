@@ -8,6 +8,14 @@
 
 **Per-entry structure.** YAML frontmatter (queryable signals) followed by the existing narrative verbatim — Backward Review, Forward Plan, Skeleton Deviations, Watch-Fors, Phase-Progression Scan, Process Notes. Move text, don't rewrite.
 
+**Calendar interpretation rules** (section at end of each entry). Carried
+forward and updated each week per Step 7 of the check-in protocol. Format:
+light-structured list, one rule per line, with `**event identifier**`,
+judgment, *Added [date]*, optional note. The most recent entry's rules section
+is the canonical current rule set — older entries hold historical snapshots.
+If empty, include the header with a note rather than omitting it (so the
+parsing pattern stays consistent).
+
 **Frontmatter fields.**
 
 - `week_start` — Monday of the planned week (matches filename).
