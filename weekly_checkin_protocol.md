@@ -138,7 +138,7 @@ With parenting and workouts committed, identify time blocks that are now
 clearly open (no work meeting, no parenting, no workout). Surface them to the
 user as the week's available scheduling capacity — not as a question, just as
 visible inventory the later stages will allocate against. No writes in this
-stage; it's information for stages 5–6.
+stage; it's information for stage 5.
 
 ### Stage 4 — Day-by-day work-calendar triage
 
@@ -154,22 +154,40 @@ accumulate in `dashboard_state.md` → Calendar interpretation, the agent
 short-circuits known cases and only asks on ambiguous blocks. Expected
 behavior, not a bug.
 
-### Stage 5 — Non-negotiable Todoist items
+### Stage 5 — Prioritize Todoist against the week
 
-Pull active Todoist items that are non-negotiable for this week (P1, deadlines
-this week, anything flagged accordingly per the Todoist taxonomy doc when it
-exists). Slot them into available windows from stage 3. Write the agreed
-do-dates to Todoist as they're committed.
+There is no hard non-negotiable rule. Pull the active backlog and surface it
+by priority, with relevant flags, to work through with the user.
 
-### Stage 6 — Prioritize remaining backlog against remaining slots
+Read Todoist for all `active`-state tasks across projects (skip `waiting`,
+`someday`, `needs scoping` — those are out of scope for the weekly plan
+unless explicitly promoted). Rank the surfaced list:
 
-Surface the remaining Todoist backlog ranked by priority/age/relevance. Work
-through it with the user against the time still available after stages 1–5.
-Write agreed do-dates to Todoist as they're committed.
+1. Tasks with a **specific date** this week.
+2. Tasks with a **due date** this week.
+3. Then by priority tier (P1 → P2 → P3), with slip-flag prominent where the
+   agent can compute it (date moved forward from a prior week's plan).
 
-When the backlog exceeds the available slots (it usually will), name what's
-being deferred explicitly and surface it as a watch-for for next week's review.
-Do not silently drop items off the consideration list.
+Surface this prioritized view alongside the open time windows from stage 3.
+Walk through it collaboratively — user decides what gets a slot, what defers.
+Write agreed do-dates to Todoist as items are committed (sequential write).
+
+For `needs scoping` items that surface in inbox triage or come up in the
+walk-through: the right next step is usually scheduling a *scoping block*
+(a planning session for the work), not the work itself. Suggest scoping
+blocks; don't try to schedule the unscoped work directly.
+
+When the backlog exceeds available slots (it usually will), name what's being
+deferred explicitly and surface those items as watch-fors for next week's
+review. Visible deferral is the discipline; silent dropping is what we're
+preventing.
+
+Lauren/Emma duplicate-task handling: when the agent spots likely duplicates
+across the two relationship projects (e.g., the same "integration
+conversation" in both), flag it and ask whether one block can cover both.
+Do not merge or delete across these projects without explicit confirmation.
+
+See `todoist_taxonomy.md` for the full conventions reference.
 
 ## Step 5 — Phase / 90-day scan (light touch)
 
@@ -191,7 +209,7 @@ recent-weeks table, refresh the active watch-fors.
 
 By this point in the session, parenting blocks (Tharp Family), workout windows
 (personal Google), and Todoist do-dates have already been written to their
-respective surfaces during stages 1, 2, 5, and 6. This Step 6 substrate write
+respective surfaces during stages 1, 2, and 5. This Step 6 substrate write
 is the session-level composition — it does not duplicate per-stage writes.
 
 **Write the structured signals to substrate.** After the markdown entry is
