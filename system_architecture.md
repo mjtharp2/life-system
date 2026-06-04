@@ -1,19 +1,105 @@
-# Life System Architecture Spec
+# Life System Architecture
 
-*Operationalization Layer — Todoist + Calendar + Scheduler*
-*Drafted April 26, 2026 · Living document*
+*Substrate-centric operating system for personal life management.*
+*Living document — last fully refreshed 2026-06-03.*
 
 ## Purpose
 
-This document specifies the technical and operational architecture for extending the Life System dashboard from a passive viewer (Oura + manual check-in) into an active operating layer (task management + calendar + scheduling).
+This document is the architectural source of truth for the Life System: what
+it's for, how it's structured, what's been decided, what's underway, and what
+the system is converging toward. Future Claude sessions read this to get full
+context without rebuilding it from conversation.
 
-It exists to give future Claude sessions full context without rebuilding it from conversation, to lock design decisions before implementation drift, and to provide a single source of truth for what we are building and why.
+Companion docs:
+- `life_system_reference.md` — strategy, tiers, skeleton, regulation protocol
+- `dashboard_state.md` — technical state: data sources, connectors, write rules
+- `weekly_log/INDEX.md` — weekly check-in library
+- `weekly_checkin_protocol.md` — the ritual-runner for weekly check-ins
+- `todoist_taxonomy.md` — Todoist conventions: projects, labels, priorities
+- `ideation_log.md` — parked ideation, reviewed at quarterly checkpoints
 
-Companion to: `life_system_reference.docx` (strategic layer) and `dashboard_state.docx` (current technical state).
+## What the system is
+
+A personal operating system whose primary job is **regulation, not
+optimization**. It exists to interrupt the depletion → executive function
+collapse → compensatory behavior loop by moving cognitive load out of working
+memory and into substrate that surfaces what matters when it matters.
+
+The architecture has two layers:
+
+**Substrate (the durable layer).** Reference docs in this repo, structured
+data in a Cloudflare D1 database, accessed through a custom MCP server.
+External systems (Todoist, Google Calendar, M365, Apple Health, Spotify,
+Gmail, trainer log) federate in read-time rather than being mirrored —
+substrate holds only what has no other home (check-ins, regulation events,
+scheduler proposals, training history, agent-write audit lineage).
+
+**Conversations (the operational layer).** Fresh-thread Claude conversations
+read substrate at session start, run the work, write durable outputs back to
+substrate, and die. No important context lives in any single thread; threads
+are runtime, not memory. Compression and thread death are non-events because
+intelligence lives in the substrate.
+
+The end state this architecture converges toward is a small set of
+domain-specific agents (each carrying a persona via a Skill, mounted over
+shared substrate) coordinating through that substrate, with the user
+interacting through a unified surface. See End State below.
 
 ## Status & Recent Decisions
 
-Newest entries at top. Log meaningful timing changes, scope shifts, and external blockers here so future sessions can reconstruct the trajectory without rebuilding it from conversation.
+Newest entries at top. Log meaningful timing changes, scope shifts, and
+external blockers here so future sessions can reconstruct the trajectory
+without rebuilding it from conversation.
+
+### 2026-06-03 — Architecture doc wholesale refresh
+
+This doc rewritten to reflect the substrate-centric model that emerged after
+the 2026-05-11 architectural reorientation. The April-26 dashboard-centric
+framing (worker as integration layer, dashboard as operational surface,
+deterministic scheduler writing to Todoist/Calendar from the dashboard) has
+been replaced with the current substrate-centric model (substrate is the
+integration and memory layer, conversations are the operational layer,
+agents read/write substrate via MCP). The original dashboard-and-deterministic-
+scheduler content was archived in the decision log up through this entry; the
+forward-looking sections (Build Phases, Scheduler Algorithm, Open Questions)
+have been retired in favor of Current Build Status, End State, and Roadmap
+Items.
+
+Substantive decisions captured in this refresh that hadn't yet landed in the
+doc:
+
+- **Weekly check-in is a staged-negotiation ritual.** Step 4 of
+  `weekly_checkin_protocol.md` walks 5 stages in order: parenting (batched,
+  user-supplied), workouts (against default pattern in `trainer/program.md`),
+  flag open windows, work-calendar triage, prioritize Todoist. Each stage
+  writes to its target surface (Tharp Family / personal Google / Todoist)
+  before the next stage begins; substrate row is composed at the end via
+  `weekly_write_checkin`.
+- **Calendar interpretation rules accumulate in each weekly log entry.** No
+  separate doc — rules live at the end of each weekly entry under a "Calendar
+  interpretation rules" section, carried forward and updated weekly per Step 7
+  of the protocol. One non-holding → proposed deletion; user-flagged durable
+  rules → proposed addition; user reviews and approves in Step 7. This
+  substitutes substrate-recorded episodic memory for the in-thread context
+  fresh threads would otherwise lack.
+- **Todoist taxonomy formalized in `todoist_taxonomy.md`.** Stage 5 of the
+  check-in surfaces active backlog ranked by date / priority / slip, works
+  through it collaboratively; no hard non-negotiable rule.
+- **Trainer-bridge contract.** `weekly_checkins.weekly_training_slots` holds
+  the week's scheduler-agreed workout slots (day, time, category,
+  constraint_note). Scheduler writes via `weekly_write_checkin`; trainer reads
+  via `weekly_query_checkin slots_only` at session start. Scheduler owns
+  *when/what category*; trainer owns *what specifically*. Default workout
+  pattern (3 gym + Sat tennis + 1 home VO2 + Sunday stretching + 1 flex,
+  often yoga) lives in `trainer/program.md`.
+- **MCP edit functionality.** `training_update_session` and
+  `weekly_update_checkin` deployed alongside the write tools — full-replace
+  semantics, UUID preserved, atomic D1 batch. Lets agents amend prior writes
+  cleanly.
+- **Manual-only gate removed from check-in writes.** Personal Google + Todoist
+  write directly; Tharp Family confirm-before-each-mutation (real reason:
+  shared calendar, nannies coordinate against it). Sentinel / Tenex / M365
+  never written.
 
 ### 2026-05-25 — Weekly ritual migrated to library + protocol model
 
@@ -65,13 +151,15 @@ rhythm + live/dynamic rhythm). Sources are individually verified as readable;
 first live use in a real weekly check-in is the next step. The competent agent
 build is spec'd from what that surfaces in practice.
 
-### 2026-05-24
+### 2026-05-24 — Phase 2 (MCP server) complete
+
 - Phase 2 (MCP server) complete. The life-system worker now hosts an OAuth 2.1 MCP server exposing the substrate to Claude.ai conversations. This is now the PRIMARY conversation-side interface to all substrate data — every Claude conversation (trainer, future scheduler/review agents) reads and writes through this one connector. The Phase 1 HTTP routes remain as the secondary path for scheduled agents, Claude Code, and curl. Two tools live: training_write_session and training_query_log, both calling the same db.js functions as the HTTP routes. Tool registry is structured so future domains (regulation events, check-ins, scheduler proposals, etc.) add a file + registry entries with no dispatch refactor. Connector installed account-wide; read path verified end-to-end against live D1. Write path not yet verified — pending one supervised write test before trainer instructions flip to auto-write.
 
-### 2026-05-18
+### 2026-05-18 — Phase 1 (HTTP substrate) complete
+
 - Phase 1 (HTTP substrate) complete. Training-log domain tables added to life-system-db (5 tables, 10 indexes, prefixed `training_`). HTTP routes at `/api/training-log/sessions` with bearer-token auth (env.TRAINING_LOG_TOKEN). Worker refactored into modules (src/lib/, src/routes/) so shared DB and auth logic can be reused by Phase 2 MCP server tools. Backfill script ingested 18 historical trainer sessions covering 2026-04-27 through 2026-05-18. Phase 2 (MCP server for conversation writes) unblocked, deferred to a separate session.
 
-### 2026-05-11 — OPEN ARCHITECTURAL DECISION
+### 2026-05-11 — Architectural reorientation (resolved)
 
 Native Claude connectors (Todoist, Google Calendar, Apple Health/iPhone, Spotify, Gmail, Drive) now cover most integration scope the dashboard was planned to build. This raises a real architecture question: does Phase 1-3 reorient around the agent layer, with the dashboard becoming a glance surface only, and native connectors as the primary integration layer?
 
@@ -82,6 +170,12 @@ Three architectures emerge:
 - **C — Hybrid:** dashboard for glance/regulation-dip use, conversations for operational/multi-step work, worker + D1 for state and scheduled jobs. Likely correct answer.
 
 **Decision needed before Phase 1 build window (May 16-17).** Dedicated reorientation conversation required — this is a strategic architecture decision, not a triage call. Hold Phase 1 build until decided.
+
+**RESOLVED:** Architecture C (hybrid) was adopted, then evolved into the
+substrate-centric model now described in this doc. The dashboard is deferred
+(see Roadmap Items below). The agent layer became primary via Claude
+conversations + custom MCP. Native connectors handle integration. This entry
+preserved as the marker of the inflection point.
 
 ### 2026-05-10
 - Todoist lifecycle review completed (Sunday check-in Part 2). Project structure locked: 9 top-level projects + 3 Work sub-projects, 10 labels, Todoist native priorities for tier, native Deadline + Due date for hard-date vs. do-date distinction.
@@ -101,195 +195,139 @@ Three architectures emerge:
 - ChatGPT context extraction in flight via Cowork (first export request didn't land May 1, re-requested same day).
 - Open architectural question: Cowork-on-always-on-server architecture may significantly reduce Phase 1-3 build scope. Cost is not a meaningful constraint; the real question is whether the operational complexity of running personal infrastructure (vs. fully cloud-hosted via Cloudflare) earns its keep. Revisit Sunday May 4 weekly
 
-## The Core Problem
+## Current Build Status
 
-The current dashboard observes the system but does not run it. Tasks live in Todoist (or in head, or scattered). Calendar is fragmented across Outlook (work) and Google (personal). The reference doc lists action items strategically but they have no live status. Daily execution requires holding all of this in working memory.
+The work in flight, by named step. No numbering — sequence shifts as steps
+close; names are stable.
 
-This is exactly the load that triggers the depletion → executive function collapse → compensatory behavior loop. The fix is not more discipline. The fix is moving the load out of working memory and into a system that surfaces what matters today, when it matters.
+### Weekly scheduler functional
 
-## Source of Truth Map
+Substantially closed. The check-in runs as a staged-negotiation conversation
+reading all federated sources, proposing the week, writing to calendar /
+Todoist / substrate per the protocol's stages. Remaining: ongoing accumulation
+of calendar-interpretation rules through real runs (each week's Step 7
+review). The first run on the rewritten protocol with all this window's work
+live is the next live validation.
 
-Each system component owns a specific layer. No duplication. No ambiguity about where a thing lives.
+### Weekly log queryable library
 
-| Component | Owns | Update cadence |
-|---|---|---|
-| Reference doc | Strategy, tiers, weekly skeleton template, goals, regulation protocol | Quarterly review |
-| Todoist | Every actionable next step. Tier and domain metadata. | Continuous (capture) + weekly (triage) |
-| Calendar | Time. Fixed commitments, skeleton blocks, scheduled tasks. | Continuous (work) + weekly (proposal) |
-| Dashboard | Live read of all sources + daily check-in capture + weekly review interface | Daily use |
-| D1 database | Check-in history, scheduling proposals, system audit log | Continuous (writes) |
+Closed. `weekly_log/` per-week files with frontmatter + verbatim narrative,
+`INDEX.md` as read-first entry point, archive at
+`archive/weekly_log_pre-library.md`. Fresh-thread bootstrap proven.
 
-## Architecture Overview
+### Realtime / dynamic editing
 
-### Host Stack
+Not started. The live-assistant rhythm (reactive mid-week changes), writing
+only to Google personal + Todoist (work calendars read-only; Tharp Family
+confirm-gated). Same write path as the weekly scheduler, extended to
+reactive use. Comes after the weekly scheduler write path is proven in real
+weekly runs.
 
-- GitHub Pages — static dashboard frontend (existing)
-- Cloudflare Workers — API routes, OAuth handlers, scheduler engine
-- Cloudflare KV — OAuth tokens, refresh tokens, user config
-- Cloudflare D1 — relational data: check-ins, proposals, audit log
-- Cloudflare Cron Triggers — background scheduler tasks (token refresh, weekly proposal generation)
+### 90-day arc tracking + check-in/regulation D1 write path
 
-Rationale: extends existing infrastructure, single account, free tier covers usage, cron solves the dashboard-not-open problem, and KV+D1 provide both fast token reads and structured query support.
+Not started; partially seeded. The protocol already runs the 90-day proximity
+check. Arc-tracking requires check-in and regulation data accumulating in
+queryable form — folds into the `weekly_checkins` table from this window's
+build, extended with regulation_events as its own queryable surface. Wires
+substrate into the phase-progression machinery already specified but
+currently running on memory.
 
-### External Services
+### Roadmap exercise
 
-- Oura API v2 (existing) — sleep, readiness, activity
-- Todoist REST API v2 — tasks, projects, labels, filters
-- Google Calendar API — read/write personal calendar
-- Microsoft Graph API — read work calendars (Outlook). Deferred to Phase 4.
+Not started. The sequencing pass that takes the roadmap items below and
+orders them against accumulated cleanup debt. This is the work that opens
+when the operational steps above stabilize. Cleanup half of this step is
+underway via the current doc refresh.
 
-### Data Flow
+## End State
 
-1. User captures task → Todoist Inbox (untriaged)
-2. Friday 3:30-5pm flex block → user opens dashboard Triage view → assigns tier, domain, duration, block-type → task moves to Active project, no due date
-3. Sunday 3-3:30pm review block → user clicks Generate Proposal → scheduler reads calendar, identifies open blocks, matches queued tasks to blocks, returns proposal
-4. User reviews proposal → edits/removes/swaps → clicks Approve
-5. Scheduler writes due dates back to Todoist + creates calendar events for high-tier deep work blocks
-6. Throughout the week: dashboard surfaces today's tasks + today's calendar shape. Completing a task in dashboard marks done in Todoist.
-7. Following Sunday: review captures what got done vs. what was proposed. Slip patterns feed regulation protocol.
+The architecture this system is converging toward, decided in principle,
+unbuilt in most places.
 
-## Todoist Structure
+### Domain agents as Skills + substrate
 
-The locked structure for task management. Phase 1 build integrates against this.
+Each domain agent (health, finance, relationship/reflection, possibly taste,
+possibly trading) is built as **a Skill (stable persona + procedure +
+durable domain knowledge) mounted over substrate (evolving memory + live data
++ history)**. The Skill carries the agent's character and is portable — it
+activates wherever invoked, decoupling the agent from any single
+Project/thread. Substrate carries the accumulating context the agent reads
+fresh each session.
 
-### Projects (9 top-level + 3 Work sub-projects)
+Guardrail: only durable knowledge belongs in a Skill. The test is "true in
+three months regardless of what happens between now and then?" Current state
+goes in substrate; baking it into the Skill produces stale agents. Skills are
+maintained deliberately; same deletion-audit discipline as everything else.
 
-- **Work** (with sub-projects: Sentinel, Netcov, Tenex)
-- **Health**
-- **Lauren**
-- **Emma**
-- **Family**
-- **Friends**
-- **Self**
-- **Build**
-- **House**
+### The agent set
 
-Inbox is Todoist's built-in untriaged bucket, not a separate project.
+Current trainer is the first instance. The set the system is built to grow
+into:
 
-### Labels (10 total)
+- **Health / nutrition / wellness** — evolved trainer. Owns body, sleep,
+  food, recovery, regulation signals.
+- **Personal finance** — clean fit. Budgeting, cash flow, spending awareness.
+- **Trading (analyze-only, separate from personal finance)** — only if
+  compliance allows. Real governance question to resolve before building;
+  zero execution authority regardless.
+- **Relationship / reflection** — explicitly not-a-therapist, coupled to real
+  therapy. Owns emotional/psychological domain, relationship intentionality.
+  Highest care because of sensitivity and the failure mode of an AI drifting
+  into a role it can't safely hold.
+- **Taste / curatorial** — only if persistent curation proves valuable over
+  transactional connector-use.
 
-**State (4, exactly one per triaged item):**
-- `active` — being worked, gets scheduled
-- `waiting` — blocked on someone/something else
-- `someday` — deferred, not pulled by scheduler
-- `needs-scoping` — committed but requires design/sequencing before becoming actionable
+Work is deliberately walled off in the Tenex enterprise Claude — not on this
+list. The only bridge into this system is read-only work calendar
+availability.
 
-**Estimated time (5, opportunistic):**
-- `15min`, `30min`, `60min`, `90min`, `2hr+`
+### Agent coordination via substrate, not chat
 
-**Focus (1, opportunistic):**
-- `focus` — requires uninterrupted block
+Agents do not message each other. They coordinate by reading and writing the
+same substrate, asynchronously. The health agent doesn't *tell* the scheduler
+training load is high; it writes that state, and the scheduler reads it next
+time it runs. This is far more robust than direct agent-to-agent messaging
+and is the model the current architecture already supports.
 
-### Tier
+### Unified surface (Slack-style)
 
-Todoist native priorities: P1 / P2 / P3 (P4 unused, "no tier set"). No tier label needed.
+Eventually, a single front-end (likely Slack-style) where the user talks to
+the system and an orchestrator routes to the appropriate Skill against
+shared substrate. Not near-term — earns its keep only when multiple agents
+are producing enough signal that a unified surface beats opening individual
+Project conversations. Far end of the roadmap.
 
-### Dates
+### Principles
 
-Two distinct fields, both Todoist-native:
+The architecture honors a small set of principles that take precedence over
+feature requests:
 
-- **Deadline** — hard external date by which the work must be complete. Set when there's a real outside-imposed date.
-- **Due date** — the do-date, the day work is planned to happen. Set during Sunday planning for items committed to that week.
+1. **The system serves regulation, not optimization.** Every feature
+   answers: does this reduce cognitive load or add to it? Optimization
+   features that increase load are rejected even when they would "work."
 
-Both can coexist on a task. Neither is required.
+2. **Proposal over automation.** The scheduler proposes, the user decides.
+   The user retains full agency at the weekly review checkpoint.
 
-### Filters (7)
+3. **Capture must be frictionless.** Adding to Todoist Inbox works from
+   anywhere with no required metadata. Triage happens later.
 
-- **Triage Queue** — items in Inbox
-- **Today** — Todoist built-in
-- **This Week** — items due in next 7 days
-- **T1 Active** — `p1` & `@active`
-- **Waiting On** — `@waiting`
-- **Someday Review** — `@someday`
-- **Stuck** — `no date & @active`
+4. **Substrate is the durable layer; threads are runtime.** Important state
+   never lives only in a thread. Thread compression and thread death are
+   non-events because durable context lives in the repo and D1.
 
-### Lifecycle
+5. **Federate, don't mirror.** External systems remain their own source of
+   truth. Substrate holds only what has no other home.
 
-- **Capture:** lands in Inbox with no metadata required. Friction-free capture per design principle 3.
-- **Triage:** assigned during Sunday weekly check-in/planning session. Process Inbox: assign project, state, tier, deadline if hard, optional time/focus labels.
-- **Sunday planning:** in same session as triage, assign do dates (due dates in Todoist) to active items committed to the week ahead.
-- **Mid-week:** adjust do dates as reality shifts; capture new items to Inbox for next Sunday's triage.
+6. **Every write is reversible or auditable.** Agent writes log to D1 with
+   audit lineage. No silent state changes.
 
-### Pattern: Thematic work needing design before action
+7. **Build for bad weeks.** The system must be usable at Level 2
+   dysregulation. Default surfaces show the minimum; advanced features are
+   opt-in.
 
-Strategic threads that need scoping/sequencing before they produce executable next actions are captured as "Build plan for X" tasks with `needs-scoping` state. A deadline is assigned to create a staleness signal — when the deadline passes without progress, the lack of action surfaces. Substance and design happen in the appropriate context (work Claude account for professional themes, life design conversations for personal themes); the life system tracks only that the work exists and when it's getting stale.
-
-### Pattern: Phased commitments tracked in reference doc, not Todoist
-
-For items that map to named phases of the strategic plan (Health phases 1-3, therapy pipeline tracks, system architecture phases 0-6, etc.), the reference doc (`life_system_reference.md`) is canonical. Todoist contains only items currently in active execution. Future-phase commitments live in the reference doc until their phase activates, at which point they migrate to Todoist as active items. This prevents Todoist bloat with un-actionable future commitments while keeping the strategic plan fully addressable in markdown.
-
-## Calendar Architecture
-
-### Calendar Roles
-
-| Calendar | Mode | Purpose |
-|---|---|---|
-| Google (personal) | Read + Write | Skeleton blocks, workouts, relationship time, scheduled tasks |
-| Outlook (Tenex) | Read only (Phase 4) | Existing work meetings — treated as fixed commitments |
-| Outlook (Sentinel) | Read only (Phase 4) | Existing work meetings — treated as fixed commitments |
-| Outlook (Netcov) | Read only (Phase 4) | Existing work meetings — treated as fixed commitments |
-
-### Skeleton Block Types Written by Scheduler
-
-- Workouts — per the workout pattern, with location
-- Addie shifts — morning/evening per weekly skeleton
-- Relationship nights — Lauren M/T/W/F, Emma Th/Sa, marked appropriately
-- Daily 90-min focus block — placed in highest-quality available slot
-- Friday flex block 3:30-5pm — admin/triage
-- Sunday weekly review 3-3:30pm
-- Self time 11-11:30pm — daily reminder
-
-## Scheduler Algorithm
-
-Triggered manually during Sunday review block. Generates a proposal for the upcoming Monday-Sunday week.
-
-### Step A — Read Calendar State
-
-- Pull next 7 days from all connected calendars
-- Identify fixed commitments (existing meetings, all-day events)
-- Detect travel week — search for travel events Tue/Wed/Thu, flag if found
-
-### Step B — Lay Down Skeleton
-
-- Apply weekly skeleton template (or travel-week variant)
-- Resolve conflicts — fixed commitments win, skeleton block shifts to nearest open slot or marked 'unable to place'
-- Skeleton placement is proposed, not yet written
-
-### Step C — Identify Open Blocks
-
-After fixed + skeleton placements, classify remaining time:
-
-- `@focus` block — 90+ minutes uninterrupted, mid-morning preferred
-- `@admin` block — 30-60 minutes between commitments
-- `@micro` block — <30 minutes, suitable for 15min tasks only
-
-### Step D — Match Tasks to Blocks
-
-Pull tasks from active projects (any project except Someday) with `@active` state and no due date set. Sort by deadline urgency first (items with deadlines in the planning window prioritized), then by tier, then by age descending (older first).
-
-For each task, find best-fit block:
-1. Block type label (`focus` vs. flex) must match if specified
-2. Block duration must accommodate task duration label if set
-3. Domain-aware placement — relationship tasks go on relationship nights, etc.
-4. Greedy fill: T1 first, then T2. T3 only if blocks remain.
-
-Tasks that don't fit are returned as 'overflow' with reason.
-
-Todoist's native Deadline field is treated as the hard external date. The due date written by the scheduler is the do-date (planned execution day). The scheduler proposes due dates against deadlines; the user approves.
-
-### Step E — Render Proposal
-
-- Visual week grid — gray (fixed), blue (skeleton), green (proposed task assignment)
-- Each green block clickable to: swap task, remove, change duration
-- Overflow list shown separately with reason for non-placement
-- Summary stats — focus block hours, T1 tasks scheduled, T1 tasks overflowed
-
-### Step F — On Approval
-
-- Write Todoist due dates for all proposed task assignments
-- Create Google Calendar events for skeleton blocks (configurable per block type)
-- Create Google Calendar events for high-tier scheduled deep work (configurable)
-- Log full proposal + approval state to D1 audit table
+8. **Honesty over agreement.** Agents push back when plans are off; user
+   judgment is final.
 
 ## Phase Progression Review
 
@@ -306,7 +344,7 @@ The review itself: formal phase audit. For each active phase across domains:
 
 Review is based on accumulated observations from weekly check-ins plus deliberate evaluation at the session. No trigger-definition rigor required (see explicit decision in 2026-05-10 Status entry).
 
-### 90-Day Review Protocol
+## 90-Day Review Protocol
 
 Each quarterly 90-day review session covers:
 
@@ -324,7 +362,9 @@ Output: a 90-day review entry in the `weekly_log/` library (the entry file for t
 
 ## System Cadences
 
-State tracking for system-managed review cadences. The weekly check-in fetches this section to determine which cadences are approaching their next instance.
+State tracking for system-managed review cadences. The weekly check-in
+fetches this section to determine which cadences are approaching their next
+instance.
 
 ### 90-Day System Review
 
@@ -336,112 +376,98 @@ State tracking for system-managed review cadences. The weekly check-in fetches t
 
 Recurring weekly, no separate tracking needed.
 
-## Build Phases
+## Source of Truth Map
 
-> Phase 0 must complete before any feature work. Subsequent phases are independent and can ship sequentially.
+| Domain | Source of truth | Access path | Notes |
+|---|---|---|---|
+| Strategy / principles / cadences | This repo (markdown) | curl / web_fetch | Tier 1: `life_system_reference.md`, `system_architecture.md`. Tier 2 loaded on task. |
+| Weekly history | `weekly_log/` library | curl / web_fetch | Per-week files; INDEX.md is read-first. |
+| Calendar (personal + family) | Google Calendar | Native Claude connector | Allowlist in `dashboard_state.md`. |
+| Calendar (Sentinel) | Sentinel M365 tenant | Microsoft 365 connector | Read-only. |
+| Calendar (Tenex) | Tenex M365 tenant | Published ICS → Google connector | Read-only via Google to avoid second M365 tenant. |
+| Tasks | Todoist | Native connector | Conventions in `todoist_taxonomy.md`. |
+| Training log | D1 `training_*` tables | Custom MCP (`training_query_log`, `training_write_session`, `training_update_session`) + HTTP routes | Substrate's own data. |
+| Weekly check-ins | D1 `weekly_checkins` + `weekly_training_slots` | Custom MCP (`weekly_query_checkin`, `weekly_write_checkin`, `weekly_update_checkin`) + HTTP routes | Structured signals + trainer-bridge slots. |
+| Health (sleep / readiness / weight) | Oura, Apple Health, eventually Withings | Apple Health connector (mobile-only) currently; worker health-proxy planned | See Roadmap Items. |
 
-### Phase 0 — Infrastructure ✅ Complete (shipped 2026-05-08)
+Preprocessing rules (calendar federation, timezone normalization, cancelled-
+event filtering, write boundaries) are documented in `dashboard_state.md` →
+Data Sources & Access. Todoist conventions are in `todoist_taxonomy.md`.
 
-- [x] Set up Claude Code locally connected to life-system repo
-- [x] Provision Cloudflare KV namespace (life-system-tokens)
-- [x] Provision Cloudflare D1 database (life-system-db)
-- [x] Refactor existing worker into multi-route worker structure
-- [x] Set up wrangler.toml configuration with bindings
-- [x] Create OAuth callback handler stub for Todoist + Google
+## Roadmap Items
 
-### Phase 1 — Todoist Read + Write
+Identified work that hasn't been sequenced yet. The Roadmap Exercise (above
+in Current Build Status) is where these get ordered and timed against
+accumulated cleanup debt. Listed alphabetically within each grouping; ordering
+is the exercise's job.
 
-- Dedicated Todoist lifecycle review (do this before coding)
-- Todoist OAuth flow (authorize → store token in KV)
-- Worker route: `/api/todoist/tasks?filter=today`
-- Worker route: `/api/todoist/tasks?filter=triage`
-- Dashboard: Today view — list of due tasks with checkboxes
-- Dashboard: Triage view — Inbox items with tier/domain/duration assignment UI
-- Worker route: `POST /api/todoist/complete` (mark task done)
-- Worker route: `POST /api/todoist/triage` (apply labels, move to Active)
-- Validate end-to-end before Phase 2
+### Near-term roadmap items
 
-### Phase 2 — Calendar Read
+- **Cross-context health substrate.** Worker health-proxy layer pulling Oura
+  directly (bypasses Apple connector's mobile-only + Oura-aggregation
+  problems) and onboarding Withings as second source. MCP tools on top. Lets
+  scheduler/check-in reach health data on PC, makes Withings usable cleanly.
+- **Reference dashboards (deferred from original architecture, repurposed).**
+  Glance surfaces over D1 substrate — health, finance, training, weekly
+  adherence tracking. The D1 architecture explicitly enables this; the
+  original dashboard plan is retired but the *concept* of fulsome reference
+  dashboards lives on as a roadmap item. Not high priority; sits in the
+  roadmap for the exercise to sequence.
 
-- Google Calendar OAuth flow
-- Worker route: `/api/calendar/week` (returns 7-day event list)
-- Dashboard: Today's shape view — calendar timeline + due tasks combined
-- Dashboard: Week view — full week visual
+### Mid-term roadmap items
 
-### Phase 3 — Scheduler v1
+- **First Skill: package the check-in protocol as a Skill.** Auto-activating,
+  cache-immune, single coherent home for procedural knowledge. Build from a
+  proven procedure (multiple clean runs of the current markdown protocol),
+  not a guessed one.
+- **Trainer as Skill (persona).** Carry the trainer's stable persona +
+  procedure + durable knowledge into a Skill; substrate continues to hold
+  the evolving training log and program. First instance of a *persona* Skill
+  (the check-in Skill is procedural).
+- **ChatGPT corpus integration.** Years of accumulated personal context made
+  addressable by agents. Two artifacts: curated reference docs (synthesized
+  current-state thinking per domain) and searchable archive (full corpus
+  indexed via Cloudflare Vectorize, exposed as MCP tool). Reference docs
+  first (analytical-synthesis project, ~2-4 hours per domain), archive
+  second (~6-10 hours). Privacy gate: relationship and personal-history
+  reference docs likely need a non-public home — decide on private repo,
+  local-only, or Claude.ai project storage before producing content.
 
-- Skeleton template stored as JSON config in KV
-- Open-block detection algorithm
-- Task-to-block matching algorithm
-- Worker route: `POST /api/scheduler/propose`
-- Dashboard: Proposal view with edit affordances
-- Worker route: `POST /api/scheduler/approve` (writes Todoist + Calendar)
-- Audit log to D1 on every approval
+### Longer-term roadmap items
 
-### Phase 4 — Polish
+- **Path A: worker writes markdown to repo via GitHub API.** Lets agents
+  produce markdown files directly without the Claude Code patch step.
+  Defers until multi-agent write demand makes the governance trade worth it
+  (currently only the check-in agent writes weekly markdown, and the patch
+  step is one paste per week). Real risk: a token in the worker with repo
+  write access. Real benefit: removes the manual commit step from the agent
+  loop.
+- **Unified front-end surface.** Slack-style (or equivalent) where user
+  talks to the system and orchestrator routes to the right Skill. Earns its
+  keep when multiple agents are producing enough signal to justify a shared
+  surface.
 
-- Microsoft Graph integration for Outlook calendars
-- Travel week auto-detection
-- Token auto-refresh via cron trigger
-- Migrate localStorage check-in data to D1
+### Cleanup debt (sequenced as part of the roadmap exercise)
 
-### Phase 5 — Deferred
+- **Ideation log prune.** Items in `ideation_log.md` reviewed for promotion
+  to roadmap, deferral, or deletion. Promoted items merge into the roadmap-
+  items above; pruned items leave the log clean.
+- **Stale-reference / credential hygiene.** Periodic sweep for old tokens,
+  obsolete cross-references, drift between markdowns and reality.
 
-- Mobile PWA optimization
-- Push notifications
-- Claude training interface for fitness module
+## Maintenance
 
-### Phase 6 — ChatGPT Corpus Integration
+This doc is the source of architectural truth. When this thread or any
+future thread decides something architectural, the decision lands here as a
+Status & Recent Decisions entry. When something accumulates that would
+change current state or end state, those sections get updated directly.
 
-Two artifacts: curated reference docs (synthesized current-state thinking by domain — relationship, training, health, professional, decision history) and searchable archive (full corpus indexed via Cloudflare Vectorize, exposed as MCP tool for on-demand retrieval).
-
-**Sequencing:** Reference docs first, archive second. Reference docs are an analytical-synthesis project (~2-4 hours per domain, one domain per session). Archive is an infrastructure project (vector DB, embedding pipeline, retrieval endpoint, ~6-10 hours).
-
-**Trigger to start:** Either (a) a real, repeated moment where searchable history would have unblocked something — wait for the lack to be felt, or (b) Phase 4 completes and the substrate can hold the integration cleanly.
-
-**Privacy gate:** Relationship and personal-history reference docs likely contain content unsuitable for the public `life-system` repo. Decide on private repo, local-only, or Claude.ai project file storage before producing content that needs a non-public home.
-
-**What unlocks:** Years of accumulated personal context becomes addressable by current agents. Trainer can reference historical training, relationship work can reference evolved positions, decision-making can reference prior reasoning. Expanded persistent memory across the system.
-
-## Design Principles
-
-These are the constraints that prevent the system from becoming another source of overload. They take precedence over feature requests.
-
-### 1. The system serves regulation, not optimization
-
-Every feature must answer: does this reduce cognitive load, or add to it? Optimization features that increase cognitive load are rejected even when they would 'work.'
-
-### 2. Proposal over automation
-
-The scheduler proposes, never decides. The user retains full agency at the weekly review checkpoint. Automatic scheduling without explicit approval is forbidden — it would replace one external authority (calendar tyranny) with another.
-
-### 3. Capture must be frictionless
-
-Adding a task to Todoist Inbox must work from anywhere with no tier/domain/duration required. Triage happens during the flex block, not at capture time. Forcing metadata at capture creates resistance and tasks end up nowhere.
-
-### 4. The dashboard is the daily surface, not the system
-
-Todoist and Calendar are usable on their own. The dashboard adds synthesis but never becomes a single point of failure. If the dashboard breaks, the underlying systems still function.
-
-### 5. Every write is reversible or auditable
-
-Approving a scheduling proposal writes potentially dozens of due dates and calendar events. Every write logs to D1 with a proposal ID, so 'undo last proposal' is always possible. No silent state changes.
-
-### 6. Build for bad weeks, not good ones
-
-The system must be usable at Level 2 dysregulation. Default views must show the minimum (today's tasks, today's calendar, check-in capture). Advanced features (proposals, trends, weekly review) are opt-in surfaces, not required surfaces.
-
-## Open Questions
-
-Items deferred to specific phase decisions or pending more information.
-
-- **Existing Todoist setup** — does user have projects/labels already that we should adapt to vs. propose fresh structure? *Dedicated review session planned before Phase 1.*
-- **Outlook integration complexity** — Microsoft Graph requires Azure app registration. Confirm worth it for Phase 4 or treat work calendar as 'busy' via manual blocks.
-- **Phone capture path** — Todoist mobile is the obvious answer, but worth confirming this is friction-free vs. needing a custom shortcut.
-- **Travel week auto-detection** — what signals reliably indicate travel? Calendar event title patterns? Location change?
-- **Sentinel/Netcov calendar access** — does Tenex IT permit personal app OAuth against work mailbox?
-- **Anthropic Todoist connector vs. dashboard Phase 1 build** — Claude.ai has a native Todoist connector covering find/add/update/complete operations across tasks, projects, sections, labels, filters. This duplicates much of Phase 1's planned dashboard build. Does Phase 1 scope shrink (dashboard becomes read-only Today view + complete; heavy operations move to Claude conversations)? Or does the dashboard build proceed as specced for always-available glance-ability? Decide before Phase 1 build window (May 16-17).
+The 90-day review includes an architecture spec audit (step 5 of the 90-Day
+Review Protocol) — that's the formal moment the whole doc gets checked for
+staleness, not just the dated entries.
 
 ---
 
-*Last updated: April 26, 2026. Update at each phase boundary or material design change.*
+*Last fully refreshed 2026-06-03. Update Status & Recent Decisions on every
+material architectural decision; update Current Build Status, End State, and
+Roadmap Items as those evolve; full-doc audit at each 90-day review.*
