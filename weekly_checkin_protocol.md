@@ -179,14 +179,41 @@ appear once rules have lived long enough to be tested by reality.
 There is no hard non-negotiable rule. Pull the active backlog and surface it
 by priority, with relevant flags, to work through with the user.
 
-Read Todoist for all `active`-state tasks across projects (skip `waiting`,
-`someday`, `needs scoping` — those are out of scope for the weekly plan
-unless explicitly promoted). Rank the surfaced list:
+Read Todoist for all `active`-state tasks across projects to build the week's
+slot plan. For slot-allocation, `waiting` / `someday` / `needs scoping` are out
+of scope — but they are NOT out of scope for the check: two mandatory sweeps
+below cover the rest of the backlog so nothing sits in limbo or blocked
+unwatched. Rank the surfaced active list:
 
 1. Tasks with a **specific date** this week.
 2. Tasks with a **due date** this week.
 3. Then by priority tier (P1 → P2 → P3), with slip-flag prominent where the
    agent can compute it (date moved forward from a prior week's plan).
+
+**Two mandatory sweeps on the full backlog (not just the active set).** Pull
+every open task across all projects and states — the all-priorities filter
+`(p1 | p2 | p3 | p4)` returns everything; inspect each task's labels
+client-side. The `@active` / label-parameter filters silently miss any task
+that has no state label at all, which is exactly what these sweeps exist to
+catch.
+
+1. **Limbo sweep — no state label.** Any task carrying none of `active` /
+   `waiting` / `someday` / `needs scoping` is unprocessed, not deliberately
+   parked. Surface every one, grouped by project, and triage it WITH the user:
+   assign a state label, a real tier (P1–P3 — don't leave an active task at
+   default P4), and a date if it's active. Subtasks of an already-stated parent
+   are steps, not independent limbo — leave them unless the user says
+   otherwise. Mandatory every week; a clean run (zero limbo tasks) is a valid
+   result, but it must be checked, not assumed.
+
+2. **Unblock check — `waiting` and `needs scoping`.** Walk these two states
+   briefly and ask, per item, whether it's moved: a `waiting` item whose
+   blocker has cleared → promote to `active` (give it a tier, and a do-date if
+   appropriate); a `needs scoping` item the user is ready to scope → schedule a
+   scoping block, not the unscoped work. Items still genuinely blocked or
+   unscoped stay put. The point is a weekly heartbeat so nothing sits blocked
+   indefinitely with no one looking at it. (`someday` is deliberately NOT swept
+   here — it's the parking state, reviewed at the quarterly checkpoint.)
 
 Surface this prioritized view alongside the open time windows from stage 3.
 Walk through it collaboratively — user decides what gets a slot, what defers.
