@@ -33,12 +33,13 @@ Use `not_recorded` for any field the entry doesn't capture. Don't infer.
 
 ## Current pointer
 
-Most recent entry: **`2026-06-01.md`** (week of June 1-7, 2026; check-in 2026-05-31).
+Most recent entry: **`2026-06-08.md`** (week of June 8-14, 2026; check-in 2026-06-07).
 
 ## Recent weeks
 
 | File | Week | Headline | Sleep 7d (prior wk) | Regulation | Contract |
 |---|---|---|---|---|---|
+| `2026-06-08.md` | Jun 8-14 | Hold-steady week around the EMG (Fri), the Lauren six-week review (Wed), and two back-to-back concert nights (Thu/Fri). Prior week net-positive and optimistic, but the stimulant contract broke a second week running and a neck/facet symptom surfaced twice pre-EMG. Triage run, Inbox cleared. | not_recorded | none | broken |
 | `2026-06-01.md` | Jun 1-7 | Hold-the-line week: two conference days + meeting-wall Monday leave no focus container, deep work unplaced; anchors fit. Prior week strong but contract broke + work blocks slipped again. | not_recorded (~6h/night, under floor) | none | broken |
 | `2026-05-25.md` | May 25-31 | Strong week, 8/10. Productive, on schedule; VO2 finally landed, Achilles settling. First live autonomous Todoist + calendar writes. | not_recorded | none | held |
 | `2026-05-18.md` | May 18-25 | Solid week. Baseline structure starting to form. Watch slippage as system moves toward normalcy. | not_recorded | none | held |
@@ -48,18 +49,18 @@ Most recent entry: **`2026-06-01.md`** (week of June 1-7, 2026; check-in 2026-05
 
 ## Active watch-fors (carry into next check-in's backward review)
 
-From `2026-06-01.md`:
+From `2026-06-08.md`:
 
-- `work_focus_no_container` — no daytime focus block exists this week; did the `needs-scoping` work-load decision get made or slide?
-- `stimulant_contract_reset` — back to held after last week's break?
-- `emma_kids_at_home_thu` — first instance of the integration-benefit-for-Lauren approach (Emma + kids at the house Thu); additive or friction?
-- `lauren_6week_review_0609` — June 9 six-week review, now on benefit-first footing; is it landing?
-- `sleep_under_floor` — ~6h/night, under the 7h floor all week; did a lighter week recover it or did conference/concert sink it?
-- `conference_concert_midweek_load` — Wed-Thu high-load stretch (2 conference days + concert + Emma/kids night); where did sleep/regulation land?
-- `vo2_wed_am_regression_risk` — VO2 back in the AM/time-boxed slot that failed twice before; hold or fourth slide?
-- `todoist_triage_skipped` — triage not run this check-in (manual this week); did the manual pass happen, any Inbox drift?
-- `therapy_cadence_choppy` — Morin out again, 3rd disruption in ~a month; does a real cadence re-establish?
-- `lift_gate_discipline` — did lifts stay within programmed gates, or did the push-past pattern continue?
+- `stimulant_contract_two_week_pattern` — broke two weeks running; does it reset to held, or is this a trend to name more directly?
+- `neck_facet_emg_0612` — EMG Friday 6/12: what did it show, did the neck/facet symptom get raised, what's the post-EMG plan?
+- `emg_followup_action` — does the waiting "post-EMG follow-up plan" task get actioned once the EMG unblocks it?
+- `lauren_6week_review_0610` — moved to Wed 6/10; did it happen and how did it land on the benefit-first footing?
+- `work_focus_design_deferred` — the dedicated design session deferred again ("busy week" is itself the pattern); did it get scheduled or slide further?
+- `two_concert_sleep_thu_fri` — Mumford Thu + EMG Fri AM + Rufus Fri: the week's sleep pinch-point; where did sleep land?
+- `vo2_tue_gate_override_risk` — did he downgrade the Tue VO2 when tired, or override the readiness gate again?
+- `therapy_morin_thu_cadence` — Morin session moved to Thursday; does a real cadence finally re-establish?
+- `lift_gate_neck_caution` — did lifts stay inside the pre-EMG limits (no overhead, no heavy hinge)?
+- `sat_yoga_tbd` — did the tentative Saturday yoga land, and when?
 
 ---
 
