@@ -33,12 +33,13 @@ Use `not_recorded` for any field the entry doesn't capture. Don't infer.
 
 ## Current pointer
 
-Most recent entry: **`2026-06-08.md`** (week of June 8-14, 2026; check-in 2026-06-07).
+Most recent entry: **`2026-06-22.md`** (week of June 22-28, 2026; check-in 2026-06-21).
 
 ## Recent weeks
 
 | File | Week | Headline | Sleep 7d (prior wk) | Regulation | Contract |
 |---|---|---|---|---|---|
+| `2026-06-22.md` | Jun 22-28 | Pressed/recovery off a 2-week check-in gap (backward review spans 6/08-6/21). First real workout-adherence crack (back-half-of-week collapse); stimulant contract broke a 3rd week running; six-week review → decision to enter couples therapy (Teresa); EMG confirmed active reinnervation (best case); a cold (onset 6/18) flattened the back half. | not_recorded (down from illness) | none | broken |
 | `2026-06-08.md` | Jun 8-14 | Hold-steady week around the EMG (Fri), the Lauren six-week review (Wed), and two back-to-back concert nights (Thu/Fri). Prior week net-positive and optimistic, but the stimulant contract broke a second week running and a neck/facet symptom surfaced twice pre-EMG. Triage run, Inbox cleared. | not_recorded | none | broken |
 | `2026-06-01.md` | Jun 1-7 | Hold-the-line week: two conference days + meeting-wall Monday leave no focus container, deep work unplaced; anchors fit. Prior week strong but contract broke + work blocks slipped again. | not_recorded (~6h/night, under floor) | none | broken |
 | `2026-05-25.md` | May 25-31 | Strong week, 8/10. Productive, on schedule; VO2 finally landed, Achilles settling. First live autonomous Todoist + calendar writes. | not_recorded | none | held |
@@ -49,18 +50,18 @@ Most recent entry: **`2026-06-08.md`** (week of June 8-14, 2026; check-in 2026-0
 
 ## Active watch-fors (carry into next check-in's backward review)
 
-From `2026-06-08.md`:
+From `2026-06-22.md`:
 
-- `stimulant_contract_two_week_pattern` — broke two weeks running; does it reset to held, or is this a trend to name more directly?
-- `neck_facet_emg_0612` — EMG Friday 6/12: what did it show, did the neck/facet symptom get raised, what's the post-EMG plan?
-- `emg_followup_action` — does the waiting "post-EMG follow-up plan" task get actioned once the EMG unblocks it?
-- `lauren_6week_review_0610` — moved to Wed 6/10; did it happen and how did it land on the benefit-first footing?
-- `work_focus_design_deferred` — the dedicated design session deferred again ("busy week" is itself the pattern); did it get scheduled or slide further?
-- `two_concert_sleep_thu_fri` — Mumford Thu + EMG Fri AM + Rufus Fri: the week's sleep pinch-point; where did sleep land?
-- `vo2_tue_gate_override_risk` — did he downgrade the Tue VO2 when tired, or override the readiness gate again?
-- `therapy_morin_thu_cadence` — Morin session moved to Thursday; does a real cadence finally re-establish?
-- `lift_gate_neck_caution` — did lifts stay inside the pre-EMG limits (no overhead, no heavy hinge)?
-- `sat_yoga_tbd` — did the tentative Saturday yoga land, and when?
+- `back_half_workout_consistency` — front-half strong, back-half collapse is the named pattern; did back-half-of-week adherence hold this time?
+- `stimulant_contract_three_week_trend` — broke three weeks running; trend now, not a slip — does it reset or keep running?
+- `cold_recovery_gated_sessions` — did the cold clear, and did the readiness-gated sessions actually hold (gate respected, not overridden)?
+- `teresa_intro_call` — did the Thu 6/22 couples-therapy intro call with Teresa happen?
+- `reinnervation_mwf_pec_cadence` — did the MWF every-other-day pec cadence hold (the lever that maximizes the EMG finding)?
+- `friday_post_concert_lift_readiness` — Fri lift after back-to-back concert nights; where did readiness land?
+- `sentinel_workshop_prep_outcome` — did the sitter-contingent Mon-night prep happen, and how did the Wed 12-5 strategy workshop go?
+- `gtm_ops_cadence_scoping_0701` — GTM/Ops cadence needs a scoping block before its 7/1 date; did it get one?
+- `baltimore_travel_booked` — did the Baltimore travel get booked?
+- `sitter_protected_work_coverage` — did sitter coverage for protected work time materialize?
 
 ---
 
