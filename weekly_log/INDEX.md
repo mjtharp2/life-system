@@ -38,7 +38,7 @@ Use `not_recorded` for any field the entry doesn't capture. Don't infer.
 
 ## Current pointer
 
-Most recent entry: **`2026-06-22.md`** (week of June 22-28, 2026; check-in 2026-06-21).
+Most recent entry: **`2026-07-13.md`** (week of July 13-19, 2026; check-in 2026-07-13).
 
 **Current quarterly: `quarterly/2026-07-13.md`** (Q1 review, run 2026-07-11; next due 2026-10-11).
 
@@ -48,6 +48,7 @@ Every weekly check-in fetches **both** — the most recent weekly entry *and* th
 
 | File | Week | Headline | Sleep 7d (prior wk) | Regulation | Contract |
 |---|---|---|---|---|---|
+| `2026-07-13.md` | Jul 13-19 | Q2 week 1. Skeleton v2 live, 12 rocks set, 4 touched (R1/R4/R10/R12); GSD block placed Sun PM for R1 work-triage scoping. Rock 12 (friend blocks) already underwater — B-week Wed PM went to a work event, zero margin on 6 remaining. New rock-status loop caught it in week one, not October. Off a 3-week check-in gap. | not_captured | not_captured | not_captured |
 | `2026-06-22.md` | Jun 22-28 | Pressed/recovery off a 2-week check-in gap (backward review spans 6/08-6/21). First real workout-adherence crack (back-half-of-week collapse); stimulant contract broke a 3rd week running; six-week review → decision to enter couples therapy (Teresa); EMG confirmed active reinnervation (best case); a cold (onset 6/18) flattened the back half. | not_recorded (down from illness) | none | broken |
 | `2026-06-08.md` | Jun 8-14 | Hold-steady week around the EMG (Fri), the Lauren six-week review (Wed), and two back-to-back concert nights (Thu/Fri). Prior week net-positive and optimistic, but the stimulant contract broke a second week running and a neck/facet symptom surfaced twice pre-EMG. Triage run, Inbox cleared. | not_recorded | none | broken |
 | `2026-06-01.md` | Jun 1-7 | Hold-the-line week: two conference days + meeting-wall Monday leave no focus container, deep work unplaced; anchors fit. Prior week strong but contract broke + work blocks slipped again. | not_recorded (~6h/night, under floor) | none | broken |
@@ -59,18 +60,17 @@ Every weekly check-in fetches **both** — the most recent weekly entry *and* th
 
 ## Active watch-fors (carry into next check-in's backward review)
 
-From `2026-06-22.md`:
+From `2026-07-13.md`:
 
-- `back_half_workout_consistency` — front-half strong, back-half collapse is the named pattern; did back-half-of-week adherence hold this time?
-- `stimulant_contract_three_week_trend` — broke three weeks running; trend now, not a slip — does it reset or keep running?
-- `cold_recovery_gated_sessions` — did the cold clear, and did the readiness-gated sessions actually hold (gate respected, not overridden)?
-- `teresa_intro_call` — did the Thu 6/22 couples-therapy intro call with Teresa happen?
-- `reinnervation_mwf_pec_cadence` — did the MWF every-other-day pec cadence hold (the lever that maximizes the EMG finding)?
-- `friday_post_concert_lift_readiness` — Fri lift after back-to-back concert nights; where did readiness land?
-- `sentinel_workshop_prep_outcome` — did the sitter-contingent Mon-night prep happen, and how did the Wed 12-5 strategy workshop go?
-- `gtm_ops_cadence_scoping_0701` — GTM/Ops cadence needs a scoping block before its 7/1 date; did it get one?
-- `baltimore_travel_booked` — did the Baltimore travel get booked?
-- `sitter_protected_work_coverage` — did sitter coverage for protected work time materialize?
+- `friend_block_deficit` — **the live one.** Rock 12 needs 6 friend blocks from 6 remaining B-week Wed PM slots; week-1 B-week yielded zero (work event). Did Wed PM hold on the next B-week (7/27)? Zero margin, travel weeks make it negative.
+- `gsd_block_raided` — how much of Sunday's 4 hours was actually R1 work-triage vs. check-in + stretching?
+- `lauren_residual` — Fri PM is a shared lift+date slot; did the date get the tired half?
+- `capacity_generators_first` — is R1 (work triage) actually leading, or did the quarter drift to easier finite closes?
+- `reinnervation_clock` — did R4 (PM&R quarterback) move? The only rock with a biological deadline.
+- `checkin_survived_bad_week` — the real test; not yet tested (week 1 was a reset, not a bad week).
+- `pole_minimum_held` — did the evening routine (R10) survive? One question, once — not a nightly checkbox.
+- `emma_fold_gated` — the Week B unlock depends on the postponed integration conversation; has it moved?
+- `re_accretion` — not yet live; becomes live once R1 lands.
 
 ---
 
