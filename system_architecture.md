@@ -51,6 +51,19 @@ Newest entries at top. Log meaningful timing changes, scope shifts, and
 external blockers here so future sessions can reconstruct the trajectory
 without rebuilding it from conversation.
 
+### 2026-07-11 — Q1 quarterly review; skeleton v2; rocks installed
+
+First 90-day review. Run two weeks early, off a month in which structure came apart. Full record: `quarterly/2026-07-13.md`.
+
+- **Quarterly reviews are a distinct doc type** at `quarterly/YYYY-MM-DD.md` — not a weekly entry (the prior protocol said otherwise; corrected). `weekly_log/INDEX.md` gains a **current-quarterly pointer**; every weekly check-in fetches both.
+- **Rocks.** The quarter's goals live in the quarterly doc. **Rock status is a mandatory section of every weekly entry**, with `rocks_advanced` / `rocks_complete` / `rocks_blocked` in frontmatter. *This is the corrective loop:* rocks in a doc nobody reads are aspirations; rocks status-checked weekly are commitments with a feedback loop.
+- **Skeleton v2** supersedes April's. The old skeleton was **arithmetically impossible** — 9 of 14 slots double-booked, ~23 commitments in 14 slots, zero margin. It didn't collapse under load; it was at 100% utilization and load revealed it. v2 is two alternating week shapes (A: yoga / B: friend) plus a 4-hour weekend **GSD block**.
+- **GSD-block placement is a mandatory check-in stage** (new Stage 3). *If the check-in doesn't place it, it doesn't exist.*
+- **The experiential pole** enters the architecture as a cross-cutting, un-tiered, **protected** concern — the counterweight to a system that is otherwise entirely a thinking machine. Container, not track.
+- **Relational support exits Tier 3** and is reframed as a candidate **regulation input** — per the therapist's theory that solo-regulation is the actual root of the depletion loop.
+
+**Scope note:** markdown only. Rock status is queryable from weekly frontmatter; the D1/MCP question (quarterly tables, rock-status tools) is deliberately deferred to **Rock 9** (check-in rework), where it can be designed against a proven procedure rather than a guessed one.
+
 ### 2026-06-03 — Architecture doc wholesale refresh
 
 This doc rewritten to reflect the substrate-centric model that emerged after
@@ -199,6 +212,12 @@ preserved as the marker of the inflection point.
 
 The work in flight, by named step. No numbering — sequence shifts as steps
 close; names are stable.
+
+### Weekly check-in rework (Rock 9)
+
+**Open — the highest-leverage build item of Q2.** The check-in is *self-cancelling under load*: run when regulated, dropped when dysregulated — precisely when it would catch the slide. A three-week gap in June is the proof. Every other rock depends on this one holding.
+
+Must deliver: GSD-block placement as a stage; rock status as mandatory output; quarterly-doc fetch; **and a bad-week minimum for the experiential pole**. The D1/substrate question for rock status gets designed here, against a proven procedure.
 
 ### Weekly scheduler functional
 
@@ -358,7 +377,11 @@ Each quarterly 90-day review session covers:
 
 5. **Architecture spec audit.** Quick scan: do design principles still hold? Any new principles needed? Any sections that have gone stale or need revision?
 
-Output: a 90-day review entry in the `weekly_log/` library (the entry file for the current planning week) capturing decisions made, phases advanced, and watch-fors carried forward into the next quarter. See `weekly_log/INDEX.md` for the per-entry conventions.
+Output: **a standalone quarterly doc at `quarterly/YYYY-MM-DD.md`** (named by the Monday the quarter's execution begins), capturing decisions made, phases advanced, the quarter's **rocks**, the **skeleton** the quarter is planned against, and watch-fors carried forward.
+
+**This is a distinct doc type, not a weekly entry.** The planning week gets *both*: the quarterly doc **and** its own weekly entry carrying the forward plan and rock status. Update the quarterly pointer in `weekly_log/INDEX.md`.
+
+The quarterly holds the rocks; **every weekly entry carries rock status against them.** The quarterly sets the commitments; the weekly enforces them. That loop is the fix for the system's named central vulnerability — the check-in is self-cancelling under load, so the corrective mechanism fails silently exactly when it is most needed.
 
 ## System Cadences
 
@@ -368,8 +391,8 @@ instance.
 
 ### 90-Day System Review
 
-- Last review: never (system formalized 2026-04-26)
-- Next due: 2026-07-26
+- Last review: **2026-07-11** (Q1 → `quarterly/2026-07-13.md`)
+- Next due: **2026-10-11**
 - Status: not yet due
 
 ### Sunday Weekly Check-in
@@ -382,6 +405,7 @@ Recurring weekly, no separate tracking needed.
 |---|---|---|---|
 | Strategy / principles / cadences | This repo (markdown) | curl / web_fetch | Tier 1: `life_system_reference.md`, `system_architecture.md`. Tier 2 loaded on task. |
 | Weekly history | `weekly_log/` library | curl / web_fetch | Per-week files; INDEX.md is read-first. |
+| Quarterly reviews / rocks / skeleton | `quarterly/` | curl / web_fetch | Current pointer in `weekly_log/INDEX.md`. Fetched by every weekly check-in. |
 | Calendar (personal + family) | Google Calendar | Native Claude connector | Allowlist in `dashboard_state.md`. |
 | Calendar (Sentinel) | Sentinel M365 tenant | Microsoft 365 connector | Read-only. |
 | Calendar (Tenex) | Tenex M365 tenant | Published ICS → Google connector | Read-only via Google to avoid second M365 tenant. |

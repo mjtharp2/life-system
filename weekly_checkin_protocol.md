@@ -21,9 +21,10 @@ re-pull before trusting it.
 
 Read, without commentary to the user:
 - this protocol
-- `weekly_log/INDEX.md` (conventions, current pointer, active watch-fors)
+- `weekly_log/INDEX.md` (conventions, current pointer, **current quarterly pointer**, active watch-fors)
 - the most recent entry (the current pointer in INDEX)
-- `life_system_reference.md` (strategy, skeleton, regulation protocol)
+- **the current quarterly (`quarterly/YYYY-MM-DD.md`, per INDEX) — the rocks and the skeleton live here**
+- `life_system_reference.md` (strategy, tiers, regulation protocol)
 - `system_architecture.md` (build state + System Cadences, for the 90-day check)
 
 Note today's date; compute the output filename `weekly_log/YYYY-MM-DD.md`
@@ -43,8 +44,11 @@ Cover, conversationally and without interrogating: regulation events
 what shipped vs. slipped. Where the substrate already answers something,
 confirm it briefly rather than asking.
 
-**Close the backward review with an open catch question:** "Anything else from
-the week worth capturing that I haven't asked about?"
+**Rock check — mandatory, light touch.** Before closing, ask how the quarter's rocks moved this week. One question, not an audit: *"Did any rock move?"* Record which advanced, which are blocked, which are done. `none` is a valid answer — and a meaningful one. Three consecutive weeks of `none` is a signal worth naming out loud, not a fact to file quietly.
+
+This is the corrective loop the quarterly exists to install. Rocks in a doc nobody reads are aspirations; rocks status-checked weekly are commitments. Do not skip this because the week was bad — **a bad week is exactly when this check matters**, and the check-in's failure to run during bad weeks is the system's named central vulnerability.
+
+**Close the backward review with an open catch question:** "Anything else from the week worth capturing that I haven't asked about?"
 
 ## Step 2 — Forward gathering (ask before planning)
 
@@ -100,9 +104,16 @@ only.
 or off this session?") and proceed; don't re-confirm scope per item. The
 Tharp-Family confirm-before-mutation rule stands regardless of write-mode.
 
-### Stage 1 — Parenting windows (batch)
+### Stage 1 — Week shape (A/B) + parenting windows (batch)
 
-Ask the user for the week's parenting pattern in one prompt. The user
+**First, establish the week shape: A or B.** They are not interchangeable — the choice determines the parenting-shift pattern *and* the workout placement, so it must be settled before anything is written.
+
+- **Week A (yoga week)** — shifts Mon AM, Tue PM, **Wed PM**, **Thu AM**, Fri PM, Sat AM. Lifts Mon PM / Tue AM / Wed AM. Yoga Fri AM (WFH, with Emma). No friend night.
+- **Week B (friend week)** — shifts Mon AM, Tue PM, **Wed AM**, **Thu PM**, Fri PM, Sat AM. Lifts Mon PM / Tue AM / Thu AM. **Wed PM = friend night.** No yoga; stretching moves into the GSD block. Requires the Emma-fold (Emma in the family fold Tue PM / Wed AM), which is **gated on the relational work** — confirm it's on before assuming Week B.
+
+Week B is the *only* source of a friend block. Rock 12 is a count of six across the quarter — if the alternation quietly collapses to A-only, that rock silently dies. **Track it.**
+
+Then ask the user for the week's parenting pattern in one prompt. The user
 typically already knows it and will reply in shorthand (e.g. "Mon AM, Tue PM,
 Wed all day, Thu AM, Sat afternoon"). Parse the shorthand into a full week of
 Tharp Family events. Surface the parsed set for one confirm covering the
@@ -132,15 +143,29 @@ primary** calendar. Hold the structured slot data (day, time, category,
 constraint_note) in agent memory for the end-of-session substrate write — do
 not call `weekly_write_checkin` here.
 
-### Stage 3 — Flag clearly-open windows
+### Stage 3 — Place the GSD block
+
+**Four hours, one weekend afternoon (Sat PM or Sun PM). Existence is non-negotiable; the day is placed here, every week, from a regulated state, before the weekend fills.**
+
+**If the check-in does not place it, it does not exist.** This is not a formality — it is the only true slack in a 14-slot week that is otherwise fully allocated. Every rock is worked here.
+
+Place it now, after parenting and workouts, *before* work triage and Todoist prioritization — so it is defended rather than backfilled with whatever is left over. Write it to the personal Google primary calendar like any other committed block.
+
+**Then name this week's rock target.** Ask which rock this week's block is for, and hold it against the quarterly's sequencing (**capacity generators first** — Rocks 1 and 2 lead; the first month is expected to be mostly triage + EA with little visible progress elsewhere, and that is the investment phase, not slippage).
+
+**Guard against raiding.** The block also carries the weekly check-in and (in Week B) stretching. Four hours minus check-in minus stretching is not four hours of rock work. If the block is being consumed by maintenance, say so.
+
+The day is deliberately *not* fixed — the weekend shape genuinely varies and childcare is scheduled weekly regardless. The commitment is to the block's **existence and advance placement**, not to a particular day. Record where it landed in `gsd_block`; `not_placed` is a regulation signal.
+
+### Stage 4 — Flag clearly-open windows
 
 With parenting and workouts committed, identify time blocks that are now
 clearly open (no work meeting, no parenting, no workout). Surface them to the
 user as the week's available scheduling capacity — not as a question, just as
 visible inventory the later stages will allocate against. No writes in this
-stage; it's information for stage 5.
+stage; it's information for stage 6.
 
-### Stage 4 — Day-by-day work-calendar triage
+### Stage 5 — Day-by-day work-calendar triage
 
 Walk the week's work-calendar blocks (Sentinel + Tenex), day by day, asking
 per block what's skippable. The user decides; the agent does NOT write to work
@@ -156,7 +181,7 @@ Expected behavior, not a bug.
 
 **Calendar interpretation rules.** Read the prior week's entry's "Calendar
 interpretation rules" section at session start. As you walk each block in
-stage 4:
+stage 5:
 
 - If a rule applies to a block, confirm with the user before acting on it
   ("rule says Monday all-hands is skippable — still true?"). User says yes →
@@ -174,7 +199,7 @@ stage 4:
 The rules accumulate slowly. Early weeks will be mostly additions; deletions
 appear once rules have lived long enough to be tested by reality.
 
-### Stage 5 — Prioritize Todoist against the week
+### Stage 6 — Prioritize Todoist against the week
 
 There is no hard non-negotiable rule. Pull the active backlog and surface it
 by priority, with relevant flags, to work through with the user.
@@ -215,7 +240,7 @@ catch.
    indefinitely with no one looking at it. (`someday` is deliberately NOT swept
    here — it's the parking state, reviewed at the quarterly checkpoint.)
 
-Surface this prioritized view alongside the open time windows from stage 3.
+Surface this prioritized view alongside the open time windows from stage 4.
 Walk through it collaboratively — user decides what gets a slot, what defers.
 Write agreed do-dates to Todoist as items are committed (sequential write).
 
@@ -247,17 +272,19 @@ hours, identify inputs"; due/overdue → next check-in is a 90-day review sessio
 ## Step 6 — Write the entry
 
 Write `weekly_log/YYYY-MM-DD.md`: frontmatter (signals from this session) +
-narrative (Backward Review, Forward Plan, Skeleton Deviations, Watch-Fors,
-Phase Scan, any Process Notes). Verbatim user context where it matters; don't
+narrative (Backward Review, **Rock Status**, Forward Plan, Skeleton Deviations, Watch-Fors, Phase Scan, any Process Notes). Verbatim user context where it matters; don't
 over-summarize.
+
+**Rock Status is mandatory in every entry.** Which rocks advanced, which are blocked, which closed, and the running count against the quarter's ~1/week pacing. An entry without it is incomplete. Populate `rocks_advanced` / `rocks_complete` / `rocks_blocked`, plus `week_shape` and `gsd_block`.
 
 Update `INDEX.md`: move the current pointer to this entry, prepend it to the
 recent-weeks table, refresh the active watch-fors.
 
 By this point in the session, parenting blocks (Tharp Family), workout windows
-(personal Google), and Todoist do-dates have already been written to their
-respective surfaces during stages 1, 2, and 5. This Step 6 substrate write
-is the session-level composition — it does not duplicate per-stage writes.
+and the GSD block (personal Google), and Todoist do-dates have already been
+written to their respective surfaces during stages 1, 2, 3, and 6. This Step 6
+substrate write is the session-level composition — it does not duplicate
+per-stage writes.
 
 **Write the structured signals to substrate.** After the markdown entry is
 written, call `weekly_write_checkin` with the structured payload:
@@ -290,8 +317,8 @@ user review. Three pieces:
 1. **Current rules** carried forward from the prior week's entry's "Calendar
    interpretation rules" section. Display the full list — the weekly review
    is the moment they're visible.
-2. **Proposed additions** — rule-worthy moments captured during stage 4.
-3. **Proposed deletions** — rules flagged as not-holding during stage 4.
+2. **Proposed additions** — rule-worthy moments captured during stage 5.
+3. **Proposed deletions** — rules flagged as not-holding during stage 5.
 
 User approves, adjusts, or rejects each change. Agreed rules become the
 updated list.

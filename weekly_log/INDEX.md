@@ -28,12 +28,21 @@ parsing pattern stays consistent).
 - `regulation_events` — `none`, or a list of `level_1` / `level_2` / `level_3`. (Ulysses-contract breaks are tracked separately in `stimulant_contract`, not here.)
 - `stimulant_contract` — `held` / `wavered` / `broken` / `not_recorded`.
 - `carryover_watchfors` — short slugs derived from the entry's Watch-Fors section. These drive the next check-in's backward review.
+- `week_shape` — `A` (yoga week) or `B` (friend week). See the quarterly's Skeleton v2. Determines the parenting-shift pattern and the workout placement.
+- `gsd_block` — where the 4-hour weekend block landed (e.g. `sun_pm`), or `not_placed`. **If it wasn't placed, it didn't exist** — that's a regulation signal, not an omission.
+- `rocks_advanced` — list of rock numbers that moved this week. `[]` is a valid and meaningful answer.
+- `rocks_complete` — cumulative list of rock numbers closed to date.
+- `rocks_blocked` — rock numbers currently blocked, with the blocker named in the narrative.
 
 Use `not_recorded` for any field the entry doesn't capture. Don't infer.
 
 ## Current pointer
 
 Most recent entry: **`2026-06-22.md`** (week of June 22-28, 2026; check-in 2026-06-21).
+
+**Current quarterly: `quarterly/2026-07-13.md`** (Q1 review, run 2026-07-11; next due 2026-10-11).
+
+Every weekly check-in fetches **both** — the most recent weekly entry *and* the current quarterly. The quarterly holds the **rocks** (the quarter's goals) and the **skeleton** the week is planned against. A weekly entry that doesn't carry rock status is incomplete.
 
 ## Recent weeks
 

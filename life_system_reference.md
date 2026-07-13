@@ -26,78 +26,98 @@ Overload → depletion → executive function collapse → compensatory behavior
 
 ### Tier 3 — Intentional Neglect
 
-- Social expansion
-- New male friendships (tend existing 4 lightly)
+- Social expansion (broad)
 - Creative pursuits (protect the seed, don't plant yet)
-- Finances beyond monthly check-in
+- Structured personal finance / savings / investment planning
 
-## Weekly Skeleton
+### Cross-cutting — not tiered
 
-### Fixed Anchors
+**Relational support** *(moved out of Tier 3 at the Q1 review).* Not a social nice-to-have — a candidate **regulation input**, on the order of sleep. Therapist's theory, accepted as something that has to be tried: the real gap is the *absence of relational support*; every maintenance and corrective loop is self-run, and the compensatory behaviors fill the space where relational support would otherwise be. Concrete handles: **Sam** and **Shalyn**. The trade is expensive and unpriced — it costs capacity and vulnerability, the scarcest currencies, and must be made from a depleted state. **Rock 12: six friend blocks.**
 
-| Day | Your Shift | Relationship Night | Key Commitments |
-|---|---|---|---|
-| Monday | Morning (Addie) | Lauren | Gym after work 6:15pm |
-| Tuesday | Evening (Addie) | Lauren | 5:30 wake, gym, Sentinel |
-| Wednesday | Evening (Addie) | Lauren | 5:30 wake, gym, Sentinel |
-| Thursday | Morning (Addie) | Emma | Hard stop 5pm, Emma evening |
-| Friday | Evening (Addie) | Lauren date | At Emma's AM, flex block 3:30-5 |
-| Saturday | Morning (Addie) | Emma | Tennis 9-11, brunch, Emma from 3pm |
-| Sunday | Flex | Lauren/family | Stretching 2-3, weekly review 3-3:30 |
+**The experiential pole** — *think less, feel/experience more.* Presence, body awareness, sacred sexuality, ego dissolution: one thread, not several. **Not a domain competing for tier space — the counterweight to the entire cognitive apparatus.** The system is a thinking machine; the compensatory behaviors it fights are crude attempts to stop thinking and drop into experience. The system regulates away the broken exits from the head without providing a good one. **Protective, not additive.** It gets a **container, not a track**: the practice layer (breathwork, meditation, yoga) is structured; the pole itself carries no deliverable. Its practice layer is a continuous-recruitment practice — the category that collapsed in Q1 — so it **requires a bad-week minimum** or it is first to go, precisely when the machine is hottest and the exit most needed. **Rocks 10 and 11.**
 
-### Sleep Architecture
+**Note on the Tier 1 "family architecture with Lauren" line:** it fuses two things that are not one domain. Parenting is in good shape and largely independent of where the marriage lands. The **relationship-definition forward course belongs to therapy**, not this system; day-to-day and structural life stays managed here.
+
+## Weekly Skeleton (v2 — 2026-07-11)
+
+*Superseded the April v1 skeleton at the Q1 review. Full derivation: `quarterly/2026-07-13.md` § 5.*
+
+**Frame:** 14 slots — weekday AM/PM ×5, plus Sat AM/PM and Sun AM/PM as fuller half-days. Everything must live here; anything else gets fed into weekday work hours or doubled onto an evening parenting shift.
+
+**Two alternating week shapes.** Both are complete weeks. Neither is a degraded version of the other.
+
+### Week A — "Yoga week"
+
+| | AM | PM |
+|---|---|---|
+| **Mon** | Addie shift | **LIFT 1** |
+| **Tue** | **LIFT 2** | Addie shift |
+| **Wed** | **LIFT 3** | Addie shift |
+| **Thu** | Addie shift + **cardio 1** *(5am wake)* | **Emma** |
+| **Fri** | **Emma + YOGA** *(WFH)* | Addie shift + **Lauren date** *(sitter)* |
+| **Sat** | Tennis = **cardio 2** + Addie daycare | **Emma** *or* **GSD** |
+| **Sun** | **Emma** | **GSD** *or* **Emma** |
+
+### Week B — "Friend week"
+
+| | AM | PM |
+|---|---|---|
+| **Mon** | Addie shift | **LIFT 1** |
+| **Tue** | **LIFT 2** | Addie shift + **Emma (fold)** |
+| **Wed** | Addie shift + **Emma (fold)** | **FRIEND** |
+| **Thu** | **LIFT 3** | Addie shift |
+| **Fri** | **cardio 1** | Addie shift + **Lauren date** *(sitter)* |
+| **Sat** | Tennis = **cardio 2** + Addie daycare | **Emma** *or* **GSD** |
+| **Sun** | **Emma** | **GSD** *or* **Emma** |
+
+### How the swap works
+
+Week B moves two parenting shifts — **Wed PM + Thu AM → Wed AM + Thu PM** — same count, rearranged. Emma sleeps over Tuesday and is in the family fold Tue PM / Wed AM. That yields:
+
+- **Wed PM → FRIEND night** (the only source of a friend slot in the entire week)
+- **Thu AM → LIFT 3** (replacing Week A's Wed AM lift)
+- **Fri AM → cardio** instead of Emma + yoga
+
+**Yoga is the trade.** Week A has yoga (Fri AM, WFH-enabled, with Emma); Week B has no yoga and stretching moves into the GSD block instead. One flexibility session lands every week either way.
+
+Both weeks hold: **3 exclusive lifts** (rehab non-negotiable), **2 cardio**, **6 parenting shifts**, 1 flexibility session, 1 Lauren date, 4 Emma slots, 1 GSD block.
+
+### Constraints that generated this shape
+
+- **Lifts are exclusive** — nothing else in the slot. Three is a rehab non-negotiable.
+- **No Emma sleepover can precede a 5am wake.** This killed a Wed-fold variant and is why the lift moves to Thu AM in Week B.
+- **Yoga requires Friday's WFH morning.** It is not portable.
+- **Lunchtime lifting is not viable** most weeks (occasionally Mon/Fri).
+- **The Emma-fold move is gated on the relational work** — it requires Lauren's comfort and Emma's willingness, and is the *benefit-first integration* already committed to. The skeleton's only unlock and the integration strategy are the same action.
+
+### The GSD block
+
+**Four hours, one weekend afternoon. Existence is non-negotiable; the day is placed at the weekly check-in, from a regulated state, before the weekend fills.**
+
+*If the check-in does not place it, it does not exist.* Placement is now a **mandatory check-in stage**, not an afterthought.
+
+The block is deliberately *not* fixed to a day — weekend shape genuinely varies, childcare is scheduled weekly regardless, and a rigid slot would be brittle. The commitment is to the block's **existence and its advance placement**, not to a particular day.
+
+Contents: the weekly check-in, stretching (Week B), and rock work. **Guard against raiding:** four hours minus check-in minus stretching is not four hours of rock work.
+
+### The evening routine (outside the 14)
+
+Reading · skincare · plan-the-day · teeth · stretching. **This is the only place in the entire week where the restorative slot and the experiential pole actually live.** Every other slot is allocated. It is not an optional addition — it is the container for two things this review named load-bearing, and it exists outside the 14 precisely so it can hold them.
+
+### Known gaps in the skeleton — stated, not solved
+
+- **Family-of-five time has no home.** Saturday post-tennis brunch is the nearest candidate (a texture change rather than a 15th slot).
+- **Lauren has one exclusive slot (Fri PM); Emma has four.** Stated as architecture, not judgment — but romantic re-engagement with Lauren is live, and the structure currently allocates her the residual: the tired hour after bedtime on doubled parenting evenings.
+- **There is still no genuine flex.** The GSD block is the only true slack, and it is already over-subscribed. **This is what the work triage is meant to solve** — the day is where the time has to come from.
+- **Travel weeks (~every 3rd, Tue–Thu) void this pattern ~33% of the quarter.** No variant has been designed.
+
+### Sleep architecture
 
 - Target: 7 hours minimum floor, 11:30pm gate
-- 5:30am wake: Tuesday and Wednesday (gym days)
+- 5:30am wake: the two early lift days + Thu AM cardio (Week A)
 - 6:30am wake: all other days
-- Self time: 11:00-11:30pm nightly — reading, writing, no phone
-- Phone charges outside bedroom every night
+- Phone charges outside the bedroom every night
 - No substances Sunday night
-
-### Workout Pattern
-
-- Monday: gym after work (6:15pm)
-- Tuesday: gym 5:45-7:15am before Sentinel commute
-- Wednesday: gym 5:45-7:15am before Sentinel commute
-- Thursday: home cardio 6:00-6:30am only
-- Friday: gym ~10am (after Emma morning)
-- Saturday: tennis 9-11am at gym with Addie in daycare
-- Sunday: professional stretching 2-3pm, recovery
-
-### Flex Architecture
-
-- Friday 3:30-5:00pm — primary weekly admin block
-- Saturday 2:00-3:00pm — secondary buffer before Emma
-- Monday lunch — micro Todoist processing block
-
-### Scheduler-Written Blocks
-
-The block types the weekly scheduler places onto the **personal Google
-primary** calendar (work calendars are read-only constraints; Tharp Family is
-confirm-gated — see `system_architecture.md` write rules). The scheduler fits
-these around fixed external commitments each week:
-
-- **Workouts** — per the Workout Pattern above and the default pattern in
-  `trainer/program.md`, with location.
-- **Addie shifts** — morning/evening per the Fixed Anchors table.
-- **Relationship nights** — Lauren Mon/Tue/Wed/Fri, Emma Thu/Sat, per Fixed
-  Anchors.
-- **Daily 90-minute focus block** — placed in the highest-quality available
-  slot (scheduled, sacred, tracked — see Professional tier).
-- **Friday flex block** 3:30-5:00pm — admin/triage.
-- **Sunday weekly review** 3:00-3:30pm.
-- **Self time** 11:00-11:30pm — daily.
-
-These are the load-bearing defaults the staged-negotiation check-in works
-from; idiosyncrasies of a given week (travel, low-energy, parenting changes)
-modulate placement but not the underlying shape.
-
-### Travel Weeks (approx every 3rd week, Tue-Thu)
-
-- Monday and Friday structure identical
-- Emma sometimes travels with you — Thursday night can hold
-- No new commitments in travel weeks
-- Weekly review moves to Saturday if Sunday is travel recovery
 
 ## Goals By Domain
 
@@ -302,7 +322,9 @@ The Emma ↔ Lauren integration design is an active cross-cutting strategic thre
 - Calendar: Google Calendar (personal) + Outlook (work)
 - Future: Claude training interface, Todoist integration, weekly review automation
 
-## 90-Day Review (July 2026)
+## 90-Day Review
+
+**Q1 review completed 2026-07-11 → `quarterly/2026-07-13.md`. Next due 2026-10-11.**
 
 The system review asks: is this working, not just am I executing it.
 
@@ -323,4 +345,4 @@ The tier structure is a snapshot of the current season, not a permanent assignme
 
 ---
 
-*Last updated: April 2026. Update this document at each 90-day review.*
+*Last updated: 2026-07-11 (Q1 review). Skeleton v2. Update at each 90-day review.*
