@@ -21,7 +21,7 @@ re-pull before trusting it.
 
 Read, without commentary to the user:
 - this protocol
-- `weekly_log/INDEX.md` (conventions, current pointer, **current quarterly pointer**, active watch-fors)
+- `weekly_log/INDEX.md` (current pointer, **current quarterly pointer**, frame in force, active watch-fors — entry conventions live in Step 6 of this protocol, not INDEX)
 - the most recent entry (the current pointer in INDEX)
 - **the current quarterly (`quarterly/YYYY-MM-DD.md`, per INDEX) — the rocks and the skeleton live here**
 - `life_system_reference.md` (strategy, tiers, regulation protocol)
@@ -277,8 +277,59 @@ over-summarize.
 
 **Rock Status is mandatory in every entry.** Which rocks advanced, which are blocked, which closed, and the running count against the quarter's ~1/week pacing. An entry without it is incomplete. Populate `rocks_advanced` / `rocks_complete` / `rocks_blocked`, plus `week_shape` and `gsd_block`.
 
-Update `INDEX.md`: move the current pointer to this entry, prepend it to the
-recent-weeks table, refresh the active watch-fors.
+### Entry conventions
+
+*These are the canonical entry conventions (folded in from the former INDEX
+conventions block — this protocol is now their home, since INDEX is a lean
+orient-first pointer).*
+
+**File naming.** `weekly_log/YYYY-MM-DD.md` where the date = **Monday of the
+week being planned** by that check-in. A Sunday check-in on 2026-05-17 planning
+the upcoming week (May 18-25) becomes `2026-05-18.md`. Today's relevant file is
+`today - today.weekday()` (Mon of the current ISO week), formatted as
+YYYY-MM-DD.
+
+**Per-entry structure.** YAML frontmatter (queryable signals) followed by the
+narrative verbatim — Backward Review, Rock Status, Forward Plan, Skeleton
+Deviations, Watch-Fors, Phase-Progression Scan, Process Notes. Move text, don't
+rewrite. Use `not_recorded` / `not_captured` for any field the entry doesn't
+capture — don't infer.
+
+**Frontmatter fields.**
+
+- `week_start` — Monday of the planned week (matches filename).
+- `date_range` — how the entry labels the week (may overlap the next Monday).
+- `checkin_date` — when the check-in actually happened (typically the Sunday
+  before `week_start`).
+- **Quantitative measurements describe the PRIOR week reviewed**, not the
+  planned week — those are the only measurements that exist at check-in time:
+  - `energy_self_rating`, `mood_self_rating`, `sleep_quality_self_rating` —
+    integer 1-10.
+  - `sleep_avg_7d` — Apple Health / Oura 7-day sleep score average (0-100).
+    Source from Oura; Apple returns overlapping stage samples, not a score.
+  - `workouts_completed` — integer count.
+- `regulation_events` — `none`, or a list of `level_1` / `level_2` / `level_3`.
+  (Ulysses-contract breaks are tracked separately in `stimulant_contract`, not
+  here.)
+- `stimulant_contract` — `held` / `wavered` / `broken` / `not_recorded`.
+- `carryover_watchfors` — short slugs derived from the entry's Watch-Fors
+  section. These drive the next check-in's backward review.
+- `week_shape` — `A` (yoga week) or `B` (friend week). See the quarterly's
+  Skeleton v2. Determines the parenting-shift pattern and the workout placement.
+- `gsd_block` — where the 4-hour weekend block landed (e.g. `sun_pm`), or
+  `not_placed`. **If it wasn't placed, it didn't exist** — that's a regulation
+  signal, not an omission.
+- `rocks_advanced` — list of rock numbers that moved this week. `[]` is a valid
+  and meaningful answer.
+- `rocks_complete` — cumulative list of rock numbers closed to date.
+- `rocks_blocked` — rock numbers currently blocked, with the blocker named in
+  the narrative.
+
+**Calendar interpretation rules** live as a section at the end of each entry —
+full convention in Step 7 below.
+
+Update `INDEX.md`: move the current pointer to this entry, add a line to the
+Recent trajectory, and refresh the active watch-fors.
 
 By this point in the session, parenting blocks (Tharp Family), workout windows
 and the GSD block (personal Google), and Todoist do-dates have already been
